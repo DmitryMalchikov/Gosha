@@ -1,0 +1,68 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+public class ItemInfo : MonoBehaviour
+{
+
+    public int ItemID;
+    public string ItemName;
+    public string Desc;
+
+    public ShopCard CardInfo;
+    public ShopItem CaseInfo;
+
+    public Image ImgSource;
+    public Text NameText;
+    public Text PriceText;
+    public Button BuyButton;
+
+    public TradePanel _TradePanel;
+
+    public Slider Upgrade;
+
+    public void OpenBuyInfo()
+    {
+        Canvaser.Instance.BuyInfoPanel.SetBuyInfo(ItemID, NameText.text, Desc, PriceText.text, ImgSource.sprite, ItemName);
+    }
+    public void OpenUpgradeInfo()
+    {
+        Canvaser.Instance.UpgradeInfoPanel.SetBuyInfo(ItemID, NameText.text, Desc, PriceText.text, ImgSource.sprite, ItemName);
+    }
+
+    public void SetCard(ShopCard card)
+    {
+        CardInfo = card;
+        NameText.text = card.Name;
+        PriceText.text = card.Cost.ToString();
+        ItemID = card.Id;
+    }
+
+    public void SetCase(ShopItem item)
+    {
+        CaseInfo = item;
+        NameText.text = item.Name;
+        PriceText.text = item.Cost.ToString();
+        ItemID = item.Id;
+    }
+
+    public void SelectItem(bool toSelect)
+    {
+        if(toSelect)
+        {
+            _TradePanel.SelectedItemID = ItemID;
+            _TradePanel.IcecreamForTrade = 0;
+            _TradePanel.IceCreamForTradeInput.text = "";
+        }
+    }
+
+    public void SetInventoryCard(InventoryCard item)
+    {
+        ItemID = item.ItemId;
+        NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
+    }
+    public void SetBonus(InventoryItem item)
+    {
+        gameObject.SetActive(true);
+        NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
+    }
+}

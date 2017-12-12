@@ -1,0 +1,77 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Collector : MonoBehaviour {
+
+    public static Collector Instance { get; private set; }
+
+    IPickable _pickable;
+
+    public BoxCollider Collider;
+    public Vector3 MagnetSize = new Vector3(15, 15, 8);
+    public Vector3 StandardSize = new Vector3(1, 2, 1);
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        Collider = GetComponent<BoxCollider>();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.transform.tag == "IceCream")
+        {
+            _pickable = other.transform.GetComponent<IPickable>();
+
+            if (_pickable != null)
+            {
+                _pickable.PickUp();
+            }
+        }
+    }
+
+    public void UseMagnet()
+    {
+        GameController.Instance.MagnetTimeLeft = GameController.Instance.MagnetTime;
+
+        if (!GameController.Instance.Magnet)
+        {
+            //Collider.center = Vector3.forward * (MagnetSize.z / 2 - 1);
+            Collider.size = MagnetSize;
+
+            StartCoroutine(DefaultSize());
+        }
+    }
+
+    IEnumerator DefaultSize()
+    {
+        GameController.Instance.Magnet = true;
+        Canvaser.Instance.GamePanel.Magnet.gameObject.SetActive(true);
+        while (GameController.Instance.MagnetTimeLeft > 0)
+        {
+            yield return GameController.Frame;
+            GameController.Instance.MagnetTimeLeft -= Time.deltaTime;
+            Canvaser.Instance.GamePanel.Magnet.SetTimer(GameController.Instance.MagnetTimeLeft);
+        }
+        Canvaser.Instance.GamePanel.Magnet.gameObject.SetActive(false);
+        Canvaser.Instance.GamePanel.MagnetCD.OpenCooldownPanel();
+
+        //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
+        Collider.size = StandardSize;
+        GameController.Instance.Magnet = false;
+    }
+
+    public void ResetSas()
+    {
+        StopAllCoroutines();
+        //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
+        Collider.size = StandardSize;
+        GameController.Instance.Magnet = false;
+    }
+}
