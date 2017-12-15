@@ -109,8 +109,8 @@ public class ScoreManager : MonoBehaviour
         yield return StartCoroutine(NetworkHelper.SendRequest(ContinueForMoneyUrl, "", "application/json",
             (response) => 
             {
-                GameController.Instance.ContinueGame();
                 ContinuePanel.Instance.gameObject.SetActive(false);
+                GameController.Instance.ContinueGameForMoney();                
             },
             (response) =>
             {

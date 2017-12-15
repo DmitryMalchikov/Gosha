@@ -170,15 +170,15 @@ vOutput vert(vInput v)
 	UNITY_INITIALIZE_OUTPUT(vOutput,o); 
 
 		
-	#ifndef LIGHTMAP_OFF
-		#if defined(V_CW_REFLECTIVE) || defined(V_CW_REFLECTIVE_FRESNEL)
-			V_CW_TransformPointAndNormal(v.vertex, v.normal, v.tangent);	
-		#else
-			V_CW_TransformPoint(v.vertex);	
-		#endif
-	#else
-		V_CW_TransformPointAndNormal(v.vertex, v.normal, v.tangent);	
-	#endif
+	//#ifndef LIGHTMAP_OFF
+	//	#if defined(V_CW_REFLECTIVE) || defined(V_CW_REFLECTIVE_FRESNEL)
+	//		V_CW_TransformPointAndNormal(v.vertex, v.normal, v.tangent);	
+	//	#else
+	//		V_CW_TransformPoint(v.vertex);	
+	//	#endif
+	//#else
+		V_CW_TransformPoint(v.vertex);	
+	//#endif
 	o.pos = UnityObjectToClipPos(v.vertex);
 
 

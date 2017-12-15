@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 36ec281781fd9f34fbecb4b151913b25
-timeCreated: 1512117834
-licenseType: Pro
+timeCreated: 1513124455
+licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     8900000: generatedCubemap
@@ -76,6 +76,14 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: iPhone
     maxTextureSize: 2048
     textureFormat: -1
     textureCompression: 1

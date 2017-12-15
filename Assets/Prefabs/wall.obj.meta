@@ -12,6 +12,7 @@ ModelImporter:
     2300000: Plane001
     3300000: Plane001
     4300000: Plane001
+    6400000: Plane001
   materials:
     importMaterials: 1
     materialName: 0
@@ -41,13 +42,13 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importBlendShapes: 1
+    importBlendShapes: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
-    weldVertices: 1
+    weldVertices: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

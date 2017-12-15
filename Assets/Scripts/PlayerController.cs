@@ -42,11 +42,24 @@ public class PlayerController : MonoBehaviour
     public Vector3 ColliderCrouch = new Vector3(0, -0.5f, 0);
     public Tile LastTile;
 
-    public bool OnGround = true;
+    float minY = 0;
+
+    public bool OnGround
+    {
+        get { return _onGround; }
+        set
+        {
+            _onGround = value;
+            animator.SetBool("OnGround", _onGround);
+        }
+    }
+    bool _onGround = true;
+
     public Transform MainObj;
     int environment;
     public float LastGroundY = 0;
     public Animator PlayerAnimator;
+    public Transform Position;
 
     Collider lastHit;
 
@@ -59,6 +72,7 @@ public class PlayerController : MonoBehaviour
     {
         StopAllCoroutines();
         transform.position = StartPos;
+        OnGround = true;
         CurrentX = 0;
         Collisions = 0;
         StandUp();
@@ -75,13 +89,16 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (OnGround || GameController.Instance.Rocket/* || (LastGroundY > transform.position.y && rb.velocity.y < 0)*/)
+        if (OnGround || GameController.Instance.Rocket)
         {
             LastGroundY = transform.position.y;
         }
         else if (LastGroundY > transform.position.y && rb.velocity.y < 0)
         {
-            LastGroundY = transform.position.y;
+            if (transform.position.y >= minY)
+            {
+                LastGroundY = transform.position.y;
+            }
         }
 
         if (!OnGround && !isJumping && rb.velocity.y > 0 && !GameController.Instance.Rocket)
@@ -98,6 +115,7 @@ public class PlayerController : MonoBehaviour
             {
                 zeroX.Set(0, rb.velocity.y, 0);
                 rb.velocity = zeroX;
+                moveDir = Vector3.zero;
                 isMoving = false;
                 FixPos(CurrentX);
             }
@@ -118,7 +136,7 @@ public class PlayerController : MonoBehaviour
         dir = right ? 1 : -1;
         if (CurrentX != dir * Step)
         {
-            if (GameController.Instance.Rocket || (OnGround && !isCrouching))
+            if (GameController.Instance.Rocket || OnGround)
             {
                 if (right)
                 {
@@ -132,6 +150,10 @@ public class PlayerController : MonoBehaviour
 
             CurrentX += dir * Step;
             moveDir.x = dir * moveSpeed;
+            if (OnGround)
+            {
+                moveDir.y = -100;
+            }
             rb.AddForce(moveDir, ForceMode.Acceleration);
             isMoving = true;
         }
@@ -169,6 +191,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.down * CrouchPower, ForceMode.Acceleration);
         }
 
+        isCrouching = true;
         col.height = 0.35f;
         col.center = ColliderCrouch;
 
@@ -179,7 +202,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.transform.tag == "Obstacle")
         {
-            LastTile = collision.transform.parent.parent.GetComponent<Tile>();
+            LastTile = collision.transform.GetComponentInParent<Tile>();
 
             if (GameController.Instance.Shield)
             {
@@ -187,6 +210,7 @@ public class PlayerController : MonoBehaviour
                 GameController.Instance.Shield = false;
                 GameController.Instance.ShieldTimeLeft = 0;
                 LastTile.ClearObstacles();
+                LastTile = null;
             }
             else
             {
@@ -197,10 +221,16 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool(StartedHash, false);
                 StartCoroutine(WaitDeath());
                 rb.useGravity = true;
+                rb.velocity -= Vector3.right * rb.velocity.x;
             }
         }
         else if (collision.gameObject.layer == environment)
         {
+            if (minY == 0)
+            {
+                minY = transform.position.y;
+            }
+
             Collisions += 1;
             OnGround = true;
             isJumping = false;
@@ -220,6 +250,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.layer == environment)
         {
+            Debug.Log(collision.gameObject.name);
             Collisions -= 1;
             if (Collisions <= 0)
             {
@@ -238,8 +269,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator WaitForCrouch()
     {
         yield return new WaitUntil(() => OnGround == true);
-
-        isCrouching = true;
+        
         animator.SetTrigger(CrouchHash);
 
         yield return new WaitForSeconds(0.8f);

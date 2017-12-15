@@ -7,5 +7,6 @@ public class Box : MonoBehaviour, IPickable
     public void PickUp()
     {
         GameController.Instance.AddBox();
+        gameObject.SetActive(false);
     }
 }

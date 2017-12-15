@@ -17,6 +17,11 @@ public class BackButton : MonoBehaviour
         Canvaser.AddButton(this);
     }
 
+    private void OnDisable()
+    {
+        Canvaser.RemoveButton();
+    }
+
     public void PressButton()
     {
         _button.onClick.Invoke();

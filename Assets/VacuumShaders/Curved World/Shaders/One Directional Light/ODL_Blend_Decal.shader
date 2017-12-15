@@ -81,7 +81,7 @@ Shader "Hidden/VacuumShaders/Curved World/One Directional Light/Opaque/Decal"
 			#pragma multi_compile_fwdbase nodirlightmap nodynlightmap
 					  	        
 
-/*DO NOT DELETE - CURVED WORLD ODL LIGHT TYPE*/ #define V_CW_CALCULATE_LIGHT_PER_PIXEL
+/*DO NOT DELETE - CURVED WORLD ODL LIGHT TYPE*/ 
 /*DO NOT DELETE - CURVED WORLD ODL INCLUDE POINT LIGHTS*/ 
 /*DO NOT DELETE - CURVED WORLD ODL INCLUDE SPHERICAL HARMONICS AND UNITY AMBIENT*/ #define V_CW_INCLUDE_SPH_AND_AMBIENT
 			#pragma shader_feature V_CW_REFLECTIVE_OFF V_CW_REFLECTIVE V_CW_REFLECTIVE_FRESNEL

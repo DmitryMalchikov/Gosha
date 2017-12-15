@@ -16,12 +16,14 @@ public struct BonusesOn
     }
 }
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
 
     public static GameController Instance { get; private set; }
 
     public static WaitForEndOfFrame Frame { get; private set; }
     //public int ScoresSpeed = 10;
+    public int StartSpeed = -6;
     public int MaxSpeed = -35;
 
     public float ShieldTime;
@@ -34,9 +36,13 @@ public class GameController : MonoBehaviour {
     public float DecelerationTimeLeft;
     public float RocketTimeLeft;
 
-    public float RocketDistance { get {
+    public float RocketDistance
+    {
+        get
+        {
             return Mathf.Abs(RocketTime * Speed.z);
-        } }
+        }
+    }
 
     public float CurrentPoints = 0;
     public int CurrentCoins = 0;
@@ -56,7 +62,7 @@ public class GameController : MonoBehaviour {
     public bool NormalSpeed = true;
     public bool BlockMoving = false;
 
-    Vector3 CurrentSpeed;   
+    Vector3 CurrentSpeed;
 
     public Transform mainCamera;
     public Vector3 RocketSwitchSpeed;
@@ -99,13 +105,13 @@ public class GameController : MonoBehaviour {
 
     public void ResetScores()
     {
-        Canvaser.Instance.Score.text = "0"+ LocalizationManager.GetLocalizedValue("meter");
+        Canvaser.Instance.Score.text = "0" + LocalizationManager.GetLocalizedValue("meter");
         Canvaser.Instance.Coins.text = "0";
         Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
         Time.timeScale = 1;
         Started = true;
         Continued = false;
-        Speed.z = -10;
+        Speed.z = StartSpeed;
         CurrentCoins = 0;
         CurrentBoxes = 0;
         CurrentPoints = 0;
@@ -132,13 +138,13 @@ public class GameController : MonoBehaviour {
 
     public void SuperFinish()
     {
+        Canvaser.Instance.SetGameOverPanel();
         Speed.z = 0;
         Started = false;
         CameraFollow.Instance.ChangeCamera();
         PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
         Time.timeScale = 1;
-        Canvaser.Instance.SetGameOverPanel();
         AchievementsManager.Instance.CheckAchievements("Loose");
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
         if (InDuel)
@@ -177,15 +183,24 @@ public class GameController : MonoBehaviour {
 
     public void ContinueGame()
     {
+        Started = true;
+        Canvaser.Instance.PausePanel.SetActive(false);
+        Canvaser.Instance.Countdown.SetActive(true);
+        Debug.Log("Game Continued");
+    }
+
+    public void ContinueGameForMoney()
+    {
         Continued = true;
         Started = true;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
-        Canvaser.Instance.PausePanel.SetActive(false);
-        Canvaser.Instance.ContinueForMoney.gameObject.SetActive(false);
+        //Canvaser.Instance.ContinueForMoney.gameObject.SetActive(false);
         Canvaser.Instance.Countdown.SetActive(true);
         PlayerController.Instance.LastTile.ClearObstacles();
-        Debug.Log("Game Continued");
+        PlayerController.Instance.LastTile = null;
+        Debug.Log("Game Continued For Money");
     }
+
     public void LoadBonusesTime(List<BonusUpgrade> items)
     {
         for (int i = 0; i < items.Count; i++)
@@ -288,7 +303,7 @@ public class GameController : MonoBehaviour {
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, true);
         PlayerController.Instance.animator.SetTrigger("RocketTrigger");
 
-        yield return new WaitUntil(() => 
+        yield return new WaitUntil(() =>
         {
             RocketTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
@@ -299,7 +314,7 @@ public class GameController : MonoBehaviour {
         PlayerController.Instance.rb.velocity = Vector3.zero;
         BlockMoving = false;
 
-        
+
         while (RocketTimeLeft > 0)
         {
             RocketTimeLeft -= Time.deltaTime;
@@ -308,46 +323,15 @@ public class GameController : MonoBehaviour {
         }
 
         Rocket = false;
-        
+
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
         PlayerController.Instance.rb.useGravity = true;
-        
-
-        //Vector3 dest = new Vector3(Ground.position.x, -6, Ground.position.z);
-        //float time = 0;
-
-        //Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(true);
-        //while (Ground.position.y > -6)
-        //{
-        //    yield return Frame;
-        //    Ground.position = Vector3.MoveTowards(Ground.position,dest, (RocketSwitchSpeed.y - Physics.gravity.y * time) * Time.deltaTime);
-        //    RocketTimeLeft -= Time.deltaTime;
-        //    Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
-        //}
-        //Ground.position = dest; //fix position
-        //BlockMoving = false;         
-
-
-
-        //Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
-        //Rocket = false;
-
-        //dest = new Vector3(Ground.position.x, 0.7f, Ground.position.z);
-        //time = 0;
-
-        //while (Ground.position.y < 0.7f)
-        //{
-        //    yield return Frame;
-        //    time += Time.deltaTime;
-        //    Ground.position = Vector3.MoveTowards(Ground.position, dest, -time*Physics.gravity.y * Time.deltaTime);
-        //}
-        //Ground.position = dest; //fix position
     }
 
     public void UseBonus()
     {
-        if (CurrentBonus == null || CurrentBonus.Amount < 1)  return;
+        if (CurrentBonus == null || CurrentBonus.Amount < 1) return;
 
         switch (CurrentBonus.Name)
         {
@@ -375,7 +359,7 @@ public class GameController : MonoBehaviour {
             if (NormalSpeed)
             {
                 CurrentSpeed = Speed;
-                Speed = Speed * 0.7f;                
+                Speed = Speed * 0.7f;
             }
             else
             {
@@ -404,14 +388,14 @@ public class GameController : MonoBehaviour {
         Deceleration = false;
         NormalSpeed = false;
 
-        var increaseValue = (CurrentSpeed.z - Speed.z)/(returnTime * 10);
+        var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
         Debug.Log(increaseValue);
 
         while (Speed.z > CurrentSpeed.z && !NormalSpeed)
         {
             yield return new WaitForSeconds(0.1f);
 
-            Speed.z += increaseValue; 
+            Speed.z += increaseValue;
         }
 
         NormalSpeed = true;
@@ -423,11 +407,11 @@ public class GameController : MonoBehaviour {
         {
             yield return new WaitForSeconds(5);
             if (Started)
-            {            
+            {
                 if (!Deceleration)
                 {
                     CurrentSpeed.z -= 1;
-                    Speed = CurrentSpeed;                   
+                    Speed = CurrentSpeed;
                 }
             }
         }

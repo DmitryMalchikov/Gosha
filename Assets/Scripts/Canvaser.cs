@@ -9,7 +9,8 @@ public class Canvaser : MonoBehaviour
 {
 
     public static Canvaser Instance { get; private set; }
-
+    public static bool ErrorChecked = false;
+    public static bool Error = false;
 
     public GameObject GameOverPanel;
     public Text Score;
@@ -98,6 +99,7 @@ public class Canvaser : MonoBehaviour
     public ContinuePanel ContinueForMoney;
 
     public GameObject LoadingPanel;
+    public GameObject ErrorWindow;
 
     private static Stack<BackButton> _backButtons = new Stack<BackButton>();
 
@@ -119,6 +121,7 @@ public class Canvaser : MonoBehaviour
         SetVolume(CurrentVolume);
         VolumeSlider.value = CurrentVolume;
         Application.runInBackground = true;
+        StartCoroutine(WaitErrorCheck());
     }
     
     public void SetAvatar(Sprite sprt)
@@ -164,13 +167,8 @@ public class Canvaser : MonoBehaviour
         GameOverIceCream.text = string.Format("{0}", coins);
         //GameOverAllIceCream.text = 
         coins = 0;
+        GamePanel.gameObject.SetActive(false);
         GameOverPanel.SetActive(true);
-    }
-
-    public void Restart()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void Awake()
@@ -286,8 +284,28 @@ public class Canvaser : MonoBehaviour
     {
         if (_backButtons.Count > 0)
         {
-            _backButtons.Pop().PressButton();
+            _backButtons.Peek().PressButton();
         }
+    }
+
+    public static void RemoveButton()
+    {
+        _backButtons.Pop();
+    }
+
+    IEnumerator WaitErrorCheck()
+    {
+        yield return new WaitUntil(() => ErrorChecked == true);
+
+        if (Error)
+        {
+            ErrorWindow.SetActive(true);
+        }
+    }
+
+    public void CloseApp()
+    {
+        Application.Quit();
     }
 }
 

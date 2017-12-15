@@ -47,13 +47,12 @@ public class Tile : MonoBehaviour
             for (int i = 0; i < Bonus.childCount; i++)
             {
                 Bonus.GetChild(i).gameObject.SetActive(false);
-            }
-
-            Box.SetActive(false);
+            }            
 
             if (!StartTile)
             {
                 Obstacles.SetActive(true);
+                Box.SetActive(false);
             }
             MapGenerator.Instance.ResetTile(this, StartTile);
 

@@ -361,7 +361,7 @@ VertexOutputForwardBase vertForwardBase(VertexInput v)
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 	//Curved World
-	V_CW_TransformPointAndNormal(v.vertex, v.normal, v.tangent);
+	V_CW_TransformPoint(v.vertex);
 
 	float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
 #if UNITY_REQUIRE_FRAG_WORLDPOS

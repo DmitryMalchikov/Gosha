@@ -90,6 +90,7 @@ public class MapGenerator : MonoBehaviour
 
         _avaliableTiles[number].gameObject.SetActive(true);
         _avaliableTiles[number].GenerateBonus();
+        _avaliableTiles[number].GenerateBox();
 
         if (_lastTile)
         {

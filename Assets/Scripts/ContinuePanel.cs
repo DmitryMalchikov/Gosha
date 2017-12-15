@@ -45,7 +45,8 @@ public class ContinuePanel : MonoBehaviour {
 
     public void FinishRun()
     {
-        GameController.Instance.SuperFinish();
+        //Canvaser.Instance.SetGameOverPanel();
         gameObject.SetActive(false);
+        GameController.Instance.SuperFinish();        
     }
 }
