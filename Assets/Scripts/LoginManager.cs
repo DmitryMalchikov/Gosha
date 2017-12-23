@@ -107,6 +107,7 @@ public class LoginManager : MonoBehaviour
         {
             PlayerPrefs.SetString("email", email);
             PlayerPrefs.SetString("password", password);
+            OneSignal.SyncHashedEmail(email);
 
             LoginCanvas.Instance.EnableWarning(false);
 
