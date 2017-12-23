@@ -267,6 +267,7 @@ public class LoginManager : MonoBehaviour
         PlayerPrefs.DeleteKey("email");
         PlayerPrefs.DeleteKey("password");
         PlayerPrefs.DeleteKey("provider");
+        OneSignal.SetSubscription(false);
         Headers = null;
         userToken = null;
     }
