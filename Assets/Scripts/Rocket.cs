@@ -6,5 +6,6 @@ public class Rocket : MonoBehaviour, IPickable {
     public void PickUp()
     {
         GameController.Instance.ApplyRocket();
+        gameObject.SetActive(false);
     }
 }
