@@ -65,7 +65,7 @@ public class InventoryManager : MonoBehaviour {
 
     public void GetMyCasesAsync()
     {
-        Canvaser.ShowLoading(true);
+        //Canvaser.ShowLoading(true);
         StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");

@@ -7,7 +7,7 @@ public class SuitsPanel : MonoBehaviour {
 
     public SnapScrolling SuitsScroll;
 
-    public Image CurrentSuitImage;
+    public RawImage CurrentSuitImage;
 
     public GameObject SuitPanel;
     public GameObject CardsPanel;
@@ -23,23 +23,41 @@ public class SuitsPanel : MonoBehaviour {
     public Text Warning;
     public Text SuitName;
 
+    public Animator Case;
+    public GameObject Idle;
+    public GameObject PreopenCase;
+    public GameObject OpenCaseParticle;
+    
+
     public void SetPrize(Bonus bonus)
     {
         PrizeText.text = string.Format("{0} {1}", bonus.Amount, LocalizationManager.GetLocalizedValue(bonus.Name.ToLower()));
+        Case.SetBool("Open", true);
+        PreopenCase.SetActive(false);
+        OpenCaseParticle.SetActive(true);
+        StartCoroutine(WaitForOpen());
+    }
+
+    IEnumerator WaitForOpen()
+    {
+        yield return new WaitForSeconds(1f);
         PrizePanel.SetActive(true);
+        Case.SetBool("Open", false);
+        OpenCaseParticle.SetActive(false);
+        Idle.SetActive(true);
     }
 
     public void SetCurrentCostume(Image selected, string Name)
     {
 
-        CurrentSuitImage.sprite = selected.sprite;
+        //CurrentSuitImage.texture = selected.sprite.texture;
         SuitName.text = Name;
         UpdateCards();
     }
 
     public void SetCurrentCase(Image selected)
     {
-        CurrentSuitImage.sprite = selected.sprite;
+        //CurrentSuitImage.texture = selected.sprite.texture;
     }
 
     public void Open()
@@ -146,6 +164,8 @@ public class SuitsPanel : MonoBehaviour {
     public void OpenCase()
     {
         //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
+        PreopenCase.SetActive(true);
+        Idle.SetActive(false);
         LootManager.Instance.OpenCaseAsync(SuitsScroll.CasesIds[SuitsScroll.selectedPanID]);
     }
 }

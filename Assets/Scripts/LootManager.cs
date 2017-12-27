@@ -27,7 +27,7 @@ public class LootManager : MonoBehaviour {
     }
     public void OpenCaseAsync(int caseID)
     {
-        Canvaser.ShowLoading(true);
+        //Canvaser.ShowLoading(true);
         InputInt input = new InputInt() { Value = caseID };
         StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
         {
@@ -35,7 +35,7 @@ public class LootManager : MonoBehaviour {
             //show tasks
             Bonus bonus = JsonConvert.DeserializeObject<Bonus>(response.Text);
             InventoryManager.Instance.GetMyCasesAsync();
-            Canvaser.ShowLoading(false);
+            //Canvaser.ShowLoading(false);
             Canvaser.Instance.CasesPanel.SetPrize(bonus);
             
         }));
