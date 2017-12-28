@@ -10,20 +10,11 @@ using UnityEngine;
 public static class NetworkHelper
 {
 
-    public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null, List<System.Net.Cookie> cookies = null)
+    public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
         // Create a request for the URL. 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
         //SampleWebView.Instance.status.text = "Sending request";
-
-        if (cookies != null)
-        {
-            request.CookieContainer = new CookieContainer();
-            foreach (var cookie in cookies)
-            {
-                request.CookieContainer.Add(cookie);
-            }
-        }
 
         var postData = postParameters;
         var data = Encoding.UTF8.GetBytes(postData);
@@ -83,9 +74,9 @@ public static class NetworkHelper
                     }
                     catch
                     {
-                        errors = new ErrorAnswer(){ Message = "FatalError" };
+                        errors = new ErrorAnswer() { Message = "FatalError" };
                     }
-                    
+
                     //Console.WriteLine(errors.ModelState.Errors[0]);
                     return new AnswerModel() { StatusCode = httpResponse.StatusCode, Errors = errors };
                 }
