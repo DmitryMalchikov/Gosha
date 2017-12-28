@@ -244,7 +244,7 @@ public class LoginManager : MonoBehaviour
                 GetUserInfoAsync();
                 Canvaser.Instance.MainMenu.SetActive(true);
             }
-        }, cookies: SampleWebView.Cookies));
+        }));
     }
 
     public void RegisterExternal(RegisterExternalBindingModel model)
@@ -259,7 +259,7 @@ public class LoginManager : MonoBehaviour
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
             Canvaser.Instance.LoginPanel.gameObject.SetActive(false);
             Canvaser.Instance.MainMenu.SetActive(true);
-        }, cookies: SampleWebView.Cookies));
+        }));
     }
 
     public void LogOut()
