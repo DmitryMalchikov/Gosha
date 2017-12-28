@@ -9,8 +9,7 @@ using UnityEngine.UI;
 public class SampleWebView : MonoBehaviour
 {
     public static SampleWebView Instance { get; private set; }
-    public static List<System.Net.Cookie> Cookies { get; private set; }
-    
+
     private static AndroidJavaObject unityActivityClass;
 
     private void Awake()
@@ -25,7 +24,7 @@ public class SampleWebView : MonoBehaviour
     }
 
     public void CallOnLoaded(string msg)
-    {        
+    {
         if (msg.Contains("Logins.html#"))
         {
             var vals = msg.Split('*');
@@ -35,13 +34,6 @@ public class SampleWebView : MonoBehaviour
             string cookies = vals[1];
             Uri uri = new Uri(url);
 
-            Cookies = new List<System.Net.Cookie>();
-            foreach (var cookie in cookies.Split(';'))
-            {
-                var cookieValues = cookie.Split('=');
-                var name = cookieValues[0].Replace(Environment.NewLine, "").Replace(" ", "");
-                Cookies.Add(new System.Net.Cookie(name, cookieValues[1], "/", uri.Host));
-            }
             //status.text = url;
             string[] tokenParams = url.Split('#')[1].Split('&');
             string token = tokenParams[0].Split('=')[1];
@@ -58,7 +50,7 @@ public class SampleWebView : MonoBehaviour
     }
 
     public void CallOnError(string msg)
-    {        
+    {
     }
 
     public void CloseWindow()
