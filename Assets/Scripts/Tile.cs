@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Tile : MonoBehaviour
     public Transform Bonus;
     public GameObject Obstacles;
     public GameObject Box;
+
+    public List<Tile> CanGoAfter = new List<Tile>();
 
     byte counter = 0;
 

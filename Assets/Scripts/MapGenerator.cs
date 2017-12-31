@@ -51,6 +51,7 @@ public class MapGenerator : MonoBehaviour
 
         for (int i = 0; i < StartTilesNumber; i++)
         {
+
             var number = Random.Range(0, _avaliableTiles.Count);
 
             _avaliableTiles[number].gameObject.SetActive(true);
@@ -86,20 +87,38 @@ public class MapGenerator : MonoBehaviour
     {
         if (_avaliableTiles.Count == 0) return;
 
-        var number = Random.Range(0, _avaliableTiles.Count);
-
-        _avaliableTiles[number].gameObject.SetActive(true);
-        _avaliableTiles[number].GenerateBonus();
-        _avaliableTiles[number].GenerateBox();
-
-        if (_lastTile)
+        if (_lastTile && _lastTile.CanGoAfter.Count > 0)
         {
-            _avaliableTiles[number].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
+            for (int i = 0; i < _lastTile.CanGoAfter.Count; i++)
+            {
+                if (!_lastTile.CanGoAfter[i].gameObject.activeInHierarchy)
+                {
+                    _lastTile.CanGoAfter[i].gameObject.SetActive(true);
+                    _lastTile.CanGoAfter[i].GenerateBonus();
+                    _lastTile.CanGoAfter[i].GenerateBox();
+                    _lastTile.CanGoAfter[i].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
+                    _lastTile = _lastTile.CanGoAfter[i];
+                    _avaliableTiles.Remove(_lastTile);
+                    break;
+                }
+            }
         }
+        else
+        {
+            var number = Random.Range(0, _avaliableTiles.Count);
 
-        _lastTile = _avaliableTiles[number];
-        _avaliableTiles.RemoveAt(number);
+            _avaliableTiles[number].gameObject.SetActive(true);
+            _avaliableTiles[number].GenerateBonus();
+            _avaliableTiles[number].GenerateBox();
 
+            if (_lastTile)
+            {
+                _avaliableTiles[number].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
+            }
+
+            _lastTile = _avaliableTiles[number];
+            _avaliableTiles.RemoveAt(number);
+        }
     }
 
     public void ResetTile(Tile tile, bool StartTile = false)

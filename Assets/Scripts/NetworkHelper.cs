@@ -90,7 +90,7 @@ public static class NetworkHelper
 
         ThreadHelper.RunNewThread(() =>
         {
-            response = GetResponsePost(url, parameters, contentType, LoginManager.Instance.Headers, cookies);
+            response = GetResponsePost(url, parameters, contentType, LoginManager.Instance.Headers);
         });
 
         while (response == null)
