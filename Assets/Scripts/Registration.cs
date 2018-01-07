@@ -25,9 +25,9 @@ public class RegisterBindingModel
 public class Registration : MonoBehaviour
 {
 
-    public string CheckEmailUrl = "";
-    public string CheckNickUrl = "";
-    public string CheckPhoneUrl = "";
+    public string CheckEmailUrl = "/api/account/checkemail";
+    public string CheckNickUrl = "/api/account/checknickname";
+    public string CheckPhoneUrl = "/api/account/checkphone";
 
     public Animator pages;
     public Animator content;
@@ -64,6 +64,18 @@ public class Registration : MonoBehaviour
     public Transform RegionsContent;
     public GameObject RegionObject;
     public ToggleGroup Group;
+
+    public void Start()
+    {
+        SetUrls();
+    }
+
+    public void SetUrls()
+    {
+        CheckEmailUrl = ServerInfo.GetUrl(CheckEmailUrl);
+        CheckNickUrl = ServerInfo.GetUrl(CheckNickUrl);
+        CheckPhoneUrl = ServerInfo.GetUrl(CheckPhoneUrl);
+    }
 
     public bool External;
 
@@ -165,7 +177,9 @@ public class Registration : MonoBehaviour
                 exist = bool.Parse(response.Text);
                 Debug.Log(exist);
                 if (exist)
+                {
                     CantContinue(EmailAlreadyExists);
+                }
                 else
                 {
                     CheckPhone();

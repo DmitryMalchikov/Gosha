@@ -129,7 +129,7 @@ public class Canvaser : MonoBehaviour
         Avatar = sprt;
         SettingsAvatar.sprite = sprt;
         //SettingsAvatar.SetNativeSize();
-        GameAvatar.sprite = sprt;
+        //GameAvatar.sprite = sprt;
         //GameAvatar.SetNativeSize();
     }
 
