@@ -105,9 +105,9 @@ public class GameController : MonoBehaviour
 
     public void ResetScores()
     {
-        Canvaser.Instance.Score.text = "0" + LocalizationManager.GetLocalizedValue("meter");
-        Canvaser.Instance.Coins.text = "0";
-        Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
+        Canvaser.Instance.Score.text = "0"; //+ LocalizationManager.GetLocalizedValue("meter");
+        //Canvaser.Instance.Coins.text = "0";
+        //Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
         Time.timeScale = 1;
         Started = true;
         Continued = false;
