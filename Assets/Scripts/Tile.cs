@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -27,6 +28,8 @@ public class Tile : MonoBehaviour
     {
         if (!GameController.Instance.Started) return;
 
+        transform.Translate(GameController.Instance.Speed * Time.fixedDeltaTime);
+
         counter = (byte)((counter + 1) % 3);
 
         if (counter == 0) return;
@@ -35,8 +38,7 @@ public class Tile : MonoBehaviour
         {
             if (MapGenerator.Instance.transform.position.z - transform.position.z > MapGenerator.Instance.TileSize)
             {
-                MapGenerator.Instance.NextTile();
-                Generated = true;
+                StartCoroutine(NextTile());
             }
         }
 
@@ -83,6 +85,14 @@ public class Tile : MonoBehaviour
     public void ClearObstacles()
     {
         Obstacles.SetActive(false);
+    }
+
+    IEnumerator NextTile()
+    {
+        yield return new WaitForFixedUpdate();
+
+        MapGenerator.Instance.NextTile();
+        Generated = true;
     }
 }
 

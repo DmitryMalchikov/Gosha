@@ -194,6 +194,7 @@ public class PlayerController : MonoBehaviour
         isCrouching = true;
         col.height = 0.35f;
         col.center = ColliderCrouch;
+        animator.SetTrigger(CrouchHash);
 
         StartCoroutine(WaitForCrouch());
     }
@@ -268,9 +269,8 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator WaitForCrouch()
     {
-        yield return new WaitUntil(() => OnGround == true);
+        yield return new WaitUntil(() => OnGround == true);       
         
-        animator.SetTrigger(CrouchHash);
 
         yield return new WaitForSeconds(0.8f);
         StandUp();

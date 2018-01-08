@@ -34,6 +34,7 @@ public static class NetworkHelper
                 request.Headers[headers[i].Name] = headers[i].Value;
             }
         }
+        request.UserAgent = "GoshaGame";
         //request.Proxy = new WebProxy("http://127.0.0.1:8888");
 
         using (var stream = request.GetRequestStream())

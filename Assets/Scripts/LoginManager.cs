@@ -233,6 +233,8 @@ public class LoginManager : MonoBehaviour
         {
             var result = JsonConvert.DeserializeObject<UserInfoViewModel>(response.Text);
 
+            //PlayerPrefs.SetString("email", result.Email);
+
             if (!result.HasRegistered)
             {
                 Canvaser.Instance.RegistrationPanel.ExternalRegistration(result.Email);
