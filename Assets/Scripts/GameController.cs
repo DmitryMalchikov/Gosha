@@ -25,6 +25,8 @@ public class GameController : MonoBehaviour
     //public int ScoresSpeed = 10;
     public int StartSpeed = -6;
     public int MaxSpeed = -35;
+	public float IncreaseTimeStep;
+	public float IncreaseValue;
 
     public float ShieldTime;
     public float MagnetTime;
@@ -105,6 +107,9 @@ public class GameController : MonoBehaviour
 
     public void ResetScores()
     {
+		Rocket = false;
+		Deceleration = false;
+		Shield = false;
         Canvaser.Instance.Score.text = "0"; //+ LocalizationManager.GetLocalizedValue("meter");
         //Canvaser.Instance.Coins.text = "0";
         //Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
@@ -116,6 +121,7 @@ public class GameController : MonoBehaviour
         CurrentBoxes = 0;
         CurrentPoints = 0;
         CurrentSpeed = Speed;
+		IceCreamRotator.SetRotator (true);
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());
@@ -139,6 +145,7 @@ public class GameController : MonoBehaviour
     public void SuperFinish()
     {
         Canvaser.Instance.SetGameOverPanel();
+		IceCreamRotator.SetRotator (false);
         Speed.z = 0;
         Started = false;
         CameraFollow.Instance.ChangeCamera();
@@ -194,6 +201,8 @@ public class GameController : MonoBehaviour
         Continued = true;
         Started = true;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
+		PlayerController.Instance.animator.transform.rotation = new Quaternion ();
+		PlayerController.Instance.transform.position += Vector3.right * (PlayerController.Instance.CurrentX - PlayerController.Instance.transform.position.x);
         //Canvaser.Instance.ContinueForMoney.gameObject.SetActive(false);
         Canvaser.Instance.Countdown.SetActive(true);
         PlayerController.Instance.LastTile.ClearObstacles();
@@ -241,6 +250,9 @@ public class GameController : MonoBehaviour
         {
             Canvaser.PressBack();
         }
+		if (Input.GetKeyDown (KeyCode.D)) {
+			ApplyDeceleration ();
+		}
     }
 
     IEnumerator GameStarted()
@@ -260,6 +272,12 @@ public class GameController : MonoBehaviour
             {
                 ApplyRocket();
             }
+			if (Input.GetKeyDown (KeyCode.M)) {
+				Collector.Instance.UseMagnet ();
+			}
+			if (Input.GetKeyDown (KeyCode.S)) {
+				PlayerController.Instance.ApplyShield ();
+			}
 
             yield return null;
         }
@@ -405,12 +423,12 @@ public class GameController : MonoBehaviour
     {
         while (Speed.z > MaxSpeed)
         {
-            yield return new WaitForSeconds(5);
+			yield return new WaitForSeconds(IncreaseTimeStep);
             if (Started)
             {
                 if (!Deceleration)
                 {
-                    CurrentSpeed.z -= 1;
+					CurrentSpeed.z -= IncreaseValue;
                     Speed = CurrentSpeed;
                 }
             }

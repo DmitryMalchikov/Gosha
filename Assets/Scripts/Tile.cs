@@ -17,12 +17,12 @@ public class Tile : MonoBehaviour
 
     byte counter = 0;
 
-    private void Update()
-    {
-        if (!GameController.Instance.Started) return;
-
-        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
-    }
+//    private void Update()
+//    {
+//        if (!GameController.Instance.Started) return;
+//
+//        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+//    }
 
     private void FixedUpdate()
     {

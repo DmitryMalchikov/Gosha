@@ -19,7 +19,6 @@ public class Canvaser : MonoBehaviour
     int coins;
     public Text Cases;
     int cases;
-    public Text HighScore;
 
     public Registration RegistrationPanel;
     public GameObject RegistrationFinishedPanel;
@@ -136,10 +135,10 @@ public class Canvaser : MonoBehaviour
 
     public void SetScore(int points)
     {
-        if(!string.IsNullOrEmpty(LoginManager.Instance.User.Nickname) && points > LoginManager.Instance.User.HighScore)
-        {
-            HighScore.text = points + LocalizationManager.GetLocalizedValue("meter");
-        }
+//        if(!string.IsNullOrEmpty(LoginManager.Instance.User.Nickname) && points > LoginManager.Instance.User.HighScore)
+//        {
+//            HighScore.text = points + LocalizationManager.GetLocalizedValue("meter");
+//        }
         score = points;
         Score.text = points + LocalizationManager.GetLocalizedValue("meter");
     }

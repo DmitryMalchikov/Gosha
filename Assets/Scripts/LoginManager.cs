@@ -19,7 +19,6 @@ public class LoginManager : MonoBehaviour
     public string LoginUrl = "/token";
     public string RegisterUrl = "/api/account/register";
     public string UserInfoUrl = "/api/user/userinfo";
-    public string UploadImageUrl = "/api/user/uploadimage";
     public string ProfileImageUrl = "/api/user/profileimage?userId=";
     public string ForgotPasswordUrl = "/api/account/forgotpassword";
     public string ValidateResetTokenUrl = "/api/account/validatepasswordresettoken";
@@ -46,7 +45,6 @@ public class LoginManager : MonoBehaviour
         LoginUrl = ServerInfo.GetUrl(LoginUrl);
         RegisterUrl = ServerInfo.GetUrl(RegisterUrl);
         UserInfoUrl = ServerInfo.GetUrl(UserInfoUrl);
-        UploadImageUrl = ServerInfo.GetUrl(UploadImageUrl);
         ProfileImageUrl = ServerInfo.GetUrl(ProfileImageUrl);
         ForgotPasswordUrl = ServerInfo.GetUrl(ForgotPasswordUrl);
         ValidateResetTokenUrl = ServerInfo.GetUrl(ValidateResetTokenUrl);
@@ -277,7 +275,7 @@ public class LoginManager : MonoBehaviour
     public void SendImage(string path)
     {
         Debug.Log("Send Image: " + path);
-        StartCoroutine(NetworkHelper.SendImage(path, UploadImageUrl));
+		StartCoroutine(NetworkHelper.SendImage(path, ImageUploadUrl));
     }
 
     public void GetUserImage(int userId, Image img)

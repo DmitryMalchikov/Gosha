@@ -31,7 +31,7 @@ public class SuitsPanel : MonoBehaviour {
 
     public void SetPrize(Bonus bonus)
     {
-        PrizeText.text = string.Format("{0} {1}", bonus.Amount, LocalizationManager.GetLocalizedValue(bonus.Name.ToLower()));
+        PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
         Case.SetBool("Open", true);
         PreopenCase.SetActive(false);
         OpenCaseParticle.SetActive(true);

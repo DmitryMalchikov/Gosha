@@ -405,7 +405,7 @@ public class WebViewObject : MonoBehaviour
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return string.Empty;
-        _CWebViewPlugin_LoadURL(webView, url);
+        //_CWebViewPlugin_LoadURL(webView, url);
 #elif UNITY_ANDROID
         if (webView == null)
             return string.Empty;

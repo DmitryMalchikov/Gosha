@@ -120,8 +120,12 @@ public static class NetworkHelper
 
     public static IEnumerator SendImage(string fileName, string URL)
     {
-        Canvaser.Instance.Test.text = fileName;
+        //Canvaser.Instance.Test.text = fileName;
+		#if UNITY_ANDROID
         WWW localFile = new WWW("file://" + fileName);
+		#elif UNITY_IOS
+		WWW localFile = new WWW("file://" + fileName);
+		#endif
         yield return localFile;
         if (localFile.error == null)
             Debug.Log("Loaded file successfully");
@@ -145,7 +149,7 @@ public static class NetworkHelper
         if (upload.error == null)
             Debug.Log("upload done :");
         else
-            Debug.Log("Error during upload: " + upload.error);
+			Debug.Log("Error during upload: " + upload.error + " URL: " + URL);
 
         LoginManager.Instance.GetAvatarImage();
     }
@@ -259,7 +263,7 @@ public class SubmitModel
 public class SubmitScoreModel : SubmitModel
 {
     public int IceCreamCount { get; set; }
-    public int BoxesCount { get; set; }
+    public int CasesCount { get; set; }
     public int Distance { get; set; }
     public Dictionary<int, byte> Uses { get; set; }
 }

@@ -24,7 +24,6 @@ public class ThreadHelper
             }
             finally
             {
-                Debug.Log("Checked");
                 Canvaser.ErrorChecked = true;
             }
         });

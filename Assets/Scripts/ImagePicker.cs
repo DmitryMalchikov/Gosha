@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.InteropServices;
 
 public class ImagePicker : MonoBehaviour
 {
@@ -16,7 +17,15 @@ public class ImagePicker : MonoBehaviour
         unityActivityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         unityActivityClass.Call("openGallery");
     }
-#else
+	#elif UNITY_IOS
+	[DllImport("__Internal")]
+	private static extern void Unimgpicker_show(string title, string outputFileName, int maxSize);
+
+	static void _openFileSystem()
+	{
+		Unimgpicker_show ("avatar", "avatar", 10);
+	}
+#else 
     static void _openFileSystem() { }
 #endif
 

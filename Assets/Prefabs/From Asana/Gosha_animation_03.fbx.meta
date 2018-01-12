@@ -629,7 +629,7 @@ ModelImporter:
       name: smash
       takeName: smash
       firstFrame: 0
-      lastFrame: 80
+      lastFrame: 36
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

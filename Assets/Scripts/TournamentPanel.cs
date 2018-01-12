@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text;
 
 public class TournamentPanel : MonoBehaviour {
 
@@ -75,7 +76,18 @@ public class TournamentPanel : MonoBehaviour {
         {
             var time = (info.ExpireDate - DateTime.Now);
 
-            TimeToEnd.text = string.Format("{0:00} {2} {1:00} {3}", time.Hours, time.Minutes, LocalizationManager.GetLocalizedValue("hours"), LocalizationManager.GetLocalizedValue("minutes"));
+			StringBuilder timeLeft = new StringBuilder ();
+
+			if (time.Days > 0) {
+				timeLeft.AppendFormat("{0:00} {1} ", time.Days, LocalizationManager.GetLocalizedValue("days"));
+			}
+			if (time.Hours > 0) {
+				timeLeft.AppendFormat("{0:00} {1} ", time.Hours, LocalizationManager.GetLocalizedValue("hours"));
+			}
+
+			timeLeft.AppendFormat("{0:00} {1}", time.Minutes, LocalizationManager.GetLocalizedValue("minutes"));
+
+			TimeToEnd.text = timeLeft.ToString();
 
             yield return minute;
         }

@@ -29,7 +29,7 @@ public class LootManager : MonoBehaviour {
     {
         //Canvaser.ShowLoading(true);
         InputInt input = new InputInt() { Value = caseID };
-        StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+		StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, JsonConvert.SerializeObject(new {CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks
