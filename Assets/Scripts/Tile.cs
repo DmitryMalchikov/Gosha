@@ -42,7 +42,7 @@ public class Tile : MonoBehaviour
             }
         }
 
-        if (transform.position.z < -20)
+        if (transform.position.z < -25)
         {
             Generated = false;
             for (int i = 0; i < IceCreams.childCount; i++)

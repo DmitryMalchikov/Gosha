@@ -130,9 +130,20 @@ public class PlayerController : MonoBehaviour
 	{
 		velocityBeforePhysics = rb.velocity;
 
-		if (!OnGround && !isJumping && rb.velocity.y > 0 && !GameController.Instance.Rocket)
+		if (!tempOnGround && !isJumping && rb.velocity.y > 0 && !GameController.Instance.Rocket)
 		{
+			StickToGround ();
+			//rb.velocity += Vector3.down * rb.velocity.y;
+		}
+	}
+
+	void StickToGround(){
+		RaycastHit hit;
+		if (Physics.Raycast (new Ray (transform.position, Vector3.down), out hit, 5, LayerMask.GetMask ("Environment"))) {
+			transform.position = hit.point + Vector3.up * .4f;
 			rb.velocity += Vector3.down * rb.velocity.y;
+			//OnGround = true;
+			tempOnGround = true;
 		}
 	}
 
@@ -212,7 +223,7 @@ public class PlayerController : MonoBehaviour
         {
 			if (!GameController.Instance.Started)
 				return;
-			
+
 			LastTile = collision.transform.GetComponentInParent<Tile>();
 
 			if (GameController.Instance.Shield)
@@ -236,7 +247,9 @@ public class PlayerController : MonoBehaviour
 				} else {
 					animator.SetTrigger ("HitRight");
 				}
+				if (CurrentX != dir * Step) {
 					CurrentX += dir * Step;
+				}
 					moveDir.x = dir * moveSpeed;
 					if (OnGround) {
 						moveDir.y = -100;
@@ -252,7 +265,7 @@ public class PlayerController : MonoBehaviour
 			}
                 lastHit = collision.collider;
 			//rb.constraints = RigidbodyConstraints.FreezeRotation;
-                //lastHit.enabled = false;
+                lastHit.enabled = false;
                 animator.SetTrigger(DeathHash);
                 GameController.Instance.Started = false;
                 animator.SetBool(StartedHash, false);
@@ -282,24 +295,35 @@ public class PlayerController : MonoBehaviour
         GameController.Instance.FinishGame();
     }
 
+	bool tempOnGround = true;
+
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.layer == environment)
         {
-            Collisions -= 1;
-            if (Collisions <= 0)
-            {
-                Collisions = 0;
-                OnGround = false;
-
-                if (!GameController.Instance.Rocket)
-                {
-                    rb.useGravity = true;
-                }
-            }
+			tempOnGround = false;
+			StartCoroutine (SetOnGround ());
         }
     }
 
+	IEnumerator SetOnGround(){
+		yield return new WaitForFixedUpdate();
+
+		if (!tempOnGround) {
+			Collisions -= 1;
+			if (Collisions <= 0)
+			{
+				Collisions = 0;
+				OnGround = false;
+
+				if (!GameController.Instance.Rocket)
+				{
+					rb.useGravity = true;
+				}
+			}
+		}
+
+	}
 
     IEnumerator WaitForCrouch()
     {

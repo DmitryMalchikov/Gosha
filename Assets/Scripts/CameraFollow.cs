@@ -20,6 +20,9 @@ public class CameraFollow : MonoBehaviour {
 
     private void OnEnable()
     {
+		if (target == null) {
+			target = PlayerController.Instance.transform;
+		}
         offset = transform.position - target.position;
         y = target.position.y;
         animator.enabled = false;

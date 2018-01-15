@@ -33,8 +33,10 @@ public class VK : MonoBehaviour {
 
     public void Init()
     {
+		#if UNITY_ANDROID
         ajo = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         ajo.Call("VKinit", AppId, name);
+		#endif
     }
 
     public static bool IsLoggedIn()

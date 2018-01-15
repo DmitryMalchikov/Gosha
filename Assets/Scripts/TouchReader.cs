@@ -18,7 +18,18 @@ public class TouchReader : MonoBehaviour {
     void Start()
     {
         col = GetComponent<Collider>();
+
+		if (!PC) {
+			StartCoroutine (GetPC ());
+		}
+
     }
+
+	IEnumerator GetPC(){
+		yield return new WaitUntil (() => PlayerController.Instance != null);
+
+		PC = PlayerController.Instance;
+	}
 
     void OnMouseDown()
     {
