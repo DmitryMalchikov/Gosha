@@ -5,10 +5,11 @@ public class Car : MonoBehaviour {
     public float Speed;
     Vector3 defaultPos;
     bool firstEnable = true;
+    public bool IsMoving = true;
 
     private void OnEnable()
     {
-        if (Speed > 0)
+        if (IsMoving)
         {
             if (firstEnable)
             {

@@ -10,12 +10,14 @@ public class Tile : MonoBehaviour
     public Transform IceCreams;
 
     public Transform Bonus;
-    public GameObject Obstacles;
+    public CarObstacles Obstacles;
     public GameObject Box;
 
     public List<Tile> CanGoAfter = new List<Tile>();
 
     byte counter = 0;
+
+    bool CarsStarted = false;
 
 //    private void Update()
 //    {
@@ -42,7 +44,13 @@ public class Tile : MonoBehaviour
             }
         }
 
-        if (transform.position.z < -25)
+        if(transform.position.z < MapGenerator.Instance.TileSize/2  && !CarsStarted)
+        {
+            Obstacles.StartCars();
+            CarsStarted = true;
+        }
+
+        if (transform.position.z < -MapGenerator.Instance.TileSize/2 - 10)
         {
             Generated = false;
             for (int i = 0; i < IceCreams.childCount; i++)
@@ -56,7 +64,9 @@ public class Tile : MonoBehaviour
 
             if (!StartTile)
             {
-                Obstacles.SetActive(true);
+                CarsStarted = false;
+                Obstacles.StopCars();
+                Obstacles.gameObject.SetActive(true);
                 Box.SetActive(false);
             }
             MapGenerator.Instance.ResetTile(this, StartTile);
@@ -84,7 +94,7 @@ public class Tile : MonoBehaviour
 
     public void ClearObstacles()
     {
-        Obstacles.SetActive(false);
+        Obstacles.gameObject.SetActive(false);
     }
 
     IEnumerator NextTile()
