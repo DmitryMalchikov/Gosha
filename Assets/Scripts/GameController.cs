@@ -92,6 +92,7 @@ public class GameController : MonoBehaviour
     public Vector3 StartGroundPos = new Vector3(0, 0.7f, 100);
     public bool Continued = false;
 	public string CancelBtn = "Cancel";
+	public GameObject RocketParticles;
 
     CurvedWorld_Controller curvController;
 
@@ -304,6 +305,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator UseRocket()
     {
+		RocketParticles.SetActive (true);
         Rocket = true;
         BlockMoving = true;
         StartCoroutine(CoinGenerator.Instance.StartGeneration());
@@ -325,6 +327,7 @@ public class GameController : MonoBehaviour
             return PlayerController.Instance.transform.position.y >= RocketHeight;
         });
 
+		PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
         PlayerController.Instance.col.enabled = true;
         PlayerController.Instance.rb.velocity = Vector3.zero;
         BlockMoving = false;
@@ -338,6 +341,7 @@ public class GameController : MonoBehaviour
         }
 
         Rocket = false;
+		RocketParticles.SetActive (false);
 
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
