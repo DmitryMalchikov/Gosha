@@ -20,6 +20,13 @@ public class LootManager : MonoBehaviour {
     {
         SetUrls();
     }
+
+	void Update(){
+		if (Input.GetKeyDown (KeyCode.G)) {
+			GetDailyBonusAsync ();
+		}
+	}
+
     public void SetUrls()
     {
         GetBonusUrl = ServerInfo.GetUrl(GetBonusUrl);

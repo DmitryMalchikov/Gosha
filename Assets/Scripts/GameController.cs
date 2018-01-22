@@ -91,6 +91,7 @@ public class GameController : MonoBehaviour
 
     public Vector3 StartGroundPos = new Vector3(0, 0.7f, 100);
     public bool Continued = false;
+	public string CancelBtn = "Cancel";
 
     CurvedWorld_Controller curvController;
 
@@ -121,7 +122,6 @@ public class GameController : MonoBehaviour
         CurrentBoxes = 0;
         CurrentPoints = 0;
         CurrentSpeed = Speed;
-		IceCreamRotator.SetRotator (true);
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());
@@ -152,7 +152,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
         Time.timeScale = 1;
-        AchievementsManager.Instance.CheckAchievements("Loose");
+		AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
         if (InDuel)
         {
@@ -185,7 +185,6 @@ public class GameController : MonoBehaviour
     {
         Time.timeScale = 0;
         Canvaser.Instance.PausePanel.SetActive(true);
-        Debug.Log("Game Paused");
     }
 
     public void ContinueGame()
@@ -193,7 +192,6 @@ public class GameController : MonoBehaviour
         Started = true;
         Canvaser.Instance.PausePanel.SetActive(false);
         Canvaser.Instance.Countdown.SetActive(true);
-        Debug.Log("Game Continued");
     }
 
     public void ContinueGameForMoney()
@@ -207,7 +205,6 @@ public class GameController : MonoBehaviour
         Canvaser.Instance.Countdown.SetActive(true);
         PlayerController.Instance.LastTile.ClearObstacles();
         PlayerController.Instance.LastTile = null;
-        Debug.Log("Game Continued For Money");
     }
 
     public void LoadBonusesTime(List<BonusUpgrade> items)
@@ -246,7 +243,7 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
+		if (Input.GetButtonDown(CancelBtn))
         {
             Canvaser.PressBack();
         }
@@ -265,8 +262,8 @@ public class GameController : MonoBehaviour
             Canvaser.Instance.SetScore((int)points);
             if (points % 10 == 0 && points != 0)
             {
-                AchievementsManager.Instance.CheckAchievements("Run", 10);
-                TasksManager.Instance.CheckTasks("Run", 10);
+				AchievementsManager.Instance.CheckAchievements(TasksTypes.Run, 10);
+				TasksManager.Instance.CheckTasks(TasksTypes.Run, 10);
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
@@ -287,7 +284,7 @@ public class GameController : MonoBehaviour
     {
         Canvaser.Instance.AddCoin();
         CurrentCoins++;
-        AchievementsManager.Instance.CheckAchievements("CollectIceCream");
+		AchievementsManager.Instance.CheckAchievements(TasksTypes.CollectIceCream);
     }
 
     public void AddBox()
@@ -359,7 +356,7 @@ public class GameController : MonoBehaviour
             case "Magnet":
                 Collector.Instance.UseMagnet();
                 break;
-            case "Decelerator":
+            case "Freeze":
                 ApplyDeceleration();
                 break;
         }
@@ -407,7 +404,6 @@ public class GameController : MonoBehaviour
         NormalSpeed = false;
 
         var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
-        Debug.Log(increaseValue);
 
         while (Speed.z > CurrentSpeed.z && !NormalSpeed)
         {
@@ -426,7 +422,7 @@ public class GameController : MonoBehaviour
 			yield return new WaitForSeconds(IncreaseTimeStep);
             if (Started)
             {
-                if (!Deceleration)
+				if (!Deceleration && !Rocket)
                 {
 					CurrentSpeed.z -= IncreaseValue;
                     Speed = CurrentSpeed;
@@ -441,7 +437,7 @@ public class GameController : MonoBehaviour
         {
             RocketTime = upgrades.Find(x => x.BonusName == "Rocket").BonusTime;
             MagnetTime = upgrades.Find(x => x.BonusName == "Magnet").BonusTime;
-            DecelerationTime = upgrades.Find(x => x.BonusName == "Decelerator").BonusTime;
+            DecelerationTime = upgrades.Find(x => x.BonusName == "Freeze").BonusTime;
             ShieldTime = upgrades.Find(x => x.BonusName == "Shield").BonusTime;
         }
     }

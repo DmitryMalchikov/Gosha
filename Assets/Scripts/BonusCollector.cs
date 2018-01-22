@@ -34,7 +34,7 @@ public class BonusCollector : MonoBehaviour {
             if (_pickable != null)
             {
                 _pickable.PickUp();
-                TasksManager.Instance.CheckTasks("CollectBonus");
+				TasksManager.Instance.CheckTasks(TasksTypes.CollectBonus);
             }
         }
     }

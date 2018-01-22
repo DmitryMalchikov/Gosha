@@ -1431,7 +1431,7 @@ ModelImporter:
     - serializedVersion: 16
       name: run_right
       takeName: run_right
-      firstFrame: 0
+      firstFrame: 2
       lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
@@ -1587,7 +1587,7 @@ ModelImporter:
     - serializedVersion: 16
       name: run_left
       takeName: run_left
-      firstFrame: 0
+      firstFrame: 2
       lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0

@@ -628,7 +628,7 @@ ModelImporter:
     - serializedVersion: 16
       name: smash
       takeName: smash
-      firstFrame: 0
+      firstFrame: 8
       lastFrame: 36
       wrapMode: 0
       orientationOffsetY: 0

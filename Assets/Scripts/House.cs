@@ -16,10 +16,19 @@ public class House : MonoBehaviour {
     public Vector3 SecondFloor = new Vector3(0, 60, 0);
     public Vector3 ThirdFloor = new Vector3(0, 88.9f, 0);
 
+	private List<Material> InstMaterials = new List<Material>();
+
     private void OnEnable()
     {
         SetHouse();
     }
+
+//	private void OnDisable(){
+//		for (int i = 0; i < InstMaterials.Count; i++) {
+//			Destroy (InstMaterials [i]);
+//		}
+//		InstMaterials.Clear ();
+//	}
 
     public void SetHouse()
     {
@@ -29,18 +38,21 @@ public class House : MonoBehaviour {
 
         if (Random.Range(0,4) == 0)
         {
-            Floors[2].transform.parent.gameObject.SetActive(false);
+            Floors[1].transform.parent.gameObject.SetActive(false);
             Roofs.transform.localPosition = SecondFloor;
         }
         else
         {
-            Floors[2].transform.parent.gameObject.SetActive(true);
+            Floors[1].transform.parent.gameObject.SetActive(true);
             Roofs.transform.localPosition = ThirdFloor;
         }
 
 		for (int i = 0; i < Floors.Count; i++) 
 		{
-			Floors [i].material = FloorMaterials [FloorColor];
+			var materials = Floors [i].sharedMaterials;
+			materials [materials.Length - 1] = FloorMaterials [FloorColor];
+			Floors [i].sharedMaterials = materials;
+			//InstMaterials.AddRange (materials);
 		}
 
         for (int i = 0; i < Objects.Count; i++)

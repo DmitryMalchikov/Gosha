@@ -101,7 +101,6 @@ public static class NetworkHelper
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            Debug.Log("OK");
             successMethod(response);
         }
         else
@@ -317,7 +316,6 @@ public class UserInfoModel
     public List<PlayerTasks> WeeklyTasks { get; set; }
     public List<BonusUpgrade> BonusUpgrades { get; set; }
     public List<Bonus> Bonuses { get; set; }
-    //public List<PlayerAchievementModel> Tournaments { get; set; }
 
     public UserInfoModel()
     {
@@ -331,7 +329,7 @@ public class UserInfoModel
 
 public class Bonus
 {
-    public string Type { get; set; }
+	public string Type { get; set; }
     public int Amount { get; set; }
     public int Id { get; set; }
     public string Name { get; set; }

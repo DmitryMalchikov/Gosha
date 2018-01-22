@@ -92,6 +92,26 @@ public class TouchReader : MonoBehaviour {
         }
     }
 
+	#if UNITY_EDITOR
+	void Update(){
+		if (!GameController.Instance.Started)
+			return;
+
+		if (Input.GetKeyDown (KeyCode.RightArrow)) {
+			PC.Move (true);
+		}
+		else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			PC.Move (false);
+		}
+		else if (Input.GetKeyDown (KeyCode.DownArrow)) {
+			PC.Crouch ();
+		}
+		else if (Input.GetKeyDown (KeyCode.UpArrow)) {
+			PC.Jump ();
+		}
+	}
+	#endif
+
     //private void Update()
     //{
     //}

@@ -56,7 +56,7 @@ public class FBManager : MonoBehaviour
         }
         else
         {
-            AchievementsManager.Instance.CheckAchievements("Share");
+			AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareFB);
         }
     }
 }

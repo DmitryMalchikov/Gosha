@@ -52,7 +52,7 @@ public class OKManager : MonoBehaviour
                 }
                 else
                 {
-                    AchievementsManager.Instance.CheckAchievements("Share");
+					AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareOK);
                 }
             },
             new List<OKMedia>()

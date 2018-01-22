@@ -21,6 +21,7 @@ public class CoinGenerator : MonoBehaviour
     float _playerDistance;
     int _coinsNumber = 0;
     int _totalCoins = 0;
+	private Vector3 PreviousRot = Vector3.zero;
 
     private void Awake()
     {
@@ -49,17 +50,20 @@ public class CoinGenerator : MonoBehaviour
     }
 
     public void BeginGeneration(float startTime)
-    {
-        _generationStarted = true;
+    {        
         _deltaTime = Mathf.Abs(CoinDistance / GameController.Instance.Speed.z);
         _playerDistance = Mathf.Abs(Generator.position.z - PlayerController.Instance.transform.position.z);        
 
         float totalTime = GameController.Instance.RocketTime - (Mathf.Abs(_playerDistance / GameController.Instance.Speed.z) + (Time.time - startTime));
 
-        _totalCoins = 0;
-        _coinsNumber = (int)(totalTime * GameController.Instance.Speed.z/ CoinDistance);
-       StartCoroutine(Generation());
-       StartCoroutine(Stop(totalTime));
+
+		if (totalTime > 0) {
+			_totalCoins = 0;
+			_coinsNumber = (int)(-totalTime * GameController.Instance.Speed.z/ CoinDistance);
+			_generationStarted = true;
+			StartCoroutine (Generation ());
+			StartCoroutine (Stop (totalTime));
+		}
     }
 
     public void StopGeneration()
@@ -67,18 +71,23 @@ public class CoinGenerator : MonoBehaviour
         _generationStarted = false;
     }
 
+	private bool EnoughTime(float endTime){
+		return 		(Generator.position.z - PlayerController.Instance.transform.position.z) <=
+		-GameController.Instance.Speed.z * (endTime - Time.time);
+	}
+
     public IEnumerator StartGeneration()
     {
         Generator.position = new Vector3(Generator.position.x, Generator.position.y, PlayerController.Instance.transform.position.z - GameController.Instance.Speed.z * 1.5f);
-        float distance = GameController.Instance.RocketDistance + PlayerController.Instance.transform.position.z;
 
         float startTime = Time.time;
+		float endTime = startTime + GameController.Instance.RocketTime;
 
-        while (Generator.position.z < ZDIstance && Generator.position.z < distance)
+		while (Generator.position.z < ZDIstance && EnoughTime(endTime))
         {
             int coinsNumber = Random.Range(MinLine, MaxLine + 1);            
 
-            for (; coinsNumber >= 0 && Generator.position.z < ZDIstance && Generator.position.z < distance; coinsNumber--)
+			for (; coinsNumber >= 0 && Generator.position.z < ZDIstance && EnoughTime(endTime); coinsNumber--)
             {
                 yield return NextCoin();
                 if (coinsNumber > 0)
@@ -88,7 +97,7 @@ public class CoinGenerator : MonoBehaviour
                 yield return GameController.Frame;
             }
 
-            if (Generator.position.z < ZDIstance && Generator.position.z < distance)
+			if (Generator.position.z < ZDIstance && EnoughTime(endTime))
             {
                 yield return ChangeLine(true);
             }
@@ -141,8 +150,11 @@ public class CoinGenerator : MonoBehaviour
         var coin = _avaliableCoins[0];
 
         coin.transform.position = Generator.position;
+		coin.transform.rotation = Quaternion.Euler(PreviousRot);
         coin.gameObject.SetActive(true);
+
         _totalCoins += 1;
+		PreviousRot -= Vector3.up * IceCreamRotator.Instance.AngleDelta;
 
         _avaliableCoins.RemoveAt(0);
     }
@@ -150,8 +162,6 @@ public class CoinGenerator : MonoBehaviour
     public void ResetCoin(Coin coin)
     {
         _avaliableCoins.Add(coin);
-        //coin.transform.position = transform.position;
-        //coin.gameObject.SetActive(false);
     }
 
     IEnumerator Generation()
@@ -160,7 +170,7 @@ public class CoinGenerator : MonoBehaviour
         {
             int coinsNumber = Random.Range(MinLine, MaxLine + 1);            
 
-            for (; coinsNumber >= 0 && _generationStarted; coinsNumber--)
+			for (; coinsNumber >= 0 && _generationStarted && _totalCoins < _coinsNumber; coinsNumber--)
             {
                 yield return NextCoin();
                 if (coinsNumber > 0)
@@ -169,7 +179,7 @@ public class CoinGenerator : MonoBehaviour
                 }
             }
 
-            if (_generationStarted)
+			if (_generationStarted && _totalCoins < _coinsNumber)
             yield return ChangeLine(false);
         }
     }

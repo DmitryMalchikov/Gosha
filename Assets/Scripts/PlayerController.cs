@@ -8,12 +8,18 @@ public class PlayerController : MonoBehaviour
     static int CrouchHash = Animator.StringToHash("Crouch");
     static int JumpHash = Animator.StringToHash("Jump");
     static int DeathHash = Animator.StringToHash("Death");
+	static int HitLeft = Animator.StringToHash("HitLeft");
+	static int HitRight = Animator.StringToHash ("HitRight");
+	static int Left = Animator.StringToHash("Left");
+	static int Right = Animator.StringToHash ("Right");
+	static int OnGroundHash = Animator.StringToHash("OnGround");
     public static int StartedHash = Animator.StringToHash("Started");
     public static int RocketHash = Animator.StringToHash("Rocket");
     #endregion
 
     public static PlayerController Instance;
 
+	public bool UseHardTouch = true;
     public float Step = 2;
     public float CurrentX = 0;
     public float nextStep;
@@ -26,17 +32,19 @@ public class PlayerController : MonoBehaviour
     public bool isMoving;
     public int Collisions = 0;
 
+	public Transform AnimatorRoot;
     public Animator animator;
     public CapsuleCollider col;
 	public float MaxCollisionAngle;
 	public float MinCollisionAngle;
 	public int MaxHitsCount = 2;
-	public float DeathRotation = 20;
+	public float DeltaXOffset = .1f;
 
     private Vector3 moveDir;
 
     public Rigidbody rb;
 
+	public bool OnRamp = false;
     public Vector3 crouch;
     public Vector3 zeroX = Vector3.zero;
     public Vector3 velBeforeCrouch;
@@ -48,6 +56,7 @@ public class PlayerController : MonoBehaviour
 	[HideInInspector]
     public Tile LastTile;
 
+	private string ObstacleTag = "Obstacle";
     private float minY = 0;
 
     public bool OnGround
@@ -56,12 +65,13 @@ public class PlayerController : MonoBehaviour
         set
         {
             _onGround = value;
-            animator.SetBool("OnGround", _onGround);
+			animator.SetBool(OnGroundHash, _onGround);
         }
     }
     bool _onGround = true;
 
     int environment;
+	int environmentMask;
     public float LastGroundY = 0;
     public Animator PlayerAnimator;
     public Transform Position;
@@ -72,6 +82,8 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+		Application.targetFrameRate = 60;
+		QualitySettings.vSyncCount = 0;
         Instance = this;
     }
 
@@ -92,6 +104,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         environment = LayerMask.NameToLayer("Environment");
+		environmentMask = LayerMask.GetMask ("Environment");
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
@@ -111,6 +124,13 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+		if ((!OnGround || !tempOnGround) && rb.velocity.y > 0)
+		{
+			//Debug.Log ("Down");
+			StickToGround ();
+			//rb.velocity += Vector3.down * rb.velocity.y;
+		}
+
         if (isMoving)
         {
             bool back = false;
@@ -129,21 +149,19 @@ public class PlayerController : MonoBehaviour
 	void FixedUpdate()
 	{
 		velocityBeforePhysics = rb.velocity;
-
-		if (!tempOnGround && !isJumping && rb.velocity.y > 0 && !GameController.Instance.Rocket)
-		{
-			StickToGround ();
-			//rb.velocity += Vector3.down * rb.velocity.y;
-		}
 	}
 
-	void StickToGround(){
+	public void StickToGround(){
+		if (!isJumping && !GameController.Instance.Rocket)
+		{
 		RaycastHit hit;
-		if (Physics.Raycast (new Ray (transform.position, Vector3.down), out hit, 5, LayerMask.GetMask ("Environment"))) {
-			transform.position = hit.point + Vector3.up * .4f;
-			rb.velocity += Vector3.down * rb.velocity.y;
-			//OnGround = true;
-			tempOnGround = true;
+			if (Physics.Raycast (new Ray (transform.position + Vector3.up, Vector3.down), out hit, 1.5f, environmentMask)) {
+				transform.position = hit.point + Vector3.up * .4f;
+				rb.velocity += Vector3.down * rb.velocity.y;
+				//OnGround = true;
+				tempOnGround = true;
+				OnGround = true;
+			}
 		}
 	}
 
@@ -158,14 +176,15 @@ public class PlayerController : MonoBehaviour
             {
                 if (right)
                 {
-                    animator.SetTrigger("Right");
+                    animator.SetTrigger(Right);
                 }
                 else
                 {
-                    animator.SetTrigger("Left");
+                    animator.SetTrigger(Left);
                 }
             }
 
+			rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
             CurrentX += dir * Step;
             moveDir.x = dir * moveSpeed;
             if (OnGround)
@@ -193,8 +212,8 @@ public class PlayerController : MonoBehaviour
             rb.velocity = moveDir;
             isJumping = true;
 
-            AchievementsManager.Instance.CheckAchievements("Jump");
-            TasksManager.Instance.CheckTasks("Jump");
+			AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
+			TasksManager.Instance.CheckTasks(TasksTypes.Jump);
         }
     }
 
@@ -210,8 +229,9 @@ public class PlayerController : MonoBehaviour
         }
 
         isCrouching = true;
+		col.center = ColliderCrouch;
         col.height = 0.35f;
-        col.center = ColliderCrouch;
+        
         animator.SetTrigger(CrouchHash);
 
         StartCoroutine(WaitForCrouch());
@@ -219,7 +239,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Obstacle")
+		if (collision.transform.tag == ObstacleTag)
         {
 			if (!GameController.Instance.Started)
 				return;
@@ -228,7 +248,8 @@ public class PlayerController : MonoBehaviour
 
 			if (GameController.Instance.Shield)
 			{
-				collision.collider.enabled = false;
+				LastTile.DisableCollider (collision.collider);
+				//collision.collider.enabled = false;
 				GameController.Instance.Shield = false;
 				GameController.Instance.ShieldTimeLeft = 0;
 				LastTile.ClearObstacles();
@@ -238,31 +259,56 @@ public class PlayerController : MonoBehaviour
 			}
 
 				Vector3 normal = collision.contacts [0].normal;
-				float angle = Vector3.Angle (normal, Vector3.forward);
-			bool sidehit = Vector3.Angle(Vector3.up, normal) > 3 && angle > MinCollisionAngle && angle < MaxCollisionAngle;
-			if (sidehit && hitsCount < MaxHitsCount) {
+				Vector2 normal2 = new Vector2 (normal.x, normal.z);
+			float pointDelta = transform.position.x - collision.contacts [0].point.x;
+				//float angle = Vector3.Angle (normal, Vector3.forward);
+			float angle = Vector2.Angle(normal2, Vector2.up);
+			bool sidehit = (normal2 != Vector2.zero && angle > MinCollisionAngle && angle < MaxCollisionAngle);
+			bool hardContact = Mathf.Abs (pointDelta) > DeltaXOffset;
+			if (hitsCount < MaxHitsCount) {
+				if (sidehit) {
 					dir = Mathf.Sign (normal.x);
-				if (dir == 1) {
-					animator.SetTrigger ("HitLeft");
-				} else {
-					animator.SetTrigger ("HitRight");
-				}
-				if (CurrentX != dir * Step) {
-					CurrentX += dir * Step;
-				}
-					moveDir.x = dir * moveSpeed;
+					if (OnGround) {
+						if (dir == 1) {
+							animator.SetTrigger (HitLeft);
+						} else {
+							animator.SetTrigger (HitRight);
+						}
+					}
+					if (CurrentX != dir * Step) {
+						CurrentX += dir * Step;
+					}
+					moveDir.x = dir * moveSpeed/2;
 					if (OnGround) {
 						moveDir.y = -100;
 					}
-				rb.AddForce (moveDir, ForceMode.Acceleration);
-				isMoving = true;
+					rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
+					rb.AddForce (moveDir, ForceMode.Acceleration);
+					isMoving = true;
+					hitsCount++;
+					CameraFollow.Instance.ShakeCamera ();
+					return;
+				} else if (hardContact && UseHardTouch) {					
+					dir = Mathf.Sign (pointDelta);
+					if (OnGround) {
+						if (dir == 1) {
+							animator.SetTrigger (HitLeft);
+						} else {
+							animator.SetTrigger (HitRight);
+						}
+					}
+					LastTile.DisableCollider (collision.collider);
+					LastTile = null;
+					rb.velocity = velocityBeforePhysics;
 					hitsCount++;
 					return;
 				}
+				}
 
-			if (sidehit) {
-				animator.transform.rotation = Quaternion.LookRotation (Quaternion.Euler (0, DeathRotation * dir, 0) * Vector3.forward);
-			}
+//			if (sidehit) {
+//				animator.transform.rotation = Quaternion.LookRotation (Quaternion.Euler (0, DeathRotation * dir, 0) * Vector3.forward);
+//			}
+			animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
                 lastHit = collision.collider;
 			//rb.constraints = RigidbodyConstraints.FreezeRotation;
                 lastHit.enabled = false;
@@ -271,7 +317,11 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool(StartedHash, false);
                 StartCoroutine(WaitDeath());
                 rb.useGravity = true;
-				rb.velocity -= Vector3.right * rb.velocity.x;                
+			rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
+			animator.ResetTrigger (HitLeft);
+			animator.ResetTrigger (HitRight);
+			animator.ResetTrigger (Left);
+			animator.ResetTrigger (Right);
         }
         else if (collision.gameObject.layer == environment)
         {

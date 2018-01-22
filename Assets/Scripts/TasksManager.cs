@@ -52,24 +52,24 @@ public class TasksManager : MonoBehaviour
         }
     }
 
-    public void CheckTasks(string type, int completeAmount = 1)
+	public void CheckTasks(TasksTypes type, int completeAmount = 1)
     {
         List<PlayerTasks> tasks = new List<PlayerTasks>();
         bool send = false;
 
         switch (type)
         {
-            case "Run":
+		case TasksTypes.Run:
                 tasks = RunTasks;
                 break;
-            case "Jump":
+		case TasksTypes.Jump:
                 tasks = JumpTasks;
                 break;
-            case "Play":
+		case TasksTypes.Play:
                 tasks = PlayTasks;
                 send = true;
                 break;
-            case "CollectBonus":
+		case TasksTypes.CollectBonus:
                 tasks = CollectBonusTasks;
                 break;
         }

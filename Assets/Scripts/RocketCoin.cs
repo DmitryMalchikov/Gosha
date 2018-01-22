@@ -2,7 +2,7 @@
 
 public class RocketCoin : Coin
 {
-    void FixedUpdate()
+    void Update()
     {
         transform.Translate(GameController.Instance.Speed * Time.deltaTime, Space.World);
 

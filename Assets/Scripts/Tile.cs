@@ -19,22 +19,28 @@ public class Tile : MonoBehaviour
 
     bool CarsStarted = false;
 
-//    private void Update()
-//    {
-//        if (!GameController.Instance.Started) return;
-//
-//        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
-//    }
+	[HideInInspector]
+	public List<Collider> DisabledColliders = new List<Collider> ();
+
+	private void Update(){
+		if (!GameController.Instance.Started) return;
+
+		transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+
+		if (PlayerController.Instance.OnRamp) {
+			PlayerController.Instance.StickToGround ();
+		}
+	}
 
     private void FixedUpdate()
     {
         if (!GameController.Instance.Started) return;
 
-        transform.Translate(GameController.Instance.Speed * Time.fixedDeltaTime);
+        //transform.Translate(GameController.Instance.Speed * Time.fixedDeltaTime);
 
         counter = (byte)((counter + 1) % 3);
 
-        if (counter == 0) return;
+        if (counter != 0) return;
 
         if (!Generated)
         {
@@ -62,11 +68,13 @@ public class Tile : MonoBehaviour
                 Bonus.GetChild(i).gameObject.SetActive(false);
             }            
 
+			EnableColliders ();
+			CarsStarted = false;
+			Obstacles.StopCars();
+			Obstacles.gameObject.SetActive(true);
+
             if (!StartTile)
             {
-                CarsStarted = false;
-                Obstacles.StopCars();
-                Obstacles.gameObject.SetActive(true);
                 Box.SetActive(false);
             }
             MapGenerator.Instance.ResetTile(this, StartTile);
@@ -104,5 +112,18 @@ public class Tile : MonoBehaviour
         MapGenerator.Instance.NextTile();
         Generated = true;
     }
+
+	public void DisableCollider(Collider col){
+		DisabledColliders.Add (col);
+		col.enabled = false;
+	}
+
+	void EnableColliders(){
+		for (int i = 0; i < DisabledColliders.Count; i++) {
+			DisabledColliders [i].enabled = true;
+		}
+
+		DisabledColliders.Clear ();
+	}
 }
 

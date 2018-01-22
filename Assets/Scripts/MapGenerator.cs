@@ -81,6 +81,8 @@ public class MapGenerator : MonoBehaviour
         StartTile.transform.position = _lastTile.transform.position - Vector3.forward * TileSize * transform.localScale.z;
 
         _lastTile = tempLast;
+
+		IceCreamRotator.SetRotator (true);
     }
 
     public void NextTile()

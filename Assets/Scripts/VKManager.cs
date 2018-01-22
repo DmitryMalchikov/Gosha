@@ -30,7 +30,7 @@ public class VKManager : MonoBehaviour
         {
             if (string.IsNullOrEmpty(response))
             {
-                AchievementsManager.Instance.CheckAchievements("share");
+					AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareVK);
             }
             else
             {

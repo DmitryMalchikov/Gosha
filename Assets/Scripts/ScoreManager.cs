@@ -59,7 +59,6 @@ public class ScoreManager : MonoBehaviour
         StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, JsonConvert.SerializeObject(model), "application/json",
         (response) =>
         {
-            Debug.Log("Success");
             LoginManager.Instance.GetUserInfoAsync();
         }
         ));
@@ -77,7 +76,6 @@ public class ScoreManager : MonoBehaviour
             StartCoroutine(NetworkHelper.SendRequest(UseBonusUrl, JsonConvert.SerializeObject(value), "application/json",
             (response) =>
             {
-                Debug.Log("Success");
             },
             (response) =>
             {

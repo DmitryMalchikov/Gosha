@@ -72,38 +72,38 @@ public class AchievementsManager : MonoBehaviour
         }
     }
 
-    public void CheckAchievements(string type, int completeAmount = 1)
+	public void CheckAchievements(TasksTypes type, int completeAmount = 1)
     {
         List<PlayerTasks> achievements = new List<PlayerTasks>();
         bool send = false;
 
         switch (type)
         {
-            case "Run":
+		case TasksTypes.Run:
                 achievements = RunAchievements;
                 break;
-            case "Jump":
+		case TasksTypes.Jump:
                 achievements = JumpAchievements;
                 break;
-            case "CollectIceCream":
+		case TasksTypes.CollectIceCream:
                 achievements = CollectIceCreamAchievements;
                 break;
-            case "Buy":
+		case TasksTypes.Buy:
                 achievements = BuyAchievements;
                 send = true;
                 break;
-            case "Loose":
+		case TasksTypes.Loose:
                 achievements = LooseAchievements;
                 break;
-            case "ShareVK":
+		case TasksTypes.ShareVK:
                 achievements = ShareVKAchievements;
                 send = true;
                 break;
-            case "ShareFB":
+		case TasksTypes.ShareFB:
                 achievements = ShareFBAchievements;
                 send = true;
                 break;
-            case "ShareOK":
+		case TasksTypes.ShareOK:
                 achievements = ShareOKAchievements;
                 send = true;
                 break;

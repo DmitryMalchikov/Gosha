@@ -7,6 +7,7 @@ public class Collector : MonoBehaviour {
     public static Collector Instance { get; private set; }
 
     IPickable _pickable;
+	private string IceCreamTag = "IceCream";
 
     public BoxCollider Collider;
     public Vector3 MagnetSize = new Vector3(15, 15, 8);
@@ -25,7 +26,7 @@ public class Collector : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.transform.tag == "IceCream")
+		if (other.transform.tag == IceCreamTag)
         {
             _pickable = other.transform.GetComponent<IPickable>();
 

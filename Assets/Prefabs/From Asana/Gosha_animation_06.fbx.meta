@@ -1425,7 +1425,7 @@ ModelImporter:
       name: rocket_out
       takeName: rocket_out
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 15
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

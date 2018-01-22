@@ -25,7 +25,6 @@ public class IceCreamRotator : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other){
-		Debug.Log (other.gameObject.layer);
 		if (other.gameObject.layer == pickableLayer) {
 			if (previousRot != null) {
 				previousRot = previousRot - Vector3.up * AngleDelta;
