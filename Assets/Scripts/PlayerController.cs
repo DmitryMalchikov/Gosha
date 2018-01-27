@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
 	public float MinCollisionAngle;
 	public int MaxHitsCount = 2;
 	public float DeltaXOffset = .1f;
+	public ParticleSystem IceEffect;
 
     private Vector3 moveDir;
 
@@ -112,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (OnGround || GameController.Instance.Rocket)
+		if ((OnGround && tempOnGround) || GameController.Instance.Rocket)
         {
             LastGroundY = transform.position.y;
         }
@@ -124,7 +125,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-		if ((!OnGround || !tempOnGround) && rb.velocity.y > 0)
+		if ((!OnGround || !tempOnGround) && rb.velocity.y > 0 && !isMoving)
 		{
 			//Debug.Log ("Down");
 			StickToGround ();
@@ -133,6 +134,8 @@ public class PlayerController : MonoBehaviour
 
         if (isMoving)
         {
+			//transform.Translate (Vector3.right * moveSpeed * Time.deltaTime);
+
             bool back = false;
             back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
 
@@ -142,6 +145,7 @@ public class PlayerController : MonoBehaviour
 				moveDir = Vector3.zero;
 				isMoving = false;
 				FixPos (CurrentX);
+				StartCoroutine (SetOnGround ());
 			}
         }
     }
@@ -158,9 +162,9 @@ public class PlayerController : MonoBehaviour
 			if (Physics.Raycast (new Ray (transform.position + Vector3.up, Vector3.down), out hit, 1.5f, environmentMask)) {
 				transform.position = hit.point + Vector3.up * .4f;
 				rb.velocity += Vector3.down * rb.velocity.y;
-				//OnGround = true;
 				tempOnGround = true;
 				OnGround = true;
+				//Collisions += 1;
 			}
 		}
 	}
@@ -332,6 +336,8 @@ public class PlayerController : MonoBehaviour
 
             Collisions += 1;
             OnGround = true;
+			//tempOnGround = true;
+			//Debug.Log ("Temp true");
             isJumping = false;
             rb.useGravity = false;
         }
@@ -339,6 +345,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator WaitDeath()
     {
+		IceEffect.Stop();
         yield return new WaitForSeconds(1.8f);
 
         lastHit.enabled = true;
@@ -352,19 +359,23 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.layer == environment)
         {
 			tempOnGround = false;
+			Collisions -= 1;
+			//Debug.Log ("Temp false");
 			StartCoroutine (SetOnGround ());
         }
     }
 
 	IEnumerator SetOnGround(){
-		yield return new WaitForFixedUpdate();
+		//yield return new WaitForEndOfFrame();
+		yield return new WaitUntil(() => isMoving == false);
 
 		if (!tempOnGround) {
-			Collisions -= 1;
+			
 			if (Collisions <= 0)
 			{
 				Collisions = 0;
 				OnGround = false;
+				tempOnGround = true;
 
 				if (!GameController.Instance.Rocket)
 				{

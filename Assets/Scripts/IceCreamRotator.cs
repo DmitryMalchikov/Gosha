@@ -10,7 +10,7 @@ public class IceCreamRotator : MonoBehaviour {
 	public float AngleDelta;
 
 	private int pickableLayer;
-	private Vector3? previousRot;
+	private Vector3 previousRot;
 
 	void Awake(){
 		Instance = this;	
@@ -26,14 +26,11 @@ public class IceCreamRotator : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.layer == pickableLayer) {
-			if (previousRot != null) {
 				previousRot = previousRot - Vector3.up * AngleDelta;
+				if (previousRot.y <= -360) {
+					previousRot.y %= 360;
+				}
 				other.GetComponentInChildren<Spinner> ().StartRotation (previousRot);
-			} else {
-				previousRot = other.transform.rotation.eulerAngles;
-			}
-
-
 		}
 	}
 }

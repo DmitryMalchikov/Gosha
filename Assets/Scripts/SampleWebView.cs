@@ -49,12 +49,13 @@ public class SampleWebView : MonoBehaviour
 
             //status.text = url;
 			string token = parsed["access_token"];
-            string expireDate = parsed["expired_in"];
+            string expireDate = parsed["expires_in"];
             var s = DateTime.Now.AddSeconds(double.Parse(expireDate));
             //CloseWindow();
             LoginManager.userToken = new AccessToken() { Token = token, ExpireDate = s };
             LoginManager.Instance.CheckExternalRegister();
 			CloseWindow ();
+			Canvaser.Instance.CloseLoading ();
         }
         else
         {
@@ -73,6 +74,8 @@ public class SampleWebView : MonoBehaviour
         webViewActivity.CallStatic("closeBrowser");
 		#else
 		webObj.SetVisibility(false);
+		webObj.DestroyWebView();
+		initialized = false;
 		#endif
     }
 }

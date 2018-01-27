@@ -50,7 +50,7 @@ public class Tile : MonoBehaviour
             }
         }
 
-        if(transform.position.z < MapGenerator.Instance.TileSize/2  && !CarsStarted)
+		if(!CarsStarted && transform.position.z < MapGenerator.Instance.TileSize/2)
         {
             Obstacles.StartCars();
             CarsStarted = true;
@@ -77,8 +77,8 @@ public class Tile : MonoBehaviour
             {
                 Box.SetActive(false);
             }
-            MapGenerator.Instance.ResetTile(this, StartTile);
 
+            MapGenerator.Instance.ResetTile(this, StartTile);
         }
     }
 
@@ -107,7 +107,7 @@ public class Tile : MonoBehaviour
 
     IEnumerator NextTile()
     {
-        yield return new WaitForFixedUpdate();
+		yield return new WaitForEndOfFrame();
 
         MapGenerator.Instance.NextTile();
         Generated = true;

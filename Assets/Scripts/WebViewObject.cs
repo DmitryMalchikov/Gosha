@@ -299,26 +299,30 @@ public class WebViewObject : MonoBehaviour
 #endif
     }
 
+		public void DestroyWebView(){
+		#if UNITY_WEBPLAYER
+		Application.ExternalCall("unityWebView.destroy", name);
+		#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+		if (webView == IntPtr.Zero)
+		return;
+		_CWebViewPlugin_Destroy(webView);
+		webView = IntPtr.Zero;
+		#elif UNITY_IPHONE
+		if (webView == IntPtr.Zero)
+		return;
+		_CWebViewPlugin_Destroy(webView);
+		webView = IntPtr.Zero;
+		#elif UNITY_ANDROID
+		if (webView == null)
+		return;
+		webView.Call("Destroy");
+		webView = null;
+		#endif
+		}
+
     protected virtual void OnDestroy()
     {
-#if UNITY_WEBPLAYER
-        Application.ExternalCall("unityWebView.destroy", name);
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        if (webView == IntPtr.Zero)
-            return;
-        _CWebViewPlugin_Destroy(webView);
-        webView = IntPtr.Zero;
-#elif UNITY_IPHONE
-        if (webView == IntPtr.Zero)
-            return;
-        _CWebViewPlugin_Destroy(webView);
-        webView = IntPtr.Zero;
-#elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("Destroy");
-        webView = null;
-#endif
+		DestroyWebView ();
     }
 
     /** Use this function instead of SetMargins to easily set up a centered window */

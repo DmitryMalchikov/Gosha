@@ -393,6 +393,7 @@ public class GameController : MonoBehaviour
     IEnumerator ReturnSpeed()
     {
         Deceleration = true;
+		PlayerController.Instance.IceEffect.Play ();
 
         Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(true);
         while (DecelerationTimeLeft > 0)
@@ -406,6 +407,7 @@ public class GameController : MonoBehaviour
         Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(false);
         Deceleration = false;
         NormalSpeed = false;
+		PlayerController.Instance.IceEffect.Stop ();
 
         var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
 

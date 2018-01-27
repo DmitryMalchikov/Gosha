@@ -10,7 +10,7 @@ public class Spinner : MonoBehaviour {
 			transform.Rotate (Rotatation * Time.deltaTime, Space.World);
     }
 
-	public void StartRotation(Vector3? previousRot){
-		transform.rotation = Quaternion.Euler (previousRot.Value);
+	public void StartRotation(Vector3 previousRot){
+		transform.rotation = Quaternion.Euler (previousRot);
 	}
 }

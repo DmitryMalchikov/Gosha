@@ -130,7 +130,7 @@ public class MapGenerator : MonoBehaviour
             _avaliableTiles.Add(tile);
         }
 
-        tile.transform.position = transform.position;
+        //tile.transform.position = transform.position;
         tile.gameObject.SetActive(false);
     }
 }
