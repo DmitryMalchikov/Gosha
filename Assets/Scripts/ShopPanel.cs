@@ -23,12 +23,12 @@ public class ShopPanel : MonoBehaviour
 
     public void Open()
     {
-        Canvaser.ShowLoading(true);
+        //Canvaser.ShowLoading(true);
         Synchroniser.NewSync(5);
 
         Synchroniser.OnActionsReady += CheckBuyBtns;
         Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
-        Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
+        //Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
 
         LoginManager.Instance.GetUserInfoAsync(() => Synchroniser.SetReady(0));
         ShopManager.Instance.GetBonusesAsync(() => Synchroniser.SetReady(1));
