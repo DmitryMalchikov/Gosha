@@ -145,13 +145,13 @@ public class Canvaser : MonoBehaviour
     public void AddCoin()
     {
         coins++;
-        Coins.text = string.Format("{0}", coins);
+		Coins.text = coins.ToString();
     }
 
     public void AddCase()
     {
         cases++;
-        Cases.text = string.Format("{0}", cases);
+		Cases.text = cases.ToString();
     }
 
     public static void ShowLoading(bool toShow)

@@ -9,10 +9,12 @@ public class CameraFollow : MonoBehaviour {
 
 	public Transform target;
 	public Vector3 offset;
+	public float ZOffset;
 	public float speedY = 12;
 	public float speedX = 20;
     float y;
 	float x;
+	float z;
     public Animator animator;
 
 	public float ShakeDuration = 1;
@@ -33,10 +35,12 @@ public class CameraFollow : MonoBehaviour {
 			target = PlayerController.Instance.transform;
 		}
         offset = transform.position - target.position;
+		ZOffset = offset.z;
         y = target.position.y;
 		//x = transform.position.x;
         animator.enabled = false;
        
+		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMoveJump;
         Canvaser.Instance.GamePanel.gameObject.SetActive(true);
         ScoreManager.StartRun();
         GameController.Instance.ResetScores();
@@ -50,10 +54,11 @@ public class CameraFollow : MonoBehaviour {
 
         y = Mathf.Lerp(transform.position.y, PlayerController.Instance.LastGroundY + offset.y, speedY * Time.deltaTime);
 		x = Mathf.Lerp(transform.position.x, PlayerController.Instance.transform.position.x/1.15f + offset.x, speedX * Time.deltaTime);
+		z = Mathf.Lerp(transform.position.z, PlayerController.Instance.transform.position.z + offset.z, speedY * Time.deltaTime);
 		if (!_shaking) {
-			transform.position = new Vector3 (x, y, target.position.z) + offset - Vector3.up * offset.y;
+			transform.position = new Vector3 (x, y, z) ;
 		} else {
-			_originalPos = new Vector3 (x, y, target.position.z) + offset - Vector3.up * offset.y;
+			_originalPos = new Vector3 (x, y, z);
 		}
 
 		//transform.LookAt (target);

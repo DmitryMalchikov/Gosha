@@ -36,8 +36,6 @@ public class Tile : MonoBehaviour
     {
         if (!GameController.Instance.Started) return;
 
-        //transform.Translate(GameController.Instance.Speed * Time.fixedDeltaTime);
-
         counter = (byte)((counter + 1) % 3);
 
         if (counter != 0) return;
@@ -59,19 +57,17 @@ public class Tile : MonoBehaviour
         if (transform.position.z < -MapGenerator.Instance.TileSize/2 - 10)
         {
             Generated = false;
-            for (int i = 0; i < IceCreams.childCount; i++)
-            {
-                IceCreams.GetChild(i).gameObject.SetActive(true);
-            }
+
             for (int i = 0; i < Bonus.childCount; i++)
             {
                 Bonus.GetChild(i).gameObject.SetActive(false);
             }            
 
-			EnableColliders ();
+			//EnableColliders ();
 			CarsStarted = false;
 			Obstacles.StopCars();
-			Obstacles.gameObject.SetActive(true);
+			//EnableObstcles ();
+			//Obstacles.gameObject.SetActive(true);
 
             if (!StartTile)
             {
@@ -116,6 +112,19 @@ public class Tile : MonoBehaviour
 	public void DisableCollider(Collider col){
 		DisabledColliders.Add (col);
 		col.enabled = false;
+	}
+
+	public void EnableObstcles(){
+		for (int i = 0; i < Obstacles.transform.childCount; i++) {
+			Obstacles.transform.GetChild (i).gameObject.SetActive (true);
+		}
+	}
+
+	public void EnableIceCreams(){
+		for (int i = 0; i < IceCreams.childCount; i++)
+		{
+			IceCreams.GetChild(i).gameObject.SetActive(true);
+		}
 	}
 
 	void EnableColliders(){

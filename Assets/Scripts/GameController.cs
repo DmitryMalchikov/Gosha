@@ -88,8 +88,6 @@ public class GameController : MonoBehaviour
     public float PauseSpeed;
     public Bonus CurrentBonus;
 
-
-    public Vector3 StartGroundPos = new Vector3(0, 0.7f, 100);
     public bool Continued = false;
 	public string CancelBtn = "Cancel";
 	public GameObject RocketParticles;
@@ -112,7 +110,7 @@ public class GameController : MonoBehaviour
 		Rocket = false;
 		Deceleration = false;
 		Shield = false;
-        Canvaser.Instance.Score.text = "0"; //+ LocalizationManager.GetLocalizedValue("meter");
+        //+ LocalizationManager.GetLocalizedValue("meter");
         //Canvaser.Instance.Coins.text = "0";
         //Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
         Time.timeScale = 1;
@@ -163,6 +161,8 @@ public class GameController : MonoBehaviour
 
         Canvaser.Instance.PausePanel.SetActive(false);
         Canvaser.Instance.GamePanel.gameObject.SetActive(false);
+		Canvaser.Instance.Coins.text = "0";
+		Canvaser.Instance.Score.text = "0";
 
         AchievementsManager.Instance.SubmitAllAchievements(true);
         TasksManager.Instance.SubmitAllTasks(true);
@@ -202,10 +202,11 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
 		PlayerController.Instance.animator.transform.rotation = new Quaternion ();
 		PlayerController.Instance.transform.position += Vector3.right * (PlayerController.Instance.CurrentX - PlayerController.Instance.transform.position.x);
-        //Canvaser.Instance.ContinueForMoney.gameObject.SetActive(false);
         Canvaser.Instance.Countdown.SetActive(true);
-        PlayerController.Instance.LastTile.ClearObstacles();
-        PlayerController.Instance.LastTile = null;
+        //PlayerController.Instance.LastTile.ClearObstacles();
+        //PlayerController.Instance.LastTile = null;
+		PlayerController.Instance.RemoveObstcles();
+		CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
     }
 
     public void LoadBonusesTime(List<BonusUpgrade> items)
@@ -330,6 +331,7 @@ public class GameController : MonoBehaviour
 		PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
         PlayerController.Instance.col.enabled = true;
         PlayerController.Instance.rb.velocity = Vector3.zero;
+		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMove;
         BlockMoving = false;
 
 
@@ -346,6 +348,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
         PlayerController.Instance.rb.useGravity = true;
+		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMoveJump;
     }
 
     public void UseBonus()

@@ -24,8 +24,10 @@ public class BonusCollector : MonoBehaviour {
     {
         if (other.tag == "IceCream")
         {
-            GameController.Instance.AddCoin();
-            other.gameObject.SetActive(false);
+			if (GameController.Instance.Magnet) {
+				GameController.Instance.AddCoin ();
+				other.gameObject.SetActive (false);
+			}
         }
         else if (other.tag == "Bonus")
         {

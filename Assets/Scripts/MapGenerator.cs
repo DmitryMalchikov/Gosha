@@ -55,6 +55,8 @@ public class MapGenerator : MonoBehaviour
             var number = Random.Range(0, _avaliableTiles.Count);
 
             _avaliableTiles[number].gameObject.SetActive(true);
+			_avaliableTiles [number].EnableObstcles ();
+			_avaliableTiles [number].EnableIceCreams ();
             //TODO: Turn on all coins and etc
 
             if (_lastTile)
@@ -79,6 +81,7 @@ public class MapGenerator : MonoBehaviour
         //TODO: Turn on all coins and etc
 
         StartTile.transform.position = _lastTile.transform.position - Vector3.forward * TileSize * transform.localScale.z;
+		StartTile.EnableObstcles ();
 
         _lastTile = tempLast;
 
@@ -94,7 +97,9 @@ public class MapGenerator : MonoBehaviour
             for (int i = 0; i < _lastTile.CanGoAfter.Count; i++)
             {
                 if (!_lastTile.CanGoAfter[i].gameObject.activeInHierarchy)
-                {
+				{
+					_lastTile.CanGoAfter [i].EnableObstcles ();
+					_lastTile.CanGoAfter [i].EnableIceCreams ();
                     _lastTile.CanGoAfter[i].gameObject.SetActive(true);
                     _lastTile.CanGoAfter[i].GenerateBonus();
                     _lastTile.CanGoAfter[i].GenerateBox();
@@ -109,6 +114,8 @@ public class MapGenerator : MonoBehaviour
         {
             var number = Random.Range(0, _avaliableTiles.Count);
 
+			_avaliableTiles [number].EnableObstcles ();
+			_avaliableTiles [number].EnableIceCreams ();
             _avaliableTiles[number].gameObject.SetActive(true);
             _avaliableTiles[number].GenerateBonus();
             _avaliableTiles[number].GenerateBox();
@@ -130,7 +137,6 @@ public class MapGenerator : MonoBehaviour
             _avaliableTiles.Add(tile);
         }
 
-        //tile.transform.position = transform.position;
         tile.gameObject.SetActive(false);
     }
 }
