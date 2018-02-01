@@ -29,6 +29,10 @@ public class CarObstacles : MonoBehaviour
             if (Cars[i].IsMoving)
             {
                 Cars[i].Speed = speed;
+                if (speed == 0)
+                {
+                    Cars[i].ResetPos();
+                }
             }
         }
     }

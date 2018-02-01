@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -64,6 +65,8 @@ public class Registration : MonoBehaviour
     public Transform RegionsContent;
     public GameObject RegionObject;
     public ToggleGroup Group;
+
+    string phone;
 
     public void Start()
     {
@@ -131,7 +134,7 @@ public class Registration : MonoBehaviour
     void ComparePasswords(string pass1, string pass2)
     {
         Debug.Log(pass1 + "\n" + pass2);
-        Regex reg = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-\.]).{4,20}$");
+        Regex reg = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-\.]).{6,20}$");
         if (reg.IsMatch(pass1))
         {
             if (pass1 == pass2)
@@ -152,9 +155,64 @@ public class Registration : MonoBehaviour
         }
     }
 
+    public void ChangePhoneCharacters(string input)
+    {
+        string template = "+###(##)###-##-##";
+        char defaultCharacter = '_';
+        string charactersType = @"\d";
+        char placeholder = '#';
+
+        StringBuilder builder = new StringBuilder(template);
+        Regex reg = new Regex(charactersType);
+        var matches = reg.Matches(input);
+
+        int index = -1;
+
+        for (int i = 0; i < matches.Count; i++)
+        {
+            index = -1;
+            for (int j = 0; j < builder.Length; j++)
+            {
+                if (builder[j] == placeholder)
+                {
+                    index = j;
+                    break;
+                }
+            }
+
+            if (index > -1)
+            {
+                builder.Replace(placeholder, matches[i].Value[0], index, 1);
+            }
+        }
+
+        for (int i = 0; i < builder.Length; i++)
+        {
+            builder.Replace(placeholder, defaultCharacter, i, 1);
+        }
+
+        Phone.text = builder.ToString();
+        if (index > -1)
+        {
+            Phone.caretPosition = index + 1;
+        }
+    }
+
+    public string GetPhoneNumbers(string phone)
+    {
+        string res = phone;
+        string pattern = "+()-";
+        for (int i = 0; i < pattern.Length; i++)
+        {
+            res = res.Replace(pattern[i].ToString(),"");
+        }
+        return res;
+    }
+
     void CheckEmail(string email)
     {
-        if(string.IsNullOrEmpty(Phone.text))
+        phone = GetPhoneNumbers(Phone.text);
+        if(string.IsNullOrEmpty(phone))
         {
             CantContinue(InvalidFormatPhone);
             return;
@@ -193,7 +251,7 @@ public class Registration : MonoBehaviour
     public void CheckPhone()
     {
         bool exist;
-        InputString parameters = new InputString() { Value = Phone.text };
+        InputString parameters = new InputString() { Value = phone };
 
         StartCoroutine(NetworkHelper.SendRequest(CheckPhoneUrl, JsonConvert.SerializeObject(parameters), "application/json", (response) =>
         {
@@ -204,7 +262,7 @@ public class Registration : MonoBehaviour
             else
             {
                 NewUser.Email = Email.text;
-                NewUser.PhoneNumber = Phone.text;
+                NewUser.PhoneNumber = phone;
                 NextPage();
             }
         }));

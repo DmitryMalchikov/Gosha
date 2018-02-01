@@ -30,8 +30,11 @@ public class MapGenerator : MonoBehaviour
             _tiles[i].gameObject.SetActive(false);
             _tiles[i].transform.localPosition = new Vector3(0, -1.4f, 0);
             _tiles[i].Generated = false;
+            _tiles[i].Obstacles.StopCars();
+            _tiles[i].CarsStarted = false;
         }
-
+        StartTile.Obstacles.StopCars();
+        StartTile.CarsStarted = false;
         _lastTile = null;
         _avaliableTiles = new List<Tile>(_tiles);
     }

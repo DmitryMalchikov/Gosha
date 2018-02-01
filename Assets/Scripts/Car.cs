@@ -18,9 +18,14 @@ public class Car : MonoBehaviour {
             }
             else
             {
-                transform.localPosition = defaultPos;
+                ResetPos();
             }
         }
+    }
+
+    public void ResetPos()
+    {
+        transform.localPosition = defaultPos;
     }
 
     void Update ()

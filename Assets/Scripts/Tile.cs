@@ -17,7 +17,7 @@ public class Tile : MonoBehaviour
 
     byte counter = 0;
 
-    bool CarsStarted = false;
+    public bool CarsStarted = false;
 
 	[HideInInspector]
 	public List<Collider> DisabledColliders = new List<Collider> ();
