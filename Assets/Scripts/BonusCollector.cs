@@ -8,16 +8,9 @@ public class BonusCollector : MonoBehaviour {
 
     IPickable _pickable;
 
-    public BoxCollider Collider;
-
     private void Awake()
     {
         Instance = this;
-    }
-
-    private void Start()
-    {
-        Collider = GetComponent<BoxCollider>();
     }
 
     private void OnTriggerEnter(Collider other)

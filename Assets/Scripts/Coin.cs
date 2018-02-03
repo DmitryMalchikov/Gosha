@@ -27,7 +27,7 @@ public class Coin : MonoBehaviour, IPickable
         while (true)
         {
             yield return GameController.Frame;
-            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position + Vector3.forward / 2, startSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, startSpeed);
             startSpeed += GameController.Instance.CoinSpeed * GameController.Instance.Speed.z;
         }
         
