@@ -110,8 +110,6 @@ public class SnapScrolling : MonoBehaviour
     {
         if (panCount > 0)
         {
-            Debug.Log("Fixed update");
-
             if (contentRect.anchoredPosition.x >= pansPos[0].x && !isScrolling || contentRect.anchoredPosition.x <= pansPos[pansPos.Length - 1].x && !isScrolling)
             {
                 scrollRect.inertia = false;

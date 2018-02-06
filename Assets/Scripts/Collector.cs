@@ -53,6 +53,8 @@ public class Collector : MonoBehaviour {
     IEnumerator DefaultSize()
     {
         GameController.Instance.Magnet = true;
+		PlayerController.TurnOnEffect (EffectType.Magnet);
+
         Canvaser.Instance.GamePanel.Magnet.gameObject.SetActive(true);
         while (GameController.Instance.MagnetTimeLeft > 0)
         {
@@ -66,6 +68,7 @@ public class Collector : MonoBehaviour {
         //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
         Collider.size = StandardSize;
         GameController.Instance.Magnet = false;
+		PlayerController.TurnOffEffect (EffectType.Magnet);
     }
 
     public void ResetSas()

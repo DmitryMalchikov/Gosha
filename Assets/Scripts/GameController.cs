@@ -90,7 +90,6 @@ public class GameController : MonoBehaviour
 
     public bool Continued = false;
 	public string CancelBtn = "Cancel";
-	public GameObject RocketParticles;
 
     CurvedWorld_Controller curvController;
 
@@ -306,7 +305,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator UseRocket()
     {
-		RocketParticles.SetActive (true);
+		PlayerController.TurnOnEffect (EffectType.Rocket);
         Rocket = true;
         BlockMoving = true;
         StartCoroutine(CoinGenerator.Instance.StartGeneration());
@@ -343,7 +342,7 @@ public class GameController : MonoBehaviour
         }
 
         Rocket = false;
-		RocketParticles.SetActive (false);
+		PlayerController.TurnOffEffect (EffectType.Rocket);
 
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
@@ -396,7 +395,8 @@ public class GameController : MonoBehaviour
     IEnumerator ReturnSpeed()
     {
         Deceleration = true;
-		PlayerController.Instance.IceEffect.Play ();
+
+		PlayerController.TurnOnEffect (EffectType.Freeze);
 
         Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(true);
         while (DecelerationTimeLeft > 0)
@@ -410,7 +410,7 @@ public class GameController : MonoBehaviour
         Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(false);
         Deceleration = false;
         NormalSpeed = false;
-		PlayerController.Instance.IceEffect.Stop ();
+		PlayerController.TurnOffEffect (EffectType.Freeze);
 
         var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
 

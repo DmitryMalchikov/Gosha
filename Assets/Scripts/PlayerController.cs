@@ -43,11 +43,18 @@ public class PlayerController : MonoBehaviour
 	public float MinCollisionAngle;
 	public int MaxHitsCount = 2;
 	public float DeltaXOffset = .1f;
-	public ParticleSystem IceEffect;
+
+	[Header("Effects")]
+	public Effect IceEffect;
+	public Effect MagnetEffect;
+	public Effect ShieldEffect;
+	public Effect RocketEffect;
+
 
     private Vector3 moveDir;
 	private bool _wasHit = false;
 
+	[Space(20)]
     public Rigidbody rb;
 
 	public bool OnRamp = false;
@@ -85,6 +92,7 @@ public class PlayerController : MonoBehaviour
     private Collider lastHit;
 	private Vector3 velocityBeforePhysics;
 	private byte hitsCount;
+	private SuitInfo[] _suitsItems;
 
     private void Awake()
     {
@@ -115,6 +123,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
+		_suitsItems = GetComponentsInChildren<SuitInfo> ();
+		PutOnSuit (PlayerPrefs.GetString ("CurrentSuit"));
     }
 
     private void Update()
@@ -307,7 +317,9 @@ public class PlayerController : MonoBehaviour
 					}
 					//LastTile.DisableCollider (collision.collider);
 					//LastTile = null;
-					rb.velocity = velocityBeforePhysics;
+					if (rb.velocity.sqrMagnitude > .1f) {
+						rb.velocity = velocityBeforePhysics;
+					}
 					hitsCount++;
 					return;
 				}
@@ -345,7 +357,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator WaitDeath()
     {
-		IceEffect.Stop();
+		TurnOffEffects ();
         yield return new WaitForSeconds(1.8f);
 
         lastHit.enabled = true;
@@ -361,7 +373,9 @@ public class PlayerController : MonoBehaviour
 		RemoveObstcles ();
 		//LastTile.ClearObstacles();
 		//LastTile = null;
-		rb.velocity = velocityBeforePhysics;
+		if (rb.velocity.sqrMagnitude > .1f) {
+			rb.velocity = velocityBeforePhysics;
+		}
 	}
 
     private void OnCollisionExit(Collision collision)
@@ -437,6 +451,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator RemoveShield()
     {
         GameController.Instance.Shield = true;
+		TurnOnEffect (EffectType.Shield);
         Canvaser.Instance.GamePanel.Shield.gameObject.SetActive(true);
         while (GameController.Instance.ShieldTimeLeft > 0 && GameController.Instance.Shield)
         {
@@ -446,6 +461,7 @@ public class PlayerController : MonoBehaviour
         }
         Canvaser.Instance.GamePanel.Shield.gameObject.SetActive(false);
         GameController.Instance.Shield = false;
+		TurnOffEffect (EffectType.Shield);
     }
 
 	public void RemoveObstcles(){
@@ -454,4 +470,57 @@ public class PlayerController : MonoBehaviour
 			obstacles [i].transform.parent.gameObject.SetActive (false);
 		}
 	}
+
+	public void PutOnSuit(string suitName){
+		for (int i = 0; i < _suitsItems.Length; i++) {
+			if (_suitsItems [i].SuitName != suitName) {
+				_suitsItems [i].gameObject.SetActive (false);
+			}
+		}
+	}
+
+	public static void TurnOnEffect(EffectType type){
+		switch (type) {
+		case EffectType.Freeze:
+			Instance.IceEffect.Play ();
+			break;
+		case EffectType.Magnet:
+			Instance.MagnetEffect.Play ();
+			break;
+		case EffectType.Rocket:
+			Instance.RocketEffect.Play ();
+			break;
+		case EffectType.Shield:
+			Instance.ShieldEffect.Play ();
+			break;
+		}
+	}
+
+	public static void TurnOffEffect(EffectType type){
+		switch (type) {
+		case EffectType.Freeze:
+			Instance.IceEffect.Stop ();
+			break;
+		case EffectType.Magnet:
+			Instance.MagnetEffect.Stop ();
+			break;
+		case EffectType.Rocket:
+			Instance.RocketEffect.Stop (true);
+			break;
+		case EffectType.Shield:
+			Instance.ShieldEffect.Stop (true);
+			break;
+		}
+	}
+
+	public static void TurnOffEffects(){
+		Instance.IceEffect.Stop ();
+		Instance.MagnetEffect.Stop ();
+		Instance.RocketEffect.Stop (true);
+		Instance.ShieldEffect.Stop (true);
+	}
+}
+
+public enum EffectType{
+	Shield, Freeze, Magnet, Rocket
 }
