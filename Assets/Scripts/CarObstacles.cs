@@ -28,7 +28,7 @@ public class CarObstacles : MonoBehaviour
         {
             if (Cars[i].IsMoving)
             {
-                Cars[i].Speed = speed;
+                Cars[i].Speed = speed * (1 + (((GameController.Instance.Speed.z / -6f) -1f)/2f));
                 if (speed == 0)
                 {
                     Cars[i].ResetPos();
