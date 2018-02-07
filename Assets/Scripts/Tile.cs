@@ -26,6 +26,10 @@ public class Tile : MonoBehaviour
 		if (!GameController.Instance.Started) return;
 
 		transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+
+		if (PlayerController.Instance.OnRamp) {
+			PlayerController.Instance.StickToGround ();
+		}
 	}
 
     private void FixedUpdate()

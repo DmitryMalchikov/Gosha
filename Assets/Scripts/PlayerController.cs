@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
@@ -36,8 +34,7 @@ public class PlayerController : MonoBehaviour
     public bool isJumping;
     public bool isCrouching = false;
     public bool isMoving;
-    //public int Collisions = 0;
-	public List<CollisionInfo> Collisions = new List<CollisionInfo> ();
+    public int Collisions = 0;
 
 	public Transform AnimatorRoot;
     public Animator animator;
@@ -115,14 +112,14 @@ public class PlayerController : MonoBehaviour
 		animator.SetTrigger ("Reset");
         OnGround = true;
         CurrentX = 0;
-		//Collisions.Clear();
+        Collisions = 0;
 		hitsCount = 0;       
     }
 
     void Start()
     {
         environment = LayerMask.NameToLayer("Environment");
-		environmentMask = LayerMask.GetMask ("Environment", "Default");
+		environmentMask = LayerMask.GetMask ("Environment");
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
@@ -150,7 +147,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-		if (((!OnGround || !tempOnGround) && rb.velocity.y > 0 && !isMoving) && !OnRamp)
+		if ((!OnGround || !tempOnGround) && rb.velocity.y > 0 && !isMoving)
 		{
 			StickToGround ();
 		}
@@ -164,7 +161,6 @@ public class PlayerController : MonoBehaviour
 				zeroX.Set (0, rb.velocity.y, 0);
 				rb.velocity = zeroX;
 				moveDir = Vector3.zero;
-				rb.constraints = FreezeExceptMoveJump;
 				isMoving = false;
 				FixPos (CurrentX);
 				StartCoroutine (SetOnGround ());
@@ -175,11 +171,6 @@ public class PlayerController : MonoBehaviour
 	void FixedUpdate()
 	{
 		velocityBeforePhysics = rb.velocity;
-	}
-
-	void LateUpdate(){
-		if (OnRamp)
-			StickToGround ();
 	}
 
 	public void StickToGround(){
@@ -215,13 +206,12 @@ public class PlayerController : MonoBehaviour
             }
 
 			rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
-			rb.constraints = FreezeExceptMove;
             CurrentX += dir * Step;
             moveDir.x = dir * moveSpeed;
-//            if (OnGround)
-//            {
-//                moveDir.y = -100;
-//            }
+            if (OnGround)
+            {
+                moveDir.y = -100;
+            }
             rb.AddForce(moveDir, ForceMode.Acceleration);
             isMoving = true;
         }
@@ -268,186 +258,101 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitForCrouch());
     }
 
-	private void OnSideHit(Vector3 normal, Collision collision){
-		//Collisions.Add(new CollisionInfo(){Ground = false, Object = collision.gameObject});
-		dir = Mathf.Sign (normal.x);
-		if (OnGround) {
-			if (dir == 1) {
-				animator.SetTrigger (HitLeft);
-			} else {
-				animator.SetTrigger (HitRight);
-			}
-		}
-		if (CurrentX != dir * Step) {
-			CurrentX += dir * Step;
-		}
-		moveDir.x = dir * moveSpeed/2;
-//		if (OnGround) {
-//			moveDir.y = -100;
-//		}
-
-		rb.constraints = FreezeExceptMove;
-		rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
-		rb.AddForce (moveDir, ForceMode.Acceleration);
-		isMoving = true;
-
-		hitsCount++;
-		CameraFollow.Instance.ShakeCamera ();
-	}
-
-	private void OnHit(Collision collision){
-		//Collisions.Add(new CollisionInfo(){Ground = false, Object = collision.gameObject});
-		animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
-   	    lastHit = collision.collider;
-        lastHit.enabled = false;
-	    animator.SetTrigger(DeathHash);
-        GameController.Instance.Started = false;
-        animator.SetBool(StartedHash, false);
-        StartCoroutine(WaitDeath());
-        rb.useGravity = true;
-		rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
-		animator.ResetTrigger (HitLeft);
-		animator.ResetTrigger (HitRight);
-		animator.ResetTrigger (Left);
-		animator.ResetTrigger (Right);
-		CameraFollow.Instance.offset.z = -2.5f;
-		LastGroundY = StartPos.y;
-	}
-
-	private void OnGrounded(Collision collision){
-	  if (minY == 0)
-	  {
-	      minY = transform.position.y;
-	  }
-	
-		if (!Collisions.Any (col => col.Object == collision.gameObject)) {
-			Collisions.Add (new CollisionInfo (){ Ground = true, Object = collision.gameObject });
-		}
-	  OnGround = true;
-	  tempOnGround = true;
-	  isJumping = false;
-	  rb.useGravity = false;
-	}
-
     private void OnCollisionEnter(Collision collision)
     {
-		Vector3 normal = collision.contacts [0].normal;
-		//float angleUp = Vector3.Angle (normal, Vector3.up);
-		float angleForward = Vector3.Angle (normal, Vector3.back);
-		Vector2 normal2 = new Vector2 (normal.x, normal.z);
-		//float angle = Vector2.Angle(normal2, Vector2.down);
+		if (_wasHit)
+			return;
 
-		if (Mathf.Abs(normal.x) < 0.1f && normal.y > 0 && angleForward != 0) {
-			OnGrounded (collision);
-		} else if (normal2 != Vector2.zero && angleForward <= MaxCollisionAngle && angleForward >= MinCollisionAngle && hitsCount < MaxHitsCount) {
-			if (GameController.Instance.Shield) {
-				ShieldHit ();
-			} else {
-				OnSideHit (normal, collision);
-			}
-			//side hit
-		} else {
-			if (GameController.Instance.Shield) {
-				ShieldHit ();
-			} else {
-				OnHit (collision);
-			}
-		}
-				
+		if (collision.transform.tag == ObstacleTag)
+        {
+			if (!GameController.Instance.Started)
+				return;
 
-//		if (_wasHit)
-//			return;
-//
-//		if (collision.transform.tag == ObstacleTag)
-//        {
-//			if (!GameController.Instance.Started)
-//				return;
-//
-//			//LastTile = collision.transform.GetComponentInParent<Tile>();
-//
-//			if (GameController.Instance.Shield)
-//			{
-//				ShieldHit ();
-//				return;
-//			}
-//
-//			Vector3 normal = collision.contacts [0].normal;
-//			Vector2 normal2 = new Vector2 (normal.x, normal.z);
-//			float pointDelta = transform.position.x - collision.contacts [0].point.x;
-//			float angle = Vector2.Angle(normal2, Vector2.up);
-//			bool sidehit = (normal2 != Vector2.zero && angle > MinCollisionAngle && angle < MaxCollisionAngle);
-//			bool hardContact = Mathf.Abs (pointDelta) > DeltaXOffset;
-//
-//			if (hitsCount < MaxHitsCount) {
-//				if (sidehit) {
-//					dir = Mathf.Sign (normal.x);
-//					if (OnGround) {
-//						if (dir == 1) {
-//							animator.SetTrigger (HitLeft);
-//						} else {
-//							animator.SetTrigger (HitRight);
-//						}
-//					}
-//					if (CurrentX != dir * Step) {
-//						CurrentX += dir * Step;
-//					}
-//					moveDir.x = dir * moveSpeed/2;
-//					if (OnGround) {
-//						moveDir.y = -100;
-//					}
-//					rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
-//					rb.AddForce (moveDir, ForceMode.Acceleration);
-//					isMoving = true;
-//					hitsCount++;
-//					CameraFollow.Instance.ShakeCamera ();
-//					return;
-//				} else if (hardContact && UseHardTouch) {					
-//					dir = Mathf.Sign (pointDelta);
-//					if (OnGround) {
-//						if (dir == 1) {
-//							animator.SetTrigger (HitLeft);
-//						} else {
-//							animator.SetTrigger (HitRight);
-//						}
-//					}
-//					//LastTile.DisableCollider (collision.collider);
-//					//LastTile = null;
-//					if (rb.velocity.sqrMagnitude > .1f) {
-//						rb.velocity = velocityBeforePhysics;
-//					}
-//					hitsCount++;
-//					return;
-//				}
-//				}
-//			animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
-//                lastHit = collision.collider;
-//                lastHit.enabled = false;
-//                animator.SetTrigger(DeathHash);
-//                GameController.Instance.Started = false;
-//                animator.SetBool(StartedHash, false);
-//                StartCoroutine(WaitDeath());
-//                rb.useGravity = true;
-//			rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
-//			animator.ResetTrigger (HitLeft);
-//			animator.ResetTrigger (HitRight);
-//			animator.ResetTrigger (Left);
-//			animator.ResetTrigger (Right);
-//			CameraFollow.Instance.offset.z = -2.5f;
-//			LastGroundY = StartPos.y;
-//        }
-//        else if (collision.gameObject.layer == environment)
-//        {
-//            if (minY == 0)
-//            {
-//                minY = transform.position.y;
-//            }
-//
-//            Collisions += 1;
-//            OnGround = true;
-//			tempOnGround = true;
-//            isJumping = false;
-//            rb.useGravity = false;
-//        }
+			//LastTile = collision.transform.GetComponentInParent<Tile>();
+
+			if (GameController.Instance.Shield)
+			{
+				ShieldHit ();
+				return;
+			}
+
+			Vector3 normal = collision.contacts [0].normal;
+			Vector2 normal2 = new Vector2 (normal.x, normal.z);
+			float pointDelta = transform.position.x - collision.contacts [0].point.x;
+			float angle = Vector2.Angle(normal2, Vector2.up);
+			bool sidehit = (normal2 != Vector2.zero && angle > MinCollisionAngle && angle < MaxCollisionAngle);
+			bool hardContact = Mathf.Abs (pointDelta) > DeltaXOffset;
+
+			if (hitsCount < MaxHitsCount) {
+				if (sidehit) {
+					dir = Mathf.Sign (normal.x);
+					if (OnGround) {
+						if (dir == 1) {
+							animator.SetTrigger (HitLeft);
+						} else {
+							animator.SetTrigger (HitRight);
+						}
+					}
+					if (CurrentX != dir * Step) {
+						CurrentX += dir * Step;
+					}
+					moveDir.x = dir * moveSpeed/2;
+					if (OnGround) {
+						moveDir.y = -100;
+					}
+					rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
+					rb.AddForce (moveDir, ForceMode.Acceleration);
+					isMoving = true;
+					hitsCount++;
+					CameraFollow.Instance.ShakeCamera ();
+					return;
+				} else if (hardContact && UseHardTouch) {					
+					dir = Mathf.Sign (pointDelta);
+					if (OnGround) {
+						if (dir == 1) {
+							animator.SetTrigger (HitLeft);
+						} else {
+							animator.SetTrigger (HitRight);
+						}
+					}
+					//LastTile.DisableCollider (collision.collider);
+					//LastTile = null;
+					if (rb.velocity.sqrMagnitude > .1f) {
+						rb.velocity = velocityBeforePhysics;
+					}
+					hitsCount++;
+					return;
+				}
+				}
+			animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
+                lastHit = collision.collider;
+                lastHit.enabled = false;
+                animator.SetTrigger(DeathHash);
+                GameController.Instance.Started = false;
+                animator.SetBool(StartedHash, false);
+                StartCoroutine(WaitDeath());
+                rb.useGravity = true;
+			rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
+			animator.ResetTrigger (HitLeft);
+			animator.ResetTrigger (HitRight);
+			animator.ResetTrigger (Left);
+			animator.ResetTrigger (Right);
+			CameraFollow.Instance.offset.z = -2.5f;
+			LastGroundY = StartPos.y;
+        }
+        else if (collision.gameObject.layer == environment)
+        {
+            if (minY == 0)
+            {
+                minY = transform.position.y;
+            }
+
+            Collisions += 1;
+            OnGround = true;
+			tempOnGround = true;
+            isJumping = false;
+            rb.useGravity = false;
+        }
     }
 
     IEnumerator WaitDeath()
@@ -468,22 +373,22 @@ public class PlayerController : MonoBehaviour
 		RemoveObstcles ();
 		//LastTile.ClearObstacles();
 		//LastTile = null;
+		if (rb.velocity.sqrMagnitude > .1f) {
 			rb.velocity = velocityBeforePhysics;
+		}
 	}
 
     private void OnCollisionExit(Collision collision)
     {
+        if (collision.gameObject.layer == environment)
+        {
 			tempOnGround = false;
-		var toRemove = Collisions.Find (col => col.Object == collision.gameObject);
-		if (toRemove != null) {
-			Collisions.Remove (toRemove);
-			//Collisions -= 1;
-//			if (Collisions <= 0) {
-//				Collisions = 0;
-//			}
+			Collisions -= 1;
+			if (Collisions <= 0) {
+				Collisions = 0;
+			}
 			StartCoroutine (SetOnGround ());
-		}
-        //}
+        }
     }
 
 	IEnumerator SetOnGround(){
@@ -491,9 +396,9 @@ public class PlayerController : MonoBehaviour
 
 		if (!tempOnGround) {
 			
-			if (Collisions.Count == 0)
+			if (Collisions <= 0)
 			{
-				//Collisions = 0;
+				Collisions = 0;
 				OnGround = false;
 				tempOnGround = true;
 
@@ -618,9 +523,4 @@ public class PlayerController : MonoBehaviour
 
 public enum EffectType{
 	Shield, Freeze, Magnet, Rocket
-}
-
-public class CollisionInfo{
-	public bool Ground{ get; set;}
-	public GameObject Object{ get; set;}
 }

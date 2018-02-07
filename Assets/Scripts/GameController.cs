@@ -90,7 +90,6 @@ public class GameController : MonoBehaviour
 
     public bool Continued = false;
 	public string CancelBtn = "Cancel";
-	public TextureAnimator MainRoad;
 
     CurvedWorld_Controller curvController;
 
@@ -153,7 +152,6 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
 		AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
-		MainRoad.ResetOffset ();
         if (InDuel)
         {
             DuelManager.Instance.SubmitDuelResultAsync(DuelID, (int)CurrentPoints);
@@ -316,7 +314,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.rb.velocity += Vector3.up * (RocketPower - PlayerController.Instance.rb.velocity.y);
         //PlayerController.Instance.rb.AddForce(Vector3.up * RocketPower, ForceMode.Acceleration);
         PlayerController.Instance.col.enabled = false;
-		PlayerController.Instance.Collisions.Clear();
+        PlayerController.Instance.Collisions = 0;
         PlayerController.Instance.OnGround = false;
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(true);
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, true);
