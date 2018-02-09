@@ -10,25 +10,25 @@ public class WeeklyTask : MonoBehaviour {
 
     public Text Task;
     public Text TimeLeft;
-    public Image Prize;
+    //public Image Prize;
     PlayerTaskModel info;
-    public GameObject box;
-    public Transform CasesContent;
+    //public GameObject box;
+    //public Transform CasesContent;
 
-    public GameObject IsDone;
+    public GameObject IsLocked;
 
     public void SetTask(int number, PlayerTaskModel model)
     {
         info = model;
         Task.text = model.GenerateDescription();
-        for (int i = 0; i < model.Reward; i++)
-        {
-            Instantiate(box, CasesContent);
-        }
+        //for (int i = 0; i < model.Reward; i++)
+        //{
+        //    Instantiate(box, CasesContent);
+        //}
 
         if(info.PlayerProgress >= info.ActionsCount)
         {
-            IsDone.SetActive(true);
+            IsLocked.SetActive(false);
         }
 
         StartCoroutine(CheckTime());

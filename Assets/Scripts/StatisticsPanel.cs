@@ -35,15 +35,15 @@ public class StatisticsPanel : MonoBehaviour {
 
     public void UpdateInfo(int val)
     {
-        switch(val)
-        {
-            case 0:
-                LeadersText.text = LocalizationManager.GetLocalizedValue("weekleaders");
-                break;
-            case 1:
-                LeadersText.text = LocalizationManager.GetLocalizedValue("monthleaders");
-                break;
-        }
+        //switch(val)
+        //{
+        //    case 0:
+        //        LeadersText.text = LocalizationManager.GetLocalizedValue("weekleaders");
+        //        break;
+        //    case 1:
+        //        LeadersText.text = LocalizationManager.GetLocalizedValue("monthleaders");
+        //        break;
+        //}
         ClearContent(LeadersContent, Leaders);
         StatisticsManager.Instance.GetAllStatisticsAsync(val);
     }
