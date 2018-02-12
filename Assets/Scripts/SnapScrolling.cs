@@ -56,6 +56,7 @@ public class SnapScrolling : MonoBehaviour
         pansImage = new List<Image>();
         for (int i = 0; i < panCount; i++)
         {
+            Debug.Log(suits[i].Name);
             instPans[i] = Instantiate(panPref, transform, false);
             pansImage.Add(instPans[i].GetComponent<Image>());
             if (Costumes[i].CostumeAmount == 0)
