@@ -7,7 +7,7 @@ public class SuitsPanel : MonoBehaviour {
 
     public SnapScrolling SuitsScroll;
 
-    public RawImage CurrentSuitImage;
+    public Image CurrentSuitImage;
 
     public GameObject SuitPanel;
     public GameObject CardsPanel;
@@ -16,6 +16,7 @@ public class SuitsPanel : MonoBehaviour {
 
     public Button GetSuitBtn;
     public Button BuyCards;
+    public Button ShowSuitsCards;
 
     public Text PrizeText;
     public GameObject PrizePanel;
@@ -49,10 +50,17 @@ public class SuitsPanel : MonoBehaviour {
 
     public void SetCurrentCostume(Image selected, string Name)
     {
-
-        //CurrentSuitImage.texture = selected.sprite.texture;
+        if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit")
+        {
+            ShowSuitsCards.gameObject.SetActive(false);
+        }
+        else
+        {
+            ShowSuitsCards.gameObject.SetActive(true);
+            UpdateCards();
+        }
+        CurrentSuitImage.sprite = selected.sprite;
         SuitName.text = Name;
-        UpdateCards();
     }
 
     public void SetCurrentCase(Image selected)
@@ -63,6 +71,8 @@ public class SuitsPanel : MonoBehaviour {
     public void Open()
     {
         Canvaser.ShowLoading(true);
+        CardsPanel.SetActive(false);
+        SuitPanel.SetActive(true);
         InventoryManager.Instance.GetSuitsAsync();
     }
     
@@ -84,7 +94,7 @@ public class SuitsPanel : MonoBehaviour {
         gameObject.SetActive(true);
         Canvaser.ShowLoading(false);
         SuitsScroll.SetCostumes(costumes);
-        UpdateCards();
+        //UpdateCards();
     }
 
     public void ShowCards()
@@ -102,10 +112,11 @@ public class SuitsPanel : MonoBehaviour {
         }
     }
 
-    public void SetCard(InventoryCard card)
+    public void SetCard(InventoryCard card, string SuitName)
     {
         //set card image by costume ID
         Cards[card.Position - 1].gameObject.SetActive(card.Amount > 0);
+        Cards[card.Position - 1].GetComponent<Image>().sprite = Resources.Load<Sprite>(SuitName + " (" + card.Position + ")");
     }
     
     public void UpdateCards()
@@ -116,7 +127,7 @@ public class SuitsPanel : MonoBehaviour {
         {
             foreach (InventoryCard item in SuitsScroll.Costumes[SuitsScroll.selectedPanID].Cards)
             {
-                SetCard(item);
+                SetCard(item, SuitsScroll.Costumes[SuitsScroll.selectedPanID].Name);
             }
         }
 
