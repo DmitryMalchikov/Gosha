@@ -8,6 +8,7 @@ public class SuitsPanel : MonoBehaviour {
     public SnapScrolling SuitsScroll;
 
     public Image CurrentSuitImage;
+    public RawImage CaseImage;
 
     public GameObject SuitPanel;
     public GameObject CardsPanel;
@@ -159,13 +160,13 @@ public class SuitsPanel : MonoBehaviour {
         Debug.Log(cases.Count);
         if (cases.Count == 0)
         {
-            CurrentSuitImage.gameObject.SetActive(false);
+            CaseImage.gameObject.SetActive(false);
             Warning.text = LocalizationManager.GetLocalizedValue("nocases");
             Warning.gameObject.SetActive(true);
         }
         else
         {
-            CurrentSuitImage.gameObject.SetActive(true);
+            CaseImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
         SuitsScroll.SetCases(cases);
