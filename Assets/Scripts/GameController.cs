@@ -153,7 +153,6 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
 		AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
-		MainRoad.ResetOffset ();
         if (InDuel)
         {
             DuelManager.Instance.SubmitDuelResultAsync(DuelID, (int)CurrentPoints);
@@ -287,6 +286,7 @@ public class GameController : MonoBehaviour
     {
         Canvaser.Instance.AddCoin();
         CurrentCoins++;
+		PlayerController.PickIceCream ();
 		AchievementsManager.Instance.CheckAchievements(TasksTypes.CollectIceCream);
     }
 
@@ -332,7 +332,7 @@ public class GameController : MonoBehaviour
 		PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
         PlayerController.Instance.col.enabled = true;
         PlayerController.Instance.rb.velocity = Vector3.zero;
-		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMove;
+		PlayerController.Instance.rb.constraints = RigidbodyConstraints.FreezeAll;
         BlockMoving = false;
 
 
@@ -349,7 +349,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
         PlayerController.Instance.rb.useGravity = true;
-		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMoveJump;
+		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
     }
 
     public void UseBonus()

@@ -21,12 +21,6 @@ public class LootManager : MonoBehaviour {
         SetUrls();
     }
 
-	void Update(){
-		if (Input.GetKeyDown (KeyCode.G)) {
-			GetDailyBonusAsync ();
-		}
-	}
-
     public void SetUrls()
     {
         GetBonusUrl = ServerInfo.GetUrl(GetBonusUrl);
@@ -34,8 +28,6 @@ public class LootManager : MonoBehaviour {
     }
     public void OpenCaseAsync(int caseID)
     {
-        //Canvaser.ShowLoading(true);
-        InputInt input = new InputInt() { Value = caseID };
 		StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, JsonConvert.SerializeObject(new {CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) =>
         {
             Debug.Log("OK");

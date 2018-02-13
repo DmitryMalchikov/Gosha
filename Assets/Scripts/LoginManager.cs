@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public delegate void ResultCallback();
 
@@ -64,52 +65,74 @@ public class LoginManager : MonoBehaviour
     private void Start()
     {
         SetUrls();
-        LoginProvider = PlayerPrefs.GetString("provider");
-        if (!string.IsNullOrEmpty(LoginProvider))
-        {
-            OpenExternalLogin(LoginProvider);
-        }
-        else
-        {
-            if (string.IsNullOrEmpty(PlayerPrefs.GetString("email")))
-            {
-                Canvaser.Instance.CloseLoading();
-                //Canvaser.Instance.LoginPanel.SetActive(true);
-                //Canvaser.Instance.LoadingPanel.transform.SetAsLastSibling();
-            }
-            else
-            {
-                GetTokenAsync(true);
-            }
-        }
+        //LoginProvider = PlayerPrefs.GetString("provider");
+		string refreshExpires = PlayerPrefs.GetString("refresh_expires_in_gosha");
+
+		if (string.IsNullOrEmpty (refreshExpires)) {
+			Canvaser.Instance.CloseLoading ();
+		} else {
+			DateTime refreshExpireDate = DateTime.Parse (refreshExpires);
+
+			if (refreshExpireDate > DateTime.Now) {
+				var refreshToken = PlayerPrefs.GetString ("refresh_token_gosha");
+				GetTokenByRefreshAsync (refreshToken);
+			} else {
+				var provider = PlayerPrefs.GetString ("provider_gosha");
+
+				if (!string.IsNullOrEmpty (provider)) {
+					OpenExternalLogin (provider);
+				} else {
+					Canvaser.Instance.CloseLoading ();
+				}
+			}
+		}
     }
 
-    
+	public void GetTokenByRefreshAsync(string refreshToken)
+	{
+		StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), "application/json", (response) =>
+			{
+				userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
+				OneSignal.SyncHashedEmail(userToken.Email);
 
-    public void GetTokenAsync(bool haveCredits)
+				PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
+				PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+
+				LoginCanvas.Instance.EnableWarning(false);
+
+				Debug.Log(userToken.Token);
+
+				LoginCanvas.Instance.Enable(false);
+
+				Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
+				GetUserInfoAsync();
+				AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+				AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+				AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+			},
+			(response) =>
+			{
+				LoginCanvas.Instance.EnableWarning(true);
+			}));
+	}  
+
+    public void GetTokenAsync()
     {
         string email, password;
 
-        if (haveCredits)
-        {
-            email = PlayerPrefs.GetString("email");
-            password = PlayerPrefs.GetString("password");
-        }
-        else
-        {
-            email = Email.text;
-            password = Password.text;
-        }
+       	email = Email.text;
+       	password = Password.text;
 
         StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), "application/json", (response) =>
         {
-            PlayerPrefs.SetString("email", email);
-            PlayerPrefs.SetString("password", password);
-            OneSignal.SyncHashedEmail(email);
+			userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
+			
+			PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
+			PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+
+			OneSignal.SyncHashedEmail(userToken.Email);
 
             LoginCanvas.Instance.EnableWarning(false);
-
-            userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
 
             Debug.Log(userToken.Token);
 
@@ -223,28 +246,20 @@ public class LoginManager : MonoBehaviour
         SampleWebView.Instance.OpenWindow(string.Format(ExternalLoginUrl, provider));
     }
 
-    public void CheckExternalRegister()
+	public void CheckExternalRegister(string refresh, string expires, string email)
     {
-        Headers = new List<Header>() { new Header() { Name = "Authorization", Value = "Bearer " + userToken.Token } };
-
-        StartCoroutine(NetworkHelper.SendRequest(RegisterUserInfoUrl, "", "application/json", (response) =>
-        {
-            var result = JsonConvert.DeserializeObject<UserInfoViewModel>(response.Text);
-
-            //PlayerPrefs.SetString("email", result.Email);
-
-            if (!result.HasRegistered)
-            {
-                Canvaser.Instance.RegistrationPanel.ExternalRegistration(result.Email);
-            }
-            else
-            {
-                PlayerPrefs.SetString("provider", LoginProvider);
-                Canvaser.Instance.LoginPanel.SetActive(false);
-                GetUserInfoAsync();
-                Canvaser.Instance.MainMenu.SetActive(true);
-            }
-        }));
+		if (string.IsNullOrEmpty(refresh)) {
+			Canvaser.Instance.RegistrationPanel.ExternalRegistration (email);
+		} else {
+			Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
+			var seconds = int.Parse (expires);
+			PlayerPrefs.SetString ("provider_gosha", LoginProvider);
+			PlayerPrefs.SetString ("refresh_token_gosha", refresh);
+			PlayerPrefs.SetString ("refresh_expires_in_gosha", DateTime.Now.AddSeconds(seconds).ToString());
+			Canvaser.Instance.LoginPanel.SetActive (false);
+			GetUserInfoAsync ();
+			Canvaser.Instance.MainMenu.SetActive (true);
+		}
     }
 
     public void RegisterExternal(RegisterExternalBindingModel model)
@@ -264,9 +279,9 @@ public class LoginManager : MonoBehaviour
 
     public void LogOut()
     {
-        PlayerPrefs.DeleteKey("email");
-        PlayerPrefs.DeleteKey("password");
-        PlayerPrefs.DeleteKey("provider");
+		PlayerPrefs.DeleteKey ("refresh_token_gosha");
+		PlayerPrefs.DeleteKey ("refresh_expires_in_gosha");
+		PlayerPrefs.DeleteKey ("provider_gosha");
         OneSignal.SetSubscription(false);
         Headers = null;
         userToken = null;

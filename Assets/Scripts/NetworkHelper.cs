@@ -183,11 +183,17 @@ public class InputString
 
 public class AccessToken
 {
-    [JsonProperty(PropertyName = "access_token")]
-    public string Token { get; set; }
+	[JsonProperty(PropertyName = "access_token")]
+	public string Token { get; set; }
 
-    [JsonProperty(PropertyName = ".expires")]
-    public DateTime ExpireDate { get; set; }
+	[JsonProperty(PropertyName="userName")]
+	public string Email{ get; set;}
+
+	[JsonProperty(PropertyName="refresh_token")]
+	public string RefreshToken{ get; set;}
+
+	[JsonProperty(PropertyName = "refresh_expires_in")]
+	public float RefreshExpireIn { get; set; }
 }
 
 public class Header

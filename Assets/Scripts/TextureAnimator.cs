@@ -18,11 +18,7 @@ public class TextureAnimator : MonoBehaviour {
 			return;
 
 		offset += Time.deltaTime * GameController.Instance.Speed.z * SpeedCoef;
+		offset %= 1;
 		mat.SetTextureOffset ("_MainTex", new Vector2(0, offset));
-	}
-
-	public void ResetOffset(){
-		offset = 0;
-		mat.SetTextureOffset ("_MainTex", new Vector2(0, 0));
 	}
 }

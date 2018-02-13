@@ -6,8 +6,7 @@ using System.Linq;
 public class PlayerController : MonoBehaviour
 {
 	#region Constants
-	public const RigidbodyConstraints FreezeExceptMove = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY;
-	public const RigidbodyConstraints FreezeExceptMoveJump = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
+	public const RigidbodyConstraints FreezeExceptJump = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
 	#endregion
 
     #region Hashes
@@ -52,6 +51,7 @@ public class PlayerController : MonoBehaviour
 	public Effect MagnetEffect;
 	public Effect ShieldEffect;
 	public Effect RocketEffect;
+	public ParticleSystem IceCreamPicked;
 
 
     private Vector3 moveDir;
@@ -157,17 +157,21 @@ public class PlayerController : MonoBehaviour
 
         if (isMoving)
         {
+			
+
             bool back = false;
             back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
 
-			if (Mathf.Abs (transform.position.x - CurrentX) < 0.1f || back) {
-				zeroX.Set (0, rb.velocity.y, 0);
-				rb.velocity = zeroX;
+			if (Mathf.Abs (transform.position.x - CurrentX) < 0.01f || back) {
+				//zeroX.Set (0, rb.velocity.y, 0);
+				//rb.velocity = zeroX;
 				moveDir = Vector3.zero;
-				rb.constraints = FreezeExceptMoveJump;
+				rb.constraints = FreezeExceptJump;
 				isMoving = false;
 				FixPos (CurrentX);
 				StartCoroutine (SetOnGround ());
+			} else {
+				transform.Translate (moveDir * moveSpeed * Time.deltaTime);
 			}
         }
     }
@@ -214,15 +218,18 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-			rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
-			rb.constraints = FreezeExceptMove;
+			//rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
+			if (OnGround) {
+				rb.constraints = RigidbodyConstraints.FreezeAll;
+			}
+
             CurrentX += dir * Step;
-            moveDir.x = dir * moveSpeed;
+			moveDir = Vector3.right * dir;
 //            if (OnGround)
 //            {
 //                moveDir.y = -100;
 //            }
-            rb.AddForce(moveDir, ForceMode.Acceleration);
+            //rb.AddForce(moveDir, ForceMode.Acceleration);
             isMoving = true;
         }
     }
@@ -238,7 +245,7 @@ public class PlayerController : MonoBehaviour
         if (OnGround)
         {
             animator.SetTrigger(JumpHash);
-            moveDir.x = rb.velocity.x;
+            //moveDir.x = rb.velocity.x;
             moveDir.y = JumpSpeed;
             rb.velocity = moveDir;
             isJumping = true;
@@ -281,14 +288,15 @@ public class PlayerController : MonoBehaviour
 		if (CurrentX != dir * Step) {
 			CurrentX += dir * Step;
 		}
-		moveDir.x = dir * moveSpeed/2;
+		//moveDir.x = dir * moveSpeed/2;
 //		if (OnGround) {
 //			moveDir.y = -100;
 //		}
 
-		rb.constraints = FreezeExceptMove;
-		rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
-		rb.AddForce (moveDir, ForceMode.Acceleration);
+		moveDir = Vector3.right * dir;
+		rb.constraints = RigidbodyConstraints.FreezeAll;
+		//rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
+		//rb.AddForce (moveDir, ForceMode.Acceleration);
 		isMoving = true;
 
 		hitsCount++;
@@ -471,6 +479,9 @@ public class PlayerController : MonoBehaviour
 			rb.velocity = velocityBeforePhysics;
 	}
 
+	private void MoveToPosition(Vector3 position){
+	}
+
     private void OnCollisionExit(Collision collision)
     {
 			tempOnGround = false;
@@ -614,6 +625,10 @@ public class PlayerController : MonoBehaviour
 		Instance.RocketEffect.Stop (true);
 		Instance.ShieldEffect.Stop (true);
 	}
+
+	public static void PickIceCream(){
+		Instance.IceCreamPicked.Emit (1);
+	}
 }
 
 public enum EffectType{
@@ -624,3 +639,5 @@ public class CollisionInfo{
 	public bool Ground{ get; set;}
 	public GameObject Object{ get; set;}
 }
+
+

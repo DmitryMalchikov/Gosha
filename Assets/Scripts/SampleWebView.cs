@@ -47,13 +47,12 @@ public class SampleWebView : MonoBehaviour
 
 			var parsed = HttpUtility.ParseQueryString (vals);
 
-            //status.text = url;
 			string token = parsed["access_token"];
-            string expireDate = parsed["expires_in"];
-            var s = DateTime.Now.AddSeconds(double.Parse(expireDate));
-            //CloseWindow();
-            LoginManager.userToken = new AccessToken() { Token = token, ExpireDate = s };
-            LoginManager.Instance.CheckExternalRegister();
+			string refreshToken = parsed ["refresh_token"];
+			string refreshExpire = parsed ["refresh_expires_in"];
+			string email = parsed["userName"];
+            LoginManager.userToken = new AccessToken() { Token = token };
+			LoginManager.Instance.CheckExternalRegister(refreshToken, refreshExpire, email);
 			CloseWindow ();
 			Canvaser.Instance.CloseLoading ();
         }

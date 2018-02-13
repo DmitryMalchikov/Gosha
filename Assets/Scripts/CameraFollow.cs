@@ -40,7 +40,7 @@ public class CameraFollow : MonoBehaviour {
 		//x = transform.position.x;
         animator.enabled = false;
        
-		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptMoveJump;
+		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
         Canvaser.Instance.GamePanel.gameObject.SetActive(true);
         ScoreManager.StartRun();
         GameController.Instance.ResetScores();
