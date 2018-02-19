@@ -200,11 +200,10 @@ public class GameController : MonoBehaviour
         Continued = true;
         Started = true;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
+		PlayerController.Instance.animator.SetTrigger("Reset");
 		PlayerController.Instance.animator.transform.rotation = new Quaternion ();
 		PlayerController.Instance.transform.position += Vector3.right * (PlayerController.Instance.CurrentX - PlayerController.Instance.transform.position.x);
         Canvaser.Instance.Countdown.SetActive(true);
-        //PlayerController.Instance.LastTile.ClearObstacles();
-        //PlayerController.Instance.LastTile = null;
 		PlayerController.Instance.RemoveObstcles();
 		CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
     }
