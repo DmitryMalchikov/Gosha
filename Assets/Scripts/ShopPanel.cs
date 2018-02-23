@@ -31,10 +31,7 @@ public class ShopPanel : MonoBehaviour
         //Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
 
         LoginManager.Instance.GetUserInfoAsync(() => Synchroniser.SetReady(0));
-        ShopManager.Instance.GetBonusesAsync(() => Synchroniser.SetReady(1));
-        ShopManager.Instance.GetBonusesUpgradesAsync(() => Synchroniser.SetReady(2));
-        ShopManager.Instance.GetCardsAsync(() => Synchroniser.SetReady(3));
-        ShopManager.Instance.GetCasesAsync(() => Synchroniser.SetReady(4));
+        ShopManager.Instance.GetShopItemsAsync(() => Synchroniser.SetReady(1));
     }
 
     public void SetPromoBtn()

@@ -44,6 +44,7 @@ public class Canvaser : MonoBehaviour
     public Text GameOverDistance;
     public Text GameOverIceCream;
     public Text GameOverCases;
+	public GameObject DoubleScoreButton;
 
     public SuitsPanel Suits;
     public GameObject PausePanel;
@@ -161,6 +162,7 @@ public class Canvaser : MonoBehaviour
 
     public void SetGameOverPanel()
     {
+		DoubleScoreButton.SetActive(true);
         GameOverCases.text = string.Format("x{0}",GameController.Instance.CurrentBoxes);
         GameOverDistance.text = score + LocalizationManager.GetLocalizedValue("meter");
         GameOverIceCream.text = string.Format("{0}", coins);
@@ -170,7 +172,19 @@ public class Canvaser : MonoBehaviour
         GameOverPanel.SetActive(true);
     }
 
-    private void Awake()
+	public void DoubleScore()
+	{
+		DoubleScoreButton.SetActive(false);
+		ADSPanel.transform.SetAsLastSibling();
+		LoadingPanel.transform.SetAsLastSibling();
+		ADSPanel.DoubleScore();
+		coins = int.Parse(GameOverIceCream.text);
+		ScoreManager.Instance.SubmitScoreAsync(0, coins, 0);
+		GameOverIceCream.text = string.Format("{0}", coins * 2);
+		coins = 0;
+	}
+
+	private void Awake()
     {
         Instance = this;
         offer = new TradeOfferModel();

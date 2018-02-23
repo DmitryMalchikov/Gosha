@@ -553,6 +553,14 @@ public class ShopCard : ShopItem
     public string SuitName { get; set; }
 }
 
+public class ShopModel
+{
+	public List<ShopCard> Cards { get; set; }
+	public List<ShopItem> Bonuses { get; set; }
+	public List<ShopItem> Cases { get; set; }
+	public List<ShopItem> BonusUpgrades { get; set; }
+}
+
 public class DuelResultModel
 {
     public PlayerDuelModel FirstPlayer { get; set; }

@@ -14,10 +14,11 @@ public class ShopManager : MonoBehaviour
     public string GetSuitUrl = "/api/shop/getsuit";
     public string GetCardsUrl = "/api/shop/cards";
     public string GetCasesUrl = "/api/shop/cases";
-    public string GetBonusesUrl = "/api/shop/bonuses";
+	public string GetBonusesUrl = "/api/shop/bonuses";
+	public string GetShopItemsUrl = "/api/shop/shopitems";
 
 
-    private void Awake()
+	private void Awake()
     {
         Instance = this;
     }
@@ -35,6 +36,7 @@ public class ShopManager : MonoBehaviour
         GetCardsUrl = ServerInfo.GetUrl(GetCardsUrl);
         GetCasesUrl = ServerInfo.GetUrl(GetCasesUrl);
         GetBonusesUrl = ServerInfo.GetUrl(GetBonusesUrl);
+		GetShopItemsUrl = ServerInfo.GetUrl(GetShopItemsUrl);
     }
 
     public void EnterPromoCodeAsync(string code)
@@ -139,4 +141,24 @@ public class ShopManager : MonoBehaviour
             Canvaser.Instance.Suits.Open();
         }));
     }
+
+	public void GetShopItemsAsync(ResultCallback callback = null)
+	{
+		StartCoroutine(NetworkHelper.SendRequest(GetShopItemsUrl, "", "application/json", (response) =>
+		{
+			Debug.Log("OK");
+			//show tasks
+			ShopModel model = JsonConvert.DeserializeObject<ShopModel>(response.Text);
+			Canvaser.Instance.Shop.SetBonuses(model.Bonuses);
+			Canvaser.Instance.Shop.SetCases(model.Cases);
+			Canvaser.Instance.Shop.SetCards(model.Cards);
+			Canvaser.Instance.Shop.SetUpgrades(model.BonusUpgrades);
+
+			Canvaser.Instance.Shop.gameObject.SetActive(true);
+			if (callback != null)
+			{
+				callback();
+			}
+		}));
+	}
 }

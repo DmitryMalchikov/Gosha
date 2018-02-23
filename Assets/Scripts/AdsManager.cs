@@ -14,8 +14,9 @@ public class AdsManager : MonoBehaviour {
 
     public string AdsUrl = "/api/ads/Advertisement";
     public string AdsImageUrl = "/api/ads/adsimage?adsId=";
+	public string DoubleScoreUrl = "/api/gameplay/doublescore";
 
-    private void Awake()
+	private void Awake()
     {
         Instance = this;
     }
@@ -27,8 +28,21 @@ public class AdsManager : MonoBehaviour {
     {
         AdsUrl = ServerInfo.GetUrl(AdsUrl);
         AdsImageUrl = ServerInfo.GetUrl(AdsImageUrl);
+		DoubleScoreUrl = ServerInfo.GetUrl(DoubleScoreUrl);
     }
-    public void GetAds(Text text, Image image)
+
+	public void DoubleScoreAds(Text text, Image image)
+	{
+		StartCoroutine(NetworkHelper.SendRequest(DoubleScoreUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage }), "application/json", (response) =>
+		{
+			AdsModel ads = JsonConvert.DeserializeObject<AdsModel>(response.Text);
+			text.text = ads.Text;
+
+			GetAdsImage(ads.Id, image);
+		}));
+	}
+
+	public void GetAds(Text text, Image image)
     {
         StartCoroutine(NetworkHelper.SendRequest(AdsUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) => 
         {
