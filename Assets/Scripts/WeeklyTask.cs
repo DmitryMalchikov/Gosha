@@ -29,10 +29,12 @@ public class WeeklyTask : MonoBehaviour {
         if(info.PlayerProgress >= info.ActionsCount)
         {
             IsLocked.SetActive(false);
-        }
-
-        StartCoroutine(CheckTime());
+        }        
     }
+
+	private void OnEnable(){
+		StartCoroutine(CheckTime());
+	}
 
     protected IEnumerator CheckTime()
     {

@@ -69,17 +69,18 @@ public class Canvaser : MonoBehaviour
 
     public Text Test;
     public ToggleGroup BonusesToggleGroup;
-    public AudioMixer MainMixer;
+    public AudioMixer MusicMixer;
+	public AudioMixer EffectsMixer;
 
     public Button DailyBonusBtn;
     public Button WeeklyTasksBtn;
     public Button TournamentBtn;
-    public Slider VolumeSlider;
-    public ChangeState ToggleMute;
+
+    public Slider MusicVolumeSlider;
+	public Slider EffectsVolumeSlider;
     
     public AdsPanel ADSPanel;
 
-    public static float CurrentVolume = 0;
     public Dropdown LanguageDropdown;
 
     public SuitsPanel CasesPanel;
@@ -117,9 +118,15 @@ public class Canvaser : MonoBehaviour
 
     private void Start()
     {
-        CurrentVolume = PlayerPrefs.GetFloat("GameVolume");
-        SetVolume(CurrentVolume);
-        VolumeSlider.value = CurrentVolume;
+		var musicVolume = PlayerPrefs.GetFloat("music_volume_gosha");
+		var effectsVolume = PlayerPrefs.GetFloat("effects_volume_gosha");
+
+		//SetMusicVolume (musicVolume);
+		//SetEffectsVolume (effectsVolume);
+
+		MusicVolumeSlider.value = musicVolume;
+		EffectsVolumeSlider.value = effectsVolume;
+
         Application.runInBackground = true;
         StartCoroutine(WaitErrorCheck());
     }
@@ -252,33 +259,18 @@ public class Canvaser : MonoBehaviour
         TradeManager.Instance.GetTradeOffersAsync();
     }
 
-    public void SetVolume(float volume)
+    public void SetEffectsVolume(float volume)
     {
-        MainMixer.SetFloat("MainVolume", volume);
-        PlayerPrefs.SetFloat("GameVolume", volume);        
-
-        if (volume > -80)
-        {
-            ToggleMute.SwitchOff();
-        }
-        else
-        {
-            ToggleMute.SwitchOn();
-        }
+		EffectsMixer.SetFloat("MainVolume", volume);
+        PlayerPrefs.SetFloat("effects_volume_gosha", volume);        
     }
 
-    public void Mute(bool mute)
-    {
-        if (mute)
-        {
-            CurrentVolume = VolumeSlider.value;
-            VolumeSlider.value = -80;
-        }
-        else
-        {
-            VolumeSlider.value = CurrentVolume;
-        }
-    }
+	public void SetMusicVolume(float volume)
+	{
+		MusicMixer.SetFloat("MainVolume", volume);
+		PlayerPrefs.SetFloat("music_volume_gosha", volume);        
+	}
+		
 
     public void SetAllIceCreams(int amount)
     {

@@ -253,6 +253,8 @@ public class GameController : MonoBehaviour
 		}
     }
 
+	bool setRun = false;
+
     IEnumerator GameStarted()
     {
         while (Started)
@@ -261,11 +263,15 @@ public class GameController : MonoBehaviour
 
             points = Mathf.Round(CurrentPoints);
             Canvaser.Instance.SetScore((int)points);
-            if (points % 10 == 0 && points != 0)
-            {
-				AchievementsManager.Instance.CheckAchievements(TasksTypes.Run, 10);
-				TasksManager.Instance.CheckTasks(TasksTypes.Run, 10);
-            }
+			if (points % 10 == 0 && points != 0) {
+				if (setRun) {
+					AchievementsManager.Instance.CheckAchievements (TasksTypes.Run, 10);
+					TasksManager.Instance.CheckTasks (TasksTypes.Run, 10);
+					setRun = false;
+				}
+			} else {
+				setRun = true;
+			}
             if (Input.GetKeyDown(KeyCode.R))
             {
                 ApplyRocket();
