@@ -89,11 +89,14 @@ public class SnapScrolling : MonoBehaviour
         pansPos = new Vector2[panCount];
         pansScale = new Vector2[panCount];
         pansImage = new List<Image>();
+		CasesIds.Clear ();
+
         for (int j = 0; j < cases.Count; j++)
         {
+			CasesIds.Add(cases[j].Id);
+
             for (int i = 0; i < cases[j].Amount/*panCount*/; i++)
-            {
-                CasesIds.Add(cases[j].Id);
+            {                
                 instPans[i] = Instantiate(panPref, transform, false);
                 pansImage.Add(instPans[i].GetComponent<Image>());
 

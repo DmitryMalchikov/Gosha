@@ -132,7 +132,10 @@ public class TasksManager : MonoBehaviour
             model.Id = newModel.Id;
             model.PlayerStartProgress = model.PlayerProgress;
 
-            Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
+				if (model.PlayerProgress >= model.ActionsCount)
+				{
+            		Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
+				}
         }));
     }
 

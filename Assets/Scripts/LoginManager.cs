@@ -93,6 +93,8 @@ public class LoginManager : MonoBehaviour
 		StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), "application/json", (response) =>
 			{
 				userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
+
+				OneSignal.SetSubscription(true);
 				OneSignal.SyncHashedEmail(userToken.Email);
 
 				PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
@@ -130,6 +132,7 @@ public class LoginManager : MonoBehaviour
 			PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
 			PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
 
+			OneSignal.SetSubscription(true);
 			OneSignal.SyncHashedEmail(userToken.Email);
 
             LoginCanvas.Instance.EnableWarning(false);
@@ -256,6 +259,8 @@ public class LoginManager : MonoBehaviour
 			PlayerPrefs.SetString ("provider_gosha", LoginProvider);
 			PlayerPrefs.SetString ("refresh_token_gosha", refresh);
 			PlayerPrefs.SetString ("refresh_expires_in_gosha", DateTime.Now.AddSeconds(seconds).ToString());
+			OneSignal.SetSubscription (true);
+			OneSignal.SyncHashedEmail (email);
 			Canvaser.Instance.LoginPanel.SetActive (false);
 			GetUserInfoAsync ();
 			Canvaser.Instance.MainMenu.SetActive (true);

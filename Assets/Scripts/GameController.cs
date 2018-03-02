@@ -101,7 +101,7 @@ public class GameController : MonoBehaviour
             new BonusesOn("Magnet"),
             new BonusesOn("Shield"),
             new BonusesOn("Rocket"),
-            new BonusesOn("Decelerator")
+            new BonusesOn("Freeze")
         };
     }
 
@@ -122,6 +122,7 @@ public class GameController : MonoBehaviour
         CurrentPoints = 0;
         CurrentSpeed = Speed;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
+		TasksManager.Instance.CheckTasks (TasksTypes.Play);
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());
         StartCoroutine(GameStarted());
@@ -254,6 +255,9 @@ public class GameController : MonoBehaviour
     }
 
 	bool setRun = false;
+	public Material Skybox;
+	public float RotationCoef;
+	private float SkyboxRotation = 0f;
 
     IEnumerator GameStarted()
     {
@@ -282,6 +286,9 @@ public class GameController : MonoBehaviour
 			if (Input.GetKeyDown (KeyCode.S)) {
 				PlayerController.Instance.ApplyShield ();
 			}
+
+			SkyboxRotation = (SkyboxRotation + CurvedWorld_Controller.get._V_CW_Bend_Y * RotationCoef * Time.deltaTime) % 360;
+			Skybox.SetFloat ("_Rotation", SkyboxRotation);
 
             yield return null;
         }
@@ -457,7 +464,7 @@ public class GameController : MonoBehaviour
             ShieldTime = upgrades.Find(x => x.BonusName == "Shield").BonusTime;
         }
     }
-
+		
     IEnumerator ChangeDirection()
     {
         while (true)
