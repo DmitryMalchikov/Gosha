@@ -7,7 +7,11 @@ public class SuitsPanel : MonoBehaviour {
 
     public SnapScrolling SuitsScroll;
 
+    public GameObject CaseCamera;
+    public GameObject SuitCamera;
+
     public Image CurrentSuitImage;
+    public RawImage SuitImage;
     public RawImage CaseImage;
 
     public GameObject SuitPanel;
@@ -29,7 +33,8 @@ public class SuitsPanel : MonoBehaviour {
     public GameObject Idle;
     public GameObject PreopenCase;
     public GameObject OpenCaseParticle;
-    
+
+    public Button PutOnSuitBtn;
 
     public void SetPrize(Bonus bonus)
     {
@@ -49,8 +54,9 @@ public class SuitsPanel : MonoBehaviour {
         Idle.SetActive(true);
     }
 
-    public void SetCurrentCostume(Image selected, string Name)
+    public void SetCurrentCostume(string Name, bool HasSuit)
     {
+        PutOnSuitBtn.gameObject.SetActive(HasSuit);
         if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit")
         {
             ShowSuitsCards.gameObject.SetActive(false);
@@ -60,8 +66,14 @@ public class SuitsPanel : MonoBehaviour {
             ShowSuitsCards.gameObject.SetActive(true);
             UpdateCards();
         }
-        CurrentSuitImage.sprite = selected.sprite;
+        //CurrentSuitImage.sprite = selected.sprite;
+        PlayerController.Instance.PutOnSuit(Name);
         SuitName.text = Name;
+    }
+
+    public void PutOnSuit()
+    {
+        PlayerPrefs.SetString("CurrentSuit", SuitName.text);
     }
 
     public void SetCurrentCase(Image selected)
@@ -83,13 +95,14 @@ public class SuitsPanel : MonoBehaviour {
         Debug.Log(costumes.Count);
         if (costumes.Count == 0)
         {
-            CurrentSuitImage.gameObject.SetActive(false);
+            SuitImage.gameObject.SetActive(false);
             Warning.text = LocalizationManager.GetLocalizedValue("nosuits");
             Warning.gameObject.SetActive(true);
         }
         else
         {
-            CurrentSuitImage.gameObject.SetActive(true);
+            SuitCamera.SetActive(true);
+            SuitImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
         gameObject.SetActive(true);
@@ -101,6 +114,7 @@ public class SuitsPanel : MonoBehaviour {
     public void ShowCards()
     {
         SuitPanel.SetActive(false);
+        PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
         CardsPanel.SetActive(true);
         UpdateCards();
     }
@@ -147,7 +161,23 @@ public class SuitsPanel : MonoBehaviour {
     public void ShowCostume()
     {
         CardsPanel.SetActive(false);
+        PlayerController.Instance.PutOnSuit(SuitName.text);
         SuitPanel.SetActive(true);
+    }
+
+
+    public void ClosePanel()
+    {
+        PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+        if (Canvaser.Instance.CasesPanel.gameObject.activeInHierarchy)
+        {
+            CaseCamera.SetActive(false);
+        }
+        else
+        {
+            SuitCamera.SetActive(false);
+        }
+        gameObject.SetActive(false);
     }
 
     public void GetSuit()
@@ -166,6 +196,7 @@ public class SuitsPanel : MonoBehaviour {
         }
         else
         {
+            CaseCamera.SetActive(true);
             CaseImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
