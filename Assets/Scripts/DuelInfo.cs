@@ -19,9 +19,12 @@ public class DuelInfo : MonoBehaviour {
         info = model;
         Name.text = info.Nickname;
         Bet.text = info.Bet.ToString();
-        LoginManager.Instance.GetUserImage(info.UserId, Avatar);
-        StartCoroutine(CheckTime());
+        LoginManager.Instance.GetUserImage(info.UserId, Avatar);        
     }
+
+	void OnEnable(){
+		StartCoroutine (CheckTime ());
+	}
 
     public void AcceptDuel(bool accept)
     {
