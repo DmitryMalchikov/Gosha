@@ -177,9 +177,16 @@ public class Canvaser : MonoBehaviour
         coins = 0;
         GamePanel.gameObject.SetActive(false);
         GameOverPanel.SetActive(true);
+        CasesPanel.CaseCamera.SetActive(true);
     }
 
-	public void DoubleScore()
+    public void TurnOffGameOverPanel()
+    {
+        GameOverPanel.SetActive(false);
+        CasesPanel.CaseCamera.SetActive(false);
+    }
+
+    public void DoubleScore()
 	{
 		DoubleScoreButton.SetActive(false);
 		ADSPanel.transform.SetAsLastSibling();
