@@ -59,7 +59,7 @@ public class ShopManager : MonoBehaviour
             //show tasks
             if (upgrade)
             {
-                GetBonusesUpgradesAsync();
+				GetShopItemsAsync();
             }
 
             LoginManager.Instance.User.IceCream -= price;

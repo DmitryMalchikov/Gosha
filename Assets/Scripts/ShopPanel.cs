@@ -85,6 +85,7 @@ public class ShopPanel : MonoBehaviour
             if (item.Amount < 5)
             {
                 current.PriceText.text = (item.Cost * (item.Amount + 1)).ToString();
+				current.BuyButton.interactable = true;
             }
             else
             {

@@ -253,6 +253,7 @@ public class TournamentModel
     public DateTime ExpireDate { get; set; }
     public string Name { get; set; }
     public string Prizes { get; set; }
+	public bool AvaliableWeeklyTasks{ get; set;}
 }
 
 public class ItemBuyModel
