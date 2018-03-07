@@ -24,7 +24,7 @@ public class ShopPanel : MonoBehaviour
     public void Open()
     {
         //Canvaser.ShowLoading(true);
-        Synchroniser.NewSync(5);
+        Synchroniser.NewSync(2);
 
         Synchroniser.OnActionsReady += CheckBuyBtns;
         Synchroniser.OnActionsReady += () => gameObject.SetActive(true);

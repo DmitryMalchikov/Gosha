@@ -8,11 +8,13 @@ public class CardSetItem : MonoBehaviour {
     public int SuitID;
     public Text Title;
     public List<ItemInfo> Cards;
+	public Image SuitImage;
 
     public void SetCardSet(ShopCard card)
     {
         SuitID = card.SuitId;
         Title.text = LocalizationManager.GetLocalizedValue("suitcards") + card.SuitName;
+		SuitImage.sprite = Resources.Load<Sprite> (card.SuitName);
         SetCard(card);
     }
     public void SetCard(ShopCard card)
