@@ -55,14 +55,14 @@ public class Collector : MonoBehaviour {
         GameController.Instance.Magnet = true;
 		PlayerController.TurnOnEffect (EffectType.Magnet);
 
-        Canvaser.Instance.GamePanel.Magnet.gameObject.SetActive(true);
+        Canvaser.Instance.GamePanel.Magnet.Activate(true);
         while (GameController.Instance.MagnetTimeLeft > 0)
         {
             yield return GameController.Frame;
             GameController.Instance.MagnetTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Magnet.SetTimer(GameController.Instance.MagnetTimeLeft);
         }
-        Canvaser.Instance.GamePanel.Magnet.gameObject.SetActive(false);
+        Canvaser.Instance.GamePanel.Magnet.Activate(false);
         Canvaser.Instance.GamePanel.MagnetCD.OpenCooldownPanel();
 
         //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);

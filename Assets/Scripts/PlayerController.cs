@@ -498,14 +498,15 @@ public class PlayerController : MonoBehaviour
     {
         GameController.Instance.Shield = true;
         TurnOnEffect(EffectType.Shield);
-        Canvaser.Instance.GamePanel.Shield.gameObject.SetActive(true);
+        Canvaser.Instance.GamePanel.Shield.Activate(true);
         while (GameController.Instance.ShieldTimeLeft > 0 && GameController.Instance.Shield)
         {
             yield return GameController.Frame;
             GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
         }
-        Canvaser.Instance.GamePanel.Shield.gameObject.SetActive(false);
+        Canvaser.Instance.GamePanel.Shield.Activate(false);
+        Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
         GameController.Instance.Shield = false;
         TurnOffEffect(EffectType.Shield);
     }

@@ -330,7 +330,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.col.enabled = false;
 		PlayerController.Instance.Collisions.Clear();
         PlayerController.Instance.OnGround = false;
-        Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(true);
+        Canvaser.Instance.GamePanel.Rocket.Activate(true);
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, true);
         PlayerController.Instance.animator.SetTrigger("RocketTrigger");
 
@@ -359,7 +359,8 @@ public class GameController : MonoBehaviour
 		PlayerController.TurnOffEffect (EffectType.Rocket);
 
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
-        Canvaser.Instance.GamePanel.Rocket.gameObject.SetActive(false);
+        Canvaser.Instance.GamePanel.Rocket.Activate(false);
+        Canvaser.Instance.GamePanel.RocketCD.OpenCooldownPanel();
         PlayerController.Instance.rb.useGravity = true;
 		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
     }
@@ -412,7 +413,7 @@ public class GameController : MonoBehaviour
 
 		PlayerController.TurnOnEffect (EffectType.Freeze);
 
-        Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(true);
+        Canvaser.Instance.GamePanel.Decelerator.Activate(true);
         while (DecelerationTimeLeft > 0)
         {
             yield return Frame;
@@ -421,7 +422,8 @@ public class GameController : MonoBehaviour
             Canvaser.Instance.GamePanel.Decelerator.SetTimer(DecelerationTimeLeft);
         }
 
-        Canvaser.Instance.GamePanel.Decelerator.gameObject.SetActive(false);
+        Canvaser.Instance.GamePanel.Decelerator.Activate(false);
+        Canvaser.Instance.GamePanel.DeceleratorCD.OpenCooldownPanel();
         Deceleration = false;
         NormalSpeed = false;
 		PlayerController.TurnOffEffect (EffectType.Freeze);

@@ -31,14 +31,14 @@ public class GamePanel : MonoBehaviour
 
     public void TurdOffBonuses()
     {
-        Magnet.gameObject.SetActive(false);
-        Shield.gameObject.SetActive(false);
-        Decelerator.gameObject.SetActive(false);
-        Rocket.gameObject.SetActive(false);
+        Magnet.Activate(false);
+        Shield.Activate(false);
+        Decelerator.Activate(false);
+        Rocket.Activate(false);
 
-        MagnetCD.gameObject.SetActive(false);
-        ShieldCD.gameObject.SetActive(false);
-        DeceleratorCD.gameObject.SetActive(false);
-        RocketCD.gameObject.SetActive(false);
+        MagnetCD.Activate(false);
+        ShieldCD.Activate(false);
+        DeceleratorCD.Activate(false);
+        RocketCD.Activate(false);
     }
 }
