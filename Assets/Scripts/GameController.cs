@@ -122,6 +122,7 @@ public class GameController : MonoBehaviour
         CurrentPoints = 0;
         CurrentSpeed = Speed;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
+		PlayerController.Instance.animator.ResetTrigger("Reset");
 		TasksManager.Instance.CheckTasks (TasksTypes.Play);
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());

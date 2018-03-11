@@ -12,7 +12,7 @@ public class Ramp : MonoBehaviour {
 	void OnTriggerExit(Collider other){
 		if (other.CompareTag ("Player")) {
 			PlayerController.Instance.OnRamp = false;
-			PlayerController.Instance.rb.velocity += Vector3.down * PlayerController.Instance.rb.velocity.y;
+			//PlayerController.Instance.rb.velocity += Vector3.down * PlayerController.Instance.rb.velocity.y;
 		}
 	}
 

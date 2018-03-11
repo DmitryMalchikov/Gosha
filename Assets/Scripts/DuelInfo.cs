@@ -49,6 +49,8 @@ public class DuelInfo : MonoBehaviour {
 
     protected IEnumerator CheckTime()
     {
+		yield return new WaitUntil (() => info != null);
+
         while (true)
         {
             var time = (info.ExpireDate - DateTime.Now);

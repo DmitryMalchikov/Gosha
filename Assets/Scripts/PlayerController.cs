@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour
     public Tile LastTile;
 
     private float minY = 0;
+	private int DefaultLayer;
 
     public bool OnGround
     {
@@ -124,6 +125,7 @@ public class PlayerController : MonoBehaviour
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
         _suitsItems = GetComponentsInChildren<SuitInfo>();
+		DefaultLayer = LayerMask.NameToLayer ("Default");
         PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
     }
 
@@ -241,21 +243,27 @@ public class PlayerController : MonoBehaviour
         if (GameController.Instance.Rocket)
             return;
 
-        if (col.height == 0.35f)
-            StandUp();
-
-        if (OnGround)
-        {
-            animator.SetTrigger(JumpHash);
-            //moveDir.x = rb.velocity.x;
-            moveDir.y = JumpSpeed;
-            rb.velocity = moveDir;
-            isJumping = true;
-
-            AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
-            TasksManager.Instance.CheckTasks(TasksTypes.Jump);
-        }
+		StartCoroutine (StartJump ());
     }
+
+	IEnumerator StartJump(){
+		yield return new WaitUntil (() => isMoving == false && tempOnGround == true);
+
+		if (col.height == 0.35f)
+			StandUp();
+
+		if (OnGround)
+		{
+			animator.SetTrigger(JumpHash);
+			//moveDir.x = rb.velocity.x;
+			moveDir.y = JumpSpeed;
+			rb.velocity = moveDir;
+			isJumping = true;
+
+			AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
+			TasksManager.Instance.CheckTasks(TasksTypes.Jump);
+		}
+	}
 
     public void Crouch()
     {
@@ -350,6 +358,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+		if (collision.gameObject.layer != DefaultLayer) {
+			return;
+		}
+
         Vector3 normal = collision.contacts[0].normal;
         //float angleUp = Vector3.Angle (normal, Vector3.up);
         float angleForward = Vector3.Angle(normal, Vector3.back);
@@ -413,6 +425,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
+		if (collision.gameObject.layer != DefaultLayer) {
+			return;
+		}
+
         tempOnGround = false;
         var toRemove = Collisions.Find(col => col.Object == collision.gameObject);
         if (toRemove != null)
