@@ -15,22 +15,15 @@ public class BonusCollector : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "IceCream")
-        {
-			if (GameController.Instance.Magnet) {
-				GameController.Instance.AddCoin ();
-				other.gameObject.SetActive (false);
-			}
-        }
-        else if (other.tag == "Bonus")
-        {
-            _pickable = other.GetComponent<IPickable>();
+         _pickable = other.GetComponent<IPickable>();
 
-            if (_pickable != null)
-            {
-                _pickable.PickUp();
-				TasksManager.Instance.CheckTasks(TasksTypes.CollectBonus);
-            }
-        }
-    }
+         if (_pickable != null)
+         {
+             _pickable.PickUp();
+
+			if (other.tag == "Bonus") {
+				TasksManager.Instance.CheckTasks (TasksTypes.CollectBonus);
+			}
+         }
+     }
 }

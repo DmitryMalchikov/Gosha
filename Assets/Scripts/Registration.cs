@@ -155,16 +155,32 @@ public class Registration : MonoBehaviour
         }
     }
 
+	private int _previousLength = 0;
+	private string _previousInput;
+	private string _result = string.Empty;
+
     public void ChangePhoneCharacters(string input)
     {
-        string template = "+###(##)###-##-##";
-        char defaultCharacter = '_';
-        string charactersType = @"\d";
-        char placeholder = '#';
+		if (input == _result) {
+			return;
+		}
+		bool isDeleting = _previousLength > input.Length;
+		char deletedCharacter = ' ';
+		_previousLength = input.Length;
+		if (isDeleting && !string.IsNullOrEmpty(_previousInput)) {
+			deletedCharacter = _previousInput [_previousInput.Length - 1];
+		}
+		_previousInput = input;
+
+		char defaultCharacter = '_';
+		string charactersType = @"\d";
+		char placeholder = '#';
+		string template = Region.PhonePlaceholder.Replace (defaultCharacter, placeholder);
 
         StringBuilder builder = new StringBuilder(template);
         Regex reg = new Regex(charactersType);
         var matches = reg.Matches(input);
+		int matchesCount = matches.Count;
 
         int index = -1;
 
@@ -185,17 +201,46 @@ public class Registration : MonoBehaviour
                 builder.Replace(placeholder, matches[i].Value[0], index, 1);
             }
         }
+			
 
-        for (int i = 0; i < builder.Length; i++)
-        {
-            builder.Replace(placeholder, defaultCharacter, i, 1);
-        }
+		for (int i = builder.Length - 1; builder.Length > 0 && i >= 0 ; i--) {
+			if (builder [i]== placeholder) {
+				builder.Remove (i, 1);
+			} else if(!Regex.IsMatch(builder[i].ToString(), charactersType))
+			{
+				if (i > 0) {
+					if (isDeleting) {
+						if (!Regex.IsMatch (builder [i].ToString (), charactersType)) {
+							if (Regex.IsMatch (builder [i - 1].ToString (), charactersType)) {
+								if (!Regex.IsMatch (deletedCharacter.ToString (), charactersType)) {
+									builder.Remove (i - 1, 2);
+									i--;
+								} else {
+									break;
+								}
+							} else {
+								builder.Remove (i, 1);
+							}
+						} else {
+							builder.Remove (i, 1);
+						}
+					} else if (Regex.IsMatch (builder [i - 1].ToString (), charactersType)) {
+						break;
+					} else {
+						builder.Remove (i, 1);
+					}
+				} else {
+					builder.Remove (i, 1);
+				}
+			}
+				else {
+				break;
+			}
+		}
 
         Phone.text = builder.ToString();
-        if (index > -1)
-        {
-            Phone.caretPosition = index + 1;
-        }
+		Phone.MoveTextEnd (false);
+		_result = builder.ToString ();
     }
 
     public string GetPhoneNumbers(string phone)
@@ -211,7 +256,7 @@ public class Registration : MonoBehaviour
 
     void CheckEmail(string email)
     {
-        phone = GetPhoneNumbers(Phone.text);
+        phone = Phone.text;
         if(string.IsNullOrEmpty(phone))
         {
             CantContinue(InvalidFormatPhone);
@@ -253,19 +298,21 @@ public class Registration : MonoBehaviour
         bool exist;
         InputString parameters = new InputString() { Value = phone };
 
-        StartCoroutine(NetworkHelper.SendRequest(CheckPhoneUrl, JsonConvert.SerializeObject(parameters), "application/json", (response) =>
-        {
-            exist = bool.Parse(response.Text);
-            Debug.Log(exist);
-            if (exist)
-                CantContinue(PhoneAlreadyExists);
-            else
-            {
-                NewUser.Email = Email.text;
-                NewUser.PhoneNumber = phone;
-                NextPage();
-            }
-        }));
+		if (Regex.IsMatch (phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern)) {
+			StartCoroutine (NetworkHelper.SendRequest (CheckPhoneUrl, JsonConvert.SerializeObject (parameters), "application/json", (response) => {
+				exist = bool.Parse (response.Text);
+				Debug.Log (exist);
+				if (exist)
+					CantContinue (PhoneAlreadyExists);
+				else {
+					NewUser.Email = Email.text;
+					NewUser.PhoneNumber = phone;
+					NextPage ();
+				}
+			}));
+		} else {
+			CantContinue(InvalidFormatPhone);
+		}
      }
 
     void CheckNick(string nick)

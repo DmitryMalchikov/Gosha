@@ -14,6 +14,7 @@ public class RegionPanel : MonoBehaviour {
         if(isChosen)
         {
             Canvaser.Instance.RegistrationPanel.Region = info;
+			Canvaser.Instance.RegistrationPanel.Phone.placeholder.GetComponent<Text>().text = info.PhonePlaceholder;
         }
     }
 

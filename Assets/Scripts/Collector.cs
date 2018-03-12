@@ -6,7 +6,7 @@ public class Collector : MonoBehaviour {
 
     public static Collector Instance { get; private set; }
 
-    IPickable _pickable;
+	Coin _coin;
 	private string IceCreamTag = "IceCream";
 
     public BoxCollider Collider;
@@ -28,12 +28,13 @@ public class Collector : MonoBehaviour {
 
 		if (other.transform.tag == IceCreamTag)
         {
-            _pickable = other.transform.GetComponent<IPickable>();
+			if (GameController.Instance.Magnet) {
+				_coin = other.GetComponent<Coin> ();
 
-            if (_pickable != null)
-            {
-                _pickable.PickUp();
-            }
+				if (_coin != null) {
+					_coin.OnMagnet ();
+				}
+			}
         }
     }
 
