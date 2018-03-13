@@ -44,14 +44,7 @@ public class DuelInfoOffer : DuelInfo
         }
         else
         {
-            if (model.UserId == LoginManager.Instance.User.Id)
-            {
-                WaitText.SetActive(true);
-            }
-            else
-            {
-                AcceptButton.SetActive(true);
-            }
+            AcceptButton.SetActive(true);
         }
     }
 

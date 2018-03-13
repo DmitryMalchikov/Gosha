@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
 
     private float minY = 0;
 	private int DefaultLayer;
+	private int GroundLayer;
 
     public bool OnGround
     {
@@ -112,6 +113,7 @@ public class PlayerController : MonoBehaviour
         transform.position = StartPos;
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
+		animator.SetBool (RocketHash, false);
         OnGround = true;
         CurrentX = 0;
         hitsCount = 0;
@@ -120,12 +122,13 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         FallDistance = Step * (1f - GravityOnPercent);
-        environmentMask = LayerMask.GetMask("Environment", "Default");
+        environmentMask = LayerMask.GetMask("Ground", "Default");
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
         _suitsItems = GetComponentsInChildren<SuitInfo>();
 		DefaultLayer = LayerMask.NameToLayer ("Default");
+		GroundLayer = LayerMask.NameToLayer ("Ground");
         PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
     }
 
@@ -358,7 +361,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-		if (collision.gameObject.layer != DefaultLayer) {
+		if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer) {
 			return;
 		}
 
@@ -425,7 +428,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-		if (collision.gameObject.layer != DefaultLayer) {
+		if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer) {
 			return;
 		}
 

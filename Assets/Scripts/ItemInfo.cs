@@ -35,6 +35,7 @@ public class ItemInfo : MonoBehaviour
         NameText.text = card.Name;
         PriceText.text = card.Cost.ToString();
         ItemID = card.Id;
+		ImgSource.sprite = Resources.Load<Sprite> (string.Format("{0} ({1})", CardInfo.SuitName, CardInfo.Position));
     }
 
     public void SetCase(ShopItem item)

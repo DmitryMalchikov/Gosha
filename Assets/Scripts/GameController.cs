@@ -133,7 +133,7 @@ public class GameController : MonoBehaviour
     {
         Time.timeScale = 0;
 
-        if (!Continued)
+		if (!Continued && !InDuel)
         {
             Canvaser.Instance.ContinueForMoney.OpenContinuePanel();
         }
