@@ -38,7 +38,7 @@ public class DuelInfoOffer : DuelInfo
         {
             ResultButton.SetActive(true);
         }
-        else if (model.Result != null)
+		else if (model.Result != null || model.Status == -1)
         {
             WaitText.SetActive(true);
         }
