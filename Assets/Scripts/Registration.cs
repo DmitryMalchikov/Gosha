@@ -134,7 +134,7 @@ public class Registration : MonoBehaviour
     void ComparePasswords(string pass1, string pass2)
     {
         Debug.Log(pass1 + "\n" + pass2);
-        Regex reg = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-\.]).{6,20}$");
+        Regex reg = new Regex(@"^(?=.*?[a-z])(?=.*?[0-9]).{6,20}$");
         if (reg.IsMatch(pass1))
         {
             if (pass1 == pass2)
@@ -325,7 +325,7 @@ public class Registration : MonoBehaviour
 
             exist = bool.Parse(response.Text);
             if (exist)
-                CantContinue(NickAlreadyExists);
+                CantContinue(LocalizationManager.GetLocalizedValue("nickalreadyexists"));
             else
             {
                 NewUser.Nickname = nick;
@@ -344,6 +344,7 @@ public class Registration : MonoBehaviour
 
     void CantContinue(string message)
     {
+        Debug.Log(message);
         canContinue = false;
         WarningPanel.ShowMessage(message);
     }

@@ -10,6 +10,8 @@ public class Warning : MonoBehaviour {
 
     public void ShowMessage(string messagetoShow)
     {
+
+        Debug.Log(messagetoShow);
         message.text = messagetoShow;
         gameObject.SetActive(true);
         StartCoroutine(MessageCloser());
