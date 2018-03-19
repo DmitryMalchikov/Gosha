@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     public Effect ShieldEffect;
     public Effect RocketEffect;
     public ParticleSystem IceCreamPicked;
+	public ParticleSystem ObstaclesEffect;
 
 
     private Vector3 moveDir;
@@ -114,6 +115,7 @@ public class PlayerController : MonoBehaviour
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
 		animator.SetBool (RocketHash, false);
+		//Collisions.Clear ();
         OnGround = true;
         CurrentX = 0;
         hitsCount = 0;
@@ -532,12 +534,19 @@ public class PlayerController : MonoBehaviour
 
     public void RemoveObstcles()
     {
-        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 7f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
-        for (int i = 0; i < obstacles.Length; i++)
-        {
-            obstacles[i].transform.parent.gameObject.SetActive(false);
-        }
+		ObstaclesEffect.Play ();
+
+		StartCoroutine (WaitEffect ());
     }
+
+	IEnumerator WaitEffect(){
+		yield return null;
+		var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 7f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
+		for (int i = 0; i < obstacles.Length; i++)
+		{
+			obstacles[i].transform.parent.gameObject.SetActive(false);
+		}
+	}
 
     public void PutOnSuit(string suitName)
     {

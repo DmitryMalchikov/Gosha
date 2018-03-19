@@ -55,7 +55,14 @@ public class ScoreManager : MonoBehaviour
 
         Debug.Log(key);
         key = Utils.CalculateMD5Hash(key);
-        SubmitScoreModel model = new SubmitScoreModel() { Distance = distance, IceCreamCount = iceCream, Uses = uses, Key = key, CasesCount = boxes };
+        SubmitScoreModel model = new SubmitScoreModel() { 
+			Distance = distance, 
+			IceCreamCount = iceCream, 
+			Uses = uses,
+			Key = key, 
+			CasesCount = boxes ,
+			NotContinued = !GameController.Instance.Continued
+		};
         StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, JsonConvert.SerializeObject(model), "application/json",
         (response) =>
         {

@@ -9,6 +9,7 @@ public class ContinuePanel : MonoBehaviour {
 
     public Button ContinueButton;
     public Text CountDown;
+	public Text ContinueCostText;
     public int time;
     public int ContinueCost = 2000;
 
@@ -21,6 +22,7 @@ public class ContinuePanel : MonoBehaviour {
     {
         ContinueButton.interactable = LoginManager.Instance.User.IceCream >= ContinueCost;
 
+		ContinueCostText.text = ContinueCost.ToString ();
         gameObject.SetActive(true);
         StartCoroutine(WaitToClosePanel());
     }
@@ -40,7 +42,11 @@ public class ContinuePanel : MonoBehaviour {
 
     public void Continue()
     {
-        ScoreManager.Instance.ContinueForMoney();
+		if (LoginManager.Instance.User.IceCream >= ContinueCost) {
+			ContinuePanel.Instance.gameObject.SetActive(false);
+			GameController.Instance.ContinueGameForMoney(); 
+		}
+        //ScoreManager.Instance.ContinueForMoney();
     }
 
     public void FinishRun()
