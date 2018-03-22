@@ -68,6 +68,8 @@ public class Registration : MonoBehaviour
 
     string phone;
 
+    public GameObject LangPanel;
+
     public void Start()
     {
         SetUrls();
@@ -102,7 +104,14 @@ public class Registration : MonoBehaviour
         if (PageNum == 1)
         {
             WarningPanel.gameObject.SetActive(false);
-            gameObject.SetActive(false);
+            if (!LangPanel.activeInHierarchy)
+            {
+                LangPanel.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
         else
         {
@@ -116,7 +125,7 @@ public class Registration : MonoBehaviour
         switch (PageNum)
         {
             case 1:
-                NextPage();
+                CheckRegion();
                 break;
             case 2:
                 CheckEmail(Email.text);
@@ -128,6 +137,18 @@ public class Registration : MonoBehaviour
 
                 ComparePasswords(Password.text, ConfirmPassword.text);
                 break;
+        }
+    }
+
+    void CheckRegion()
+    {
+        if(Group.AnyTogglesOn())
+        {
+            NextPage();
+        }
+        else
+        {
+            CantContinue(LocalizationManager.GetLocalizedValue("regionchoose"));
         }
     }
 
@@ -384,5 +405,6 @@ public class Registration : MonoBehaviour
     {
         External = false;
         LoginManager.Instance.GetRegions();
+        LangPanel.SetActive(true);
     }
 }

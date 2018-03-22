@@ -21,6 +21,8 @@ public class SnapScrolling : MonoBehaviour
     private Vector2[] pansScale;
     private List<Image> pansImage;
 
+    public List<SuitIcon> SuitIcons;
+
     public List<Costume> Costumes = new List<Costume>();
 
     public Color blocked;
@@ -39,6 +41,8 @@ public class SnapScrolling : MonoBehaviour
 
     public float offsetScale = Screen.width / 1080f;
 
+    public ToggleGroup IconGroup;
+
     void Start()
     {
         contentRect = GetComponent<RectTransform>();
@@ -54,18 +58,29 @@ public class SnapScrolling : MonoBehaviour
         pansPos = new Vector2[panCount];
         pansScale = new Vector2[panCount];
         pansImage = new List<Image>();
+        SuitIcons = new List<SuitIcon>();
+
         for (int i = 0; i < panCount; i++)
         {
             instPans[i] = Instantiate(panPref, transform, false);
-            Image img = instPans[i].GetComponent<Image>();
-            img.sprite = Resources.Load<Sprite>(suits[i].Name);
-            pansImage.Add(img);
+            SuitIcon newIcon = instPans[i].GetComponent<SuitIcon>();
+            //Image img = instPans[i].GetComponent<Image>();
+            //img.sprite = Resources.Load<Sprite>(suits[i].Name);
+            newIcon.Icon.sprite = Resources.Load<Sprite>(suits[i].Name);
+            //pansImage.Add(img);
+            newIcon.IsOn.group = IconGroup;
             if (Costumes[i].CostumeAmount == 0)
             {
+                newIcon.IsOn.gameObject.SetActive(false);
+                newIcon.Icon.color = blocked;
                 Debug.Log("NoSuit");
-                pansImage[i].color = blocked;
+                //pansImage[i].color = blocked;
             }
-
+            else
+            {
+                newIcon.IsOn.isOn = (PlayerPrefs.GetString("CurrentSuit") == suits[i].Name);
+            }
+            SuitIcons.Add(newIcon);
             if (i == 0)
                 continue;
             Debug.Log(instPans[i - 1].transform.localPosition.x);
@@ -111,7 +126,10 @@ public class SnapScrolling : MonoBehaviour
             }
         }
     }
-
+    public void PutOnSuit()
+    {
+        SuitIcons[selectedPanID].IsOn.isOn = true;
+    }
     void FixedUpdate()
     {
         if (panCount > 0)

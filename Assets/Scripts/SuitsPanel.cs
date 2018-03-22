@@ -73,6 +73,7 @@ public class SuitsPanel : MonoBehaviour {
 
     public void PutOnSuit()
     {
+        SuitsScroll.PutOnSuit();
         PlayerPrefs.SetString("CurrentSuit", SuitName.text);
     }
 
@@ -168,13 +169,13 @@ public class SuitsPanel : MonoBehaviour {
 
     public void ClosePanel()
     {
-        PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
         if (Canvaser.Instance.CasesPanel.gameObject.activeInHierarchy)
         {
             CaseCamera.SetActive(false);
         }
         else
         {
+            PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
             SuitCamera.SetActive(false);
         }
         gameObject.SetActive(false);
