@@ -40,19 +40,23 @@ public class SuitsPanel : MonoBehaviour {
     {
         PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
         Case.SetBool("Open", true);
-        PreopenCase.SetActive(false);
-        OpenCaseParticle.SetActive(true);
         StartCoroutine(WaitForOpen());
     }
 
     IEnumerator WaitForOpen()
     {
-        yield return new WaitForSeconds(1f);
-        PrizePanel.SetActive(true);
-        Case.SetBool("Open", false);
-        OpenCaseParticle.SetActive(false);
-        Idle.SetActive(true);
+        yield return new WaitForSeconds(3f);
+		PreopenCase.SetActive(false);
+		OpenCaseParticle.SetActive(true);
+		PrizePanel.SetActive(true);
     }
+
+	public void TakePrize()
+	{
+		Case.SetBool("Open", false);
+		OpenCaseParticle.SetActive(false);
+		Idle.SetActive(true);
+	}
 
     public void SetCurrentCostume(string Name, bool HasSuit)
     {

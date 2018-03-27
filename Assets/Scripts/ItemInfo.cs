@@ -20,6 +20,8 @@ public class ItemInfo : MonoBehaviour
 
     public Slider Upgrade;
 
+	InventoryItem curItem;
+
     public void OpenBuyInfo()
     {
         Canvaser.Instance.BuyInfoPanel.SetBuyInfo(ItemID, NameText.text, Desc, PriceText.text, ImgSource.sprite, ItemName);
@@ -53,8 +55,9 @@ public class ItemInfo : MonoBehaviour
             _TradePanel.SelectedItemID = ItemID;
             _TradePanel.IcecreamForTrade = 0;
             _TradePanel.IceCreamForTradeInput.text = "";
-        }
-    }
+		}
+		NameText.text = string.Format("{0}({1})", curItem.Name, curItem.Amount - 1 * (toSelect ? 1 : 0));
+	}
 
     public void SetInventoryCard(InventoryCard item)
     {
@@ -64,6 +67,7 @@ public class ItemInfo : MonoBehaviour
     public void SetBonus(InventoryItem item)
     {
         gameObject.SetActive(true);
+		curItem = item;
         NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
     }
 }
