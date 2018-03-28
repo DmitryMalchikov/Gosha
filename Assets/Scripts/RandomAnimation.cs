@@ -9,9 +9,7 @@ public class RandomAnimation : StateMachineBehaviour {
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo info, int layerIndex){
 		int newNumber = Random.Range (1, TransitionsNumber);
 
-		if (_previousNumber != 0) {
-			newNumber = 0;
-		} else if (_previousNumber == newNumber) {
+        if (_previousNumber == newNumber) {
 			newNumber = (newNumber + 1) % TransitionsNumber;
 		}
 
