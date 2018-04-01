@@ -36,27 +36,52 @@ public class SuitsPanel : MonoBehaviour {
 
     public Button PutOnSuitBtn;
 
+    public GameObject GetPrizePnl;
+    public GameObject GetPrizeBtn;
+    public Text PrizeAmountTxt;
+
+    public BoxPrize BoxPrizeObj;
+
     public void SetPrize(Bonus bonus)
     {
-        PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
-        Case.SetBool("Open", true);
+        //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
+        if (bonus.Amount > 1)
+        {
+            PrizeAmountTxt.text = bonus.Amount.ToString();
+        }
+        BoxPrizeObj.SetPrize(bonus.Name);
         StartCoroutine(WaitForOpen());
     }
 
     IEnumerator WaitForOpen()
     {
         yield return new WaitForSeconds(3f);
-		PreopenCase.SetActive(false);
+        Case.SetBool("Open", true);
+        PreopenCase.SetActive(false);
 		OpenCaseParticle.SetActive(true);
-		PrizePanel.SetActive(true);
+        GetPrizeBtn.SetActive(true);
+        if (!string.IsNullOrEmpty(PrizeAmountTxt.text))
+        {
+            PrizeAmountTxt.gameObject.SetActive(true);
+        }
+        BoxPrizeObj.PrizeOut();
     }
 
 	public void TakePrize()
-	{
-		Case.SetBool("Open", false);
-		OpenCaseParticle.SetActive(false);
-		Idle.SetActive(true);
-	}
+    {
+        Case.SetBool("Open", false);
+        OpenCaseParticle.SetActive(false);
+        Idle.SetActive(true);
+        PrizeAmountTxt.text = "";
+        if (PrizeAmountTxt.gameObject.activeInHierarchy)
+        {
+            PrizeAmountTxt.gameObject.SetActive(false);
+        }
+        BoxPrizeObj.PrizeOut();
+        BoxPrizeObj.TurnOffPrizes();
+        GetPrizePnl.SetActive(false);
+        GetPrizeBtn.SetActive(false);
+    }
 
     public void SetCurrentCostume(string Name, bool HasSuit)
     {
@@ -211,6 +236,7 @@ public class SuitsPanel : MonoBehaviour {
     }
     public void OpenCase()
     {
+        GetPrizePnl.SetActive(true);
         //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
         PreopenCase.SetActive(true);
         Idle.SetActive(false);
