@@ -38,13 +38,13 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void SubmitScoreAsync(int distance, int iceCream, int boxes)
-    {
+    { 
         StartCoroutine(SubmitScore(distance, iceCream, boxes));
     }
 
     System.Collections.IEnumerator SubmitScore(int distance, int iceCream, int boxes)
     {
-        
+        Debug.Log(iceCream);
         string key = "";
         yield return StartCoroutine(NetworkHelper.SendRequest(GetKeyUrl, "", "application/json",
                 (response) =>

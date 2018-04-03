@@ -58,13 +58,14 @@ public class BoxPrize : MonoBehaviour {
         }
     }
 
-    public void PrizeOut()
+    public void PrizeOut(bool toOut)
     {
-        anim.SetTrigger("Out");
+        anim.SetBool("Out",toOut);
     }
 
     public void TurnOffPrizes()
     {
+        if(ActiveObj)
         ActiveObj.SetActive(false);
     }
 }

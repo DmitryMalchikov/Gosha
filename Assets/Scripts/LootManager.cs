@@ -33,7 +33,7 @@ public class LootManager : MonoBehaviour {
             Debug.Log("OK");
             //show tasks
             Bonus bonus = JsonConvert.DeserializeObject<Bonus>(response.Text);
-            InventoryManager.Instance.GetMyCasesAsync();
+            
             //Canvaser.ShowLoading(false);
             Canvaser.Instance.CasesPanel.SetPrize(bonus);
             

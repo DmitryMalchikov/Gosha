@@ -64,10 +64,10 @@ public class SuitsPanel : MonoBehaviour {
         {
             PrizeAmountTxt.gameObject.SetActive(true);
         }
-        BoxPrizeObj.PrizeOut();
+        BoxPrizeObj.PrizeOut(true);
     }
 
-	public void TakePrize()
+	public void TakePrize(bool toClose)
     {
         Case.SetBool("Open", false);
         OpenCaseParticle.SetActive(false);
@@ -77,10 +77,14 @@ public class SuitsPanel : MonoBehaviour {
         {
             PrizeAmountTxt.gameObject.SetActive(false);
         }
-        BoxPrizeObj.PrizeOut();
+        BoxPrizeObj.PrizeOut(false);
         BoxPrizeObj.TurnOffPrizes();
         GetPrizePnl.SetActive(false);
         GetPrizeBtn.SetActive(false);
+        if (!toClose)
+        {
+            InventoryManager.Instance.GetMyCasesAsync();
+        }
     }
 
     public void SetCurrentCostume(string Name, bool HasSuit)

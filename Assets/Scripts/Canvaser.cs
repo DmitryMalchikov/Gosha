@@ -42,7 +42,7 @@ public class Canvaser : MonoBehaviour
     public DuelsPanel Duels;
 
     public Text GameOverDistance;
-    public Text GameOverIceCream;
+    public IceCreamChanger GameOverIceCream;
     public Text GameOverCases;
 	public GameObject DoubleScoreButton;
 
@@ -85,7 +85,7 @@ public class Canvaser : MonoBehaviour
 
     public SuitsPanel CasesPanel;
 
-    public List<Text> IceCreamPanels;
+    public List<IceCreamChanger> IceCreamPanels;
 
     public DailyBonusPanel DailyBonus;
     public WeeklyTasksPanel WeeklyTasks;
@@ -172,7 +172,7 @@ public class Canvaser : MonoBehaviour
 		DoubleScoreButton.SetActive(true);
         GameOverCases.text = string.Format("x{0}",GameController.Instance.CurrentBoxes);
         GameOverDistance.text = score + LocalizationManager.GetLocalizedValue("meter");
-        GameOverIceCream.text = string.Format("{0}", coins);
+        GameOverIceCream.SetIceCream(coins);
         //GameOverAllIceCream.text = 
         coins = 0;
         GamePanel.gameObject.SetActive(false);
@@ -190,11 +190,11 @@ public class Canvaser : MonoBehaviour
 	{
 		DoubleScoreButton.SetActive(false);
 		ADSPanel.transform.SetAsLastSibling();
-		LoadingPanel.transform.SetAsLastSibling();
+		//LoadingPanel.transform.SetAsLastSibling();
 		ADSPanel.DoubleScore();
-		coins = int.Parse(GameOverIceCream.text);
+		coins = GameOverIceCream.CurrentCount;
 		ScoreManager.Instance.SubmitScoreAsync(0, coins, 0);
-		GameOverIceCream.text = string.Format("{0}", coins * 2);
+        GameOverIceCream.ChangeIceCream(coins * 2);
 		coins = 0;
 	}
 
@@ -281,9 +281,9 @@ public class Canvaser : MonoBehaviour
 
     public void SetAllIceCreams(int amount)
     {
-        foreach (Text item in IceCreamPanels)
+        foreach (IceCreamChanger item in IceCreamPanels)
         {
-            item.text = amount.ToString();
+            item.ChangeIceCream(amount);
         }
     }
 
