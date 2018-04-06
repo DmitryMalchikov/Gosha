@@ -39,7 +39,7 @@ public class FriendsManager : MonoBehaviour
 
     public void GetFriendsRequestsAsync(ResultCallback callback=null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetFriendsRequestsUrl, "", "application/x-www-form-urlencoded", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetFriendsRequestsUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");
             List<FriendModel> friendRequests = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
@@ -54,7 +54,7 @@ public class FriendsManager : MonoBehaviour
 
     public void GetFriendsAsync(ResultCallback callback = null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetFriendsUrl, "", "application/x-www-form-urlencoded", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetFriendsUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");
             List<FriendModel> friends = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
@@ -69,7 +69,7 @@ public class FriendsManager : MonoBehaviour
 
     public void GetFriendsOffersAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetFriendsOffersUrl, "", "application/x-www-form-urlencoded", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetFriendsOffersUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");
             List<FriendOfferModel> friends = JsonConvert.DeserializeObject<List<FriendOfferModel>>(response.Text);
@@ -81,7 +81,7 @@ public class FriendsManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = userId };
 
-        StartCoroutine(NetworkHelper.SendRequest(OfferFriendshipUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(OfferFriendshipUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             //show info
@@ -92,7 +92,7 @@ public class FriendsManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = userId };
 
-        StartCoroutine(NetworkHelper.SendRequest(AcceptFriendshipUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(AcceptFriendshipUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             //show info
@@ -103,7 +103,7 @@ public class FriendsManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = userId };
 
-        StartCoroutine(NetworkHelper.SendRequest(DeclineFriendshipUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DeclineFriendshipUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             //show info
@@ -119,7 +119,7 @@ public class FriendsManager : MonoBehaviour
     {
         PlayerSearchModel search = new PlayerSearchModel() { SearchString = searchString, Page = page, ItemsPerPage = itemsPerPage };
 
-        StartCoroutine(NetworkHelper.SendRequest(SearchFriendsUrl, JsonConvert.SerializeObject(search), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(SearchFriendsUrl, search, "application/json", (response) =>
         {
             Debug.Log("OK");
             Debug.Log("OK");
@@ -132,7 +132,7 @@ public class FriendsManager : MonoBehaviour
     {
         InputString search = new InputString() { Value = searchString };
 
-        StartCoroutine(NetworkHelper.SendRequest(SearchPlayersUrl, JsonConvert.SerializeObject(search), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(SearchPlayersUrl, search, "application/json", (response) =>
         {
             Debug.Log("OK");
             Debug.Log("OK");

@@ -30,7 +30,7 @@ public class StatisticsManager : MonoBehaviour
     public void GetTournamentLeadersAsync()
     {
         Canvaser.ShowLoading(true);
-        StartCoroutine(NetworkHelper.SendRequest(GetTournamentLeadersUrl, "", "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetTournamentLeadersUrl, null, "application/json", (response) =>
         {
             List<FriendModel> info = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentTable(info);
@@ -42,7 +42,7 @@ public class StatisticsManager : MonoBehaviour
     {
         InputInt value = new InputInt() { Value = period };
 
-        StartCoroutine(NetworkHelper.SendRequest(GetAllStatisticsUrl, JsonConvert.SerializeObject(value), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetAllStatisticsUrl, value, "application/json", (response) =>
         {
             List<FriendModel> info = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
 
@@ -65,7 +65,7 @@ public class StatisticsManager : MonoBehaviour
     public void GetTournamentInfoAsync()
     {
         Canvaser.ShowLoading(true);
-        StartCoroutine(NetworkHelper.SendRequest(GetTournamentInfoUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage }), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, "application/json", (response) =>
         {
             TournamentModel info = JsonConvert.DeserializeObject<TournamentModel>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentInfo(info);

@@ -85,13 +85,26 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, string parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
     {
         AnswerModel response = null;
 
         ThreadHelper.RunNewThread(() =>
         {
-            response = GetResponsePost(url, parameters, contentType, LoginManager.Instance.Headers);
+            string parms = string.Empty;
+            if (parameters != null)
+            {
+                if (!(parameters is string))
+                {
+                    parms = JsonConvert.SerializeObject(parameters);
+                }
+                else
+                {
+                    parms = parameters as string;
+                }
+            }
+
+            response = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
         });
 
         while (response == null)
@@ -120,11 +133,11 @@ public static class NetworkHelper
     public static IEnumerator SendImage(string fileName, string URL)
     {
         //Canvaser.Instance.Test.text = fileName;
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         WWW localFile = new WWW("file://" + fileName);
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		WWW localFile = new WWW("file://" + fileName);
-		#endif
+#endif
         yield return localFile;
         if (localFile.error == null)
             Debug.Log("Loaded file successfully");
@@ -148,7 +161,7 @@ public static class NetworkHelper
         if (upload.error == null)
             Debug.Log("upload done :");
         else
-			Debug.Log("Error during upload: " + upload.error + " URL: " + URL);
+            Debug.Log("Error during upload: " + upload.error + " URL: " + URL);
 
         LoginManager.Instance.GetAvatarImage();
     }
@@ -183,17 +196,17 @@ public class InputString
 
 public class AccessToken
 {
-	[JsonProperty(PropertyName = "access_token")]
-	public string Token { get; set; }
+    [JsonProperty(PropertyName = "access_token")]
+    public string Token { get; set; }
 
-	[JsonProperty(PropertyName="userName")]
-	public string Email{ get; set;}
+    [JsonProperty(PropertyName = "userName")]
+    public string Email { get; set; }
 
-	[JsonProperty(PropertyName="refresh_token")]
-	public string RefreshToken{ get; set;}
+    [JsonProperty(PropertyName = "refresh_token")]
+    public string RefreshToken { get; set; }
 
-	[JsonProperty(PropertyName = "refresh_expires_in")]
-	public float RefreshExpireIn { get; set; }
+    [JsonProperty(PropertyName = "refresh_expires_in")]
+    public float RefreshExpireIn { get; set; }
 }
 
 public class Header
@@ -253,7 +266,7 @@ public class TournamentModel
     public DateTime ExpireDate { get; set; }
     public string Name { get; set; }
     public string Prizes { get; set; }
-	public bool AvaliableWeeklyTasks{ get; set;}
+    public bool AvaliableWeeklyTasks { get; set; }
 }
 
 public class ItemBuyModel
@@ -272,7 +285,7 @@ public class SubmitScoreModel : SubmitModel
     public int IceCreamCount { get; set; }
     public int CasesCount { get; set; }
     public int Distance { get; set; }
-	public bool NotContinued{ get; set;}
+    public bool NotContinued { get; set; }
     public Dictionary<int, byte> Uses { get; set; }
 }
 
@@ -338,7 +351,7 @@ public class UserInfoModel
 
 public class Bonus
 {
-	public string Type { get; set; }
+    public string Type { get; set; }
     public int Amount { get; set; }
     public int Id { get; set; }
     public string Name { get; set; }
@@ -557,10 +570,10 @@ public class ShopCard : ShopItem
 
 public class ShopModel
 {
-	public List<ShopCard> Cards { get; set; }
-	public List<ShopItem> Bonuses { get; set; }
-	public List<ShopItem> Cases { get; set; }
-	public List<ShopItem> BonusUpgrades { get; set; }
+    public List<ShopCard> Cards { get; set; }
+    public List<ShopItem> Bonuses { get; set; }
+    public List<ShopItem> Cases { get; set; }
+    public List<ShopItem> BonusUpgrades { get; set; }
 }
 
 public class DuelResultModel
@@ -625,6 +638,6 @@ public class RegionModel
 {
     public string Name { get; set; }
     public int Id { get; set; }
-	public string PhonePattern{ get; set;}
-	public string PhonePlaceholder{ get; set;}
+    public string PhonePattern { get; set; }
+    public string PhonePlaceholder { get; set; }
 }

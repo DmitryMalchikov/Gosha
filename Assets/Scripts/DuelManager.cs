@@ -46,7 +46,7 @@ public class DuelManager : MonoBehaviour
     {
         DuelOfferModel input = new DuelOfferModel() { Id = userId, Bet = bet };
 
-        StartCoroutine(NetworkHelper.SendRequest(OfferDuelUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(OfferDuelUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.FriendsPanel.DuelOfferAnswer();
@@ -54,7 +54,7 @@ public class DuelManager : MonoBehaviour
     }
     public void GetDuelsAsync(ResultCallback callback = null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(DuelOffersUrl, "", "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DuelOffersUrl, null, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.Duels.SetDuels(JsonConvert.DeserializeObject<List<DuelModel>>(response.Text));
@@ -67,7 +67,7 @@ public class DuelManager : MonoBehaviour
     }
     public void GetDuelRequestsAsync(ResultCallback callback = null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(DuelRequestsUrl, "", "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DuelRequestsUrl, null, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.Duels.SetRequests(JsonConvert.DeserializeObject<List<DuelModel>>(response.Text));
@@ -83,7 +83,7 @@ public class DuelManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = duelID };
 
-        StartCoroutine(NetworkHelper.SendRequest(AcceptDuelUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(AcceptDuelUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
         }));
@@ -93,7 +93,7 @@ public class DuelManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = duelID };
 
-        StartCoroutine(NetworkHelper.SendRequest(DeclineDuelUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DeclineDuelUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.Duels.Open();
@@ -103,7 +103,7 @@ public class DuelManager : MonoBehaviour
     public void StartRunAsync(int duelID)
     {
         InputInt input = new InputInt() { Value = duelID };
-        StartCoroutine(NetworkHelper.SendRequest(StartRunUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(StartRunUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
 
@@ -114,7 +114,7 @@ public class DuelManager : MonoBehaviour
     {
         InputInt input = new InputInt() { Value = duelID };
 
-        StartCoroutine(NetworkHelper.SendRequest(DuelResultUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DuelResultUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.Duels.SetResult(JsonConvert.DeserializeObject<DuelResultModel>(response.Text));
@@ -125,7 +125,7 @@ public class DuelManager : MonoBehaviour
     {
         SubmitDuelScoreModel input = new SubmitDuelScoreModel() { Id = duelID, Distance = distance };
 
-        StartCoroutine(NetworkHelper.SendRequest(SubmitDuelResultUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(SubmitDuelResultUrl, input, "application/json", (response) =>
         {
             DuelResultModel DRM = JsonConvert.DeserializeObject<DuelResultModel>(response.Text);
             if (DRM.FirstPlayer != null)
