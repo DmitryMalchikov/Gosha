@@ -28,7 +28,7 @@ public class LootManager : MonoBehaviour {
     }
     public void OpenCaseAsync(int caseID)
     {
-		StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, new {CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage}, "application/json", (response) =>
+		StartCoroutine(NetworkHelper.SendRequest(OpenCaseUrl, JsonConvert.SerializeObject(new {CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks
@@ -42,7 +42,7 @@ public class LootManager : MonoBehaviour {
 
     public void GetDailyBonusAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetBonusUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetBonusUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");
             LoginManager.Instance.GetUserInfoAsync();

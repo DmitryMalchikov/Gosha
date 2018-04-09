@@ -46,7 +46,7 @@ public class ScoreManager : MonoBehaviour
     {
         Debug.Log(iceCream);
         string key = "";
-        yield return StartCoroutine(NetworkHelper.SendRequest(GetKeyUrl, null, "application/json",
+        yield return StartCoroutine(NetworkHelper.SendRequest(GetKeyUrl, "", "application/json",
                 (response) =>
                 {
                     key = response.Text.Replace("\"", string.Empty);
@@ -63,7 +63,7 @@ public class ScoreManager : MonoBehaviour
 			CasesCount = boxes ,
 			NotContinued = !GameController.Instance.Continued
 		};
-        StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, model, "application/json",
+        StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, JsonConvert.SerializeObject(model), "application/json",
         (response) =>
         {
             LoginManager.Instance.GetUserInfoAsync();
@@ -80,7 +80,7 @@ public class ScoreManager : MonoBehaviour
         else
         {
             InputInt value = new InputInt() { Value = bonusInvId };
-            StartCoroutine(NetworkHelper.SendRequest(UseBonusUrl, value, "application/json",
+            StartCoroutine(NetworkHelper.SendRequest(UseBonusUrl, JsonConvert.SerializeObject(value), "application/json",
             (response) =>
             {
             },
@@ -111,7 +111,7 @@ public class ScoreManager : MonoBehaviour
 
     System.Collections.IEnumerator ContinueForMoneyAsync()
     {
-        yield return StartCoroutine(NetworkHelper.SendRequest(ContinueForMoneyUrl, null, "application/json",
+        yield return StartCoroutine(NetworkHelper.SendRequest(ContinueForMoneyUrl, "", "application/json",
             (response) => 
             {
                 ContinuePanel.Instance.gameObject.SetActive(false);

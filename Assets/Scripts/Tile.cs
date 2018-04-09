@@ -78,7 +78,7 @@ public class Tile : MonoBehaviour
 
     public void GenerateBonus()
     {
-        if (Random.Range(0, 100) <= GameController.Instance.BonusChance)
+        if (Random.Range(1, 11) <= GameController.Instance.BonusChance)
         {
             int rand = Random.Range(0, 4);
 
@@ -88,7 +88,7 @@ public class Tile : MonoBehaviour
 
     public void GenerateBox()
     {
-        if (Random.Range(0, 100) <= GameController.Instance.BoxChance)
+        if (Random.Range(1, 101) <= GameController.Instance.BoxChance)
         {
             Box.SetActive(true);
         }

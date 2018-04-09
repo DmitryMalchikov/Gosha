@@ -166,7 +166,7 @@ public class AchievementsManager : MonoBehaviour
     void SubmitAchievementAsync(PlayerTasks model)
     {
         SubmitAchievementModel value = new SubmitAchievementModel() { Id = model.Id, AchievementId = model.TaskId, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, Language = (int)LocalizationManager.CurrentLanguage };
-        StartCoroutine(NetworkHelper.SendRequest(SubmitAchievementUrl, value, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(SubmitAchievementUrl, JsonConvert.SerializeObject(value), "application/json", (response) =>
         {
             PlayerTasksAnswer newModel = JsonConvert.DeserializeObject<PlayerTasksAnswer>(response.Text);
 
@@ -183,7 +183,7 @@ public class AchievementsManager : MonoBehaviour
 
     public void GetAllAchievementsAsync(ResultCallback callback=null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetAchievementsUrl, new { Value = (int)LocalizationManager.CurrentLanguage}, "application/json", (response) => 
+        StartCoroutine(NetworkHelper.SendRequest(GetAchievementsUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) => 
         {
             List<PlayerAchievementModel> tasks = JsonConvert.DeserializeObject<List<PlayerAchievementModel>>(response.Text);
             Canvaser.Instance.AchievementsPanel.SetAchievementsPanel(tasks);

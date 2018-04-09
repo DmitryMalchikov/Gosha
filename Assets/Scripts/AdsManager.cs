@@ -33,7 +33,7 @@ public class AdsManager : MonoBehaviour {
 
 	public void DoubleScoreAds(Text text, Image image)
 	{
-		StartCoroutine(NetworkHelper.SendRequest(DoubleScoreUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, "application/json", (response) =>
+		StartCoroutine(NetworkHelper.SendRequest(DoubleScoreUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage }), "application/json", (response) =>
 		{
 			AdsModel ads = JsonConvert.DeserializeObject<AdsModel>(response.Text);
 			text.text = ads.Text;
@@ -44,7 +44,7 @@ public class AdsManager : MonoBehaviour {
 
 	public void GetAds(Text text, Image image)
     {
-        StartCoroutine(NetworkHelper.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage}, "application/json", (response) => 
+        StartCoroutine(NetworkHelper.SendRequest(AdsUrl, JsonConvert.SerializeObject(new { Value = (int)LocalizationManager.CurrentLanguage}), "application/json", (response) => 
         {
             AdsModel ads = JsonConvert.DeserializeObject<AdsModel>(response.Text);
             text.text = ads.Text;

@@ -33,7 +33,7 @@ public class InventoryManager : MonoBehaviour {
 
     public void GetSuitsAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetSuitsUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetSuitsUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks
@@ -44,7 +44,7 @@ public class InventoryManager : MonoBehaviour {
 
     public void GetBonusesUpgradesAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetBonusUpgradesUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetBonusUpgradesUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks
@@ -54,7 +54,7 @@ public class InventoryManager : MonoBehaviour {
     }
     public void GetMyBonusesAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(GetBonusesUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetBonusesUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks
@@ -66,7 +66,7 @@ public class InventoryManager : MonoBehaviour {
     public void GetMyCasesAsync()
     {
         //Canvaser.ShowLoading(true);
-        StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, "", "application/json", (response) =>
         {
             Debug.Log("OK");
             //show tasks

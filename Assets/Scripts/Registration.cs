@@ -296,7 +296,7 @@ public class Registration : MonoBehaviour
 
             InputString parameters = new InputString() { Value = email };
 
-            StartCoroutine(NetworkHelper.SendRequest(CheckEmailUrl, parameters, "application/json", (response) =>
+            StartCoroutine(NetworkHelper.SendRequest(CheckEmailUrl, JsonConvert.SerializeObject(parameters), "application/json", (response) =>
             {
                 exist = bool.Parse(response.Text);
                 Debug.Log(exist);
@@ -320,7 +320,7 @@ public class Registration : MonoBehaviour
         InputString parameters = new InputString() { Value = phone };
 
 		if (Regex.IsMatch (phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern)) {
-			StartCoroutine (NetworkHelper.SendRequest (CheckPhoneUrl, parameters, "application/json", (response) => {
+			StartCoroutine (NetworkHelper.SendRequest (CheckPhoneUrl, JsonConvert.SerializeObject (parameters), "application/json", (response) => {
 				exist = bool.Parse (response.Text);
 				Debug.Log (exist);
 				if (exist)
@@ -341,7 +341,7 @@ public class Registration : MonoBehaviour
         bool exist;
 
         InputString parameters = new InputString() { Value = nick };
-        StartCoroutine(NetworkHelper.SendRequest(CheckNickUrl, parameters, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(CheckNickUrl, JsonConvert.SerializeObject(parameters), "application/json", (response) =>
         {
 
             exist = bool.Parse(response.Text);
