@@ -85,13 +85,26 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, string parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
     {
         AnswerModel response = null;
 
         ThreadHelper.RunNewThread(() =>
         {
-            response = GetResponsePost(url, parameters, contentType, LoginManager.Instance.Headers);
+            string parms = string.Empty;
+            if (parameters != null)
+            {
+                if (!(parameters is string))
+                {
+                    parms = JsonConvert.SerializeObject(parameters);
+                }
+                else
+                {
+                    parms = parameters as string;
+                }
+            }
+
+            response = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
         });
 
         while (response == null)

@@ -160,7 +160,7 @@ public class LoginManager : MonoBehaviour
 
     public void GetUserInfoAsync(ResultCallback callback=null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(UserInfoUrl, "", "application/x-www-form-urlencoded", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(UserInfoUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             UserInfoModel info = JsonConvert.DeserializeObject<UserInfoModel>(response.Text);
             User = info;
@@ -190,7 +190,7 @@ public class LoginManager : MonoBehaviour
     //NOT DONE!!!
     public void RegisterAsync(RegisterBindingModel model)
     {
-        StartCoroutine(NetworkHelper.SendRequest(RegisterUrl, JsonConvert.SerializeObject(model), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(RegisterUrl, model, "application/json", (response) =>
         {
             Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
@@ -200,7 +200,7 @@ public class LoginManager : MonoBehaviour
     public void ForgotPasswordAsync(string email)
     {
         InputString data = new InputString() { Value = email };
-        StartCoroutine(NetworkHelper.SendRequest(ForgotPasswordUrl, JsonConvert.SerializeObject(data), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(ForgotPasswordUrl, data, "application/json", (response) =>
         {
             Debug.Log(response.Text);
             Canvaser.Instance.ForgotPassword.OpenPasswordInputs();
@@ -211,7 +211,7 @@ public class LoginManager : MonoBehaviour
     {
         CheckTokenModel data = new CheckTokenModel() { Email = email, Code = code };
 
-        StartCoroutine(NetworkHelper.SendRequest(ValidateResetTokenUrl, JsonConvert.SerializeObject(data), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(ValidateResetTokenUrl, data, "application/json", (response) =>
         {
             Debug.Log(response.Text);
 
@@ -232,7 +232,7 @@ public class LoginManager : MonoBehaviour
     {
         ResetPasswordViewModel data = new ResetPasswordViewModel() { Email = email, Code = code, Password = password, ConfirmPassword = confirmPassword };
 
-        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, JsonConvert.SerializeObject(data), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, data, "application/json", (response) =>
         {
             Debug.Log(response.Text);
             Canvaser.Instance.ForgotPassword.ResetFinished();
@@ -269,7 +269,7 @@ public class LoginManager : MonoBehaviour
 
     public void RegisterExternal(RegisterExternalBindingModel model)
     {
-        StartCoroutine(NetworkHelper.SendRequest(ExternalRegisterUrl, JsonConvert.SerializeObject(model), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(ExternalRegisterUrl, model, "application/json", (response) =>
         {
 
             //PlayerPrefs.SetString("provider", LoginProvider);
@@ -356,7 +356,7 @@ public class LoginManager : MonoBehaviour
     public void GetRegions()
     {
 
-        StartCoroutine(NetworkHelper.SendRequest(GetRegionsUrl, "", "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(GetRegionsUrl, null, "application/json", (response) =>
         {
             Canvaser.Instance.RegistrationPanel.SetRegions(JsonConvert.DeserializeObject<List<RegionModel>>(response.Text));
         }));

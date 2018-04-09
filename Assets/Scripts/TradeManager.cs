@@ -33,7 +33,7 @@ public class TradeManager : MonoBehaviour {
     {
         Canvaser.ShowLoading(true);
         InputInt input = new InputInt() { Value = userID };
-        StartCoroutine(NetworkHelper.SendRequest(TradeItemsUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(TradeItemsUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             TradeItemsModel info = JsonConvert.DeserializeObject<TradeItemsModel>(response.Text);
@@ -44,7 +44,7 @@ public class TradeManager : MonoBehaviour {
 
     public void OfferTradeAsync(TradeOfferModel offer)
     {
-        StartCoroutine(NetworkHelper.SendRequest(OfferTradeUrl, JsonConvert.SerializeObject(offer), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(OfferTradeUrl, offer, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.TradeOffered();
@@ -53,7 +53,7 @@ public class TradeManager : MonoBehaviour {
     }
     public void GetTradeOffersAsync()
     {
-        StartCoroutine(NetworkHelper.SendRequest(TradeOffersUrl, "", "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(TradeOffersUrl, null, "application/json", (response) =>
         {
             Debug.Log("OK");
             List<TradeOfferModel> info = JsonConvert.DeserializeObject<List<TradeOfferModel>>(response.Text);
@@ -65,7 +65,7 @@ public class TradeManager : MonoBehaviour {
     public void AcceptTradeAsync(int userID)
     {
         InputInt input = new InputInt() { Value = userID };
-        StartCoroutine(NetworkHelper.SendRequest(AcceptTradeUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(AcceptTradeUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
@@ -75,7 +75,7 @@ public class TradeManager : MonoBehaviour {
     public void DeclineTradeAsync(int userID)
     {
         InputInt input = new InputInt() { Value = userID };
-        StartCoroutine(NetworkHelper.SendRequest(DeclineTradeUrl, JsonConvert.SerializeObject(input), "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(DeclineTradeUrl, input, "application/json", (response) =>
         {
             Debug.Log("OK");
             Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
