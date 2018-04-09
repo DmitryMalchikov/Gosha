@@ -15,13 +15,13 @@ public class Coin : MonoBehaviour, IPickable
     }
 
 	void Start(){
-		_defaultPosition = transform.position;
+		_defaultPosition = transform.localPosition;
 	}
 
 	void OnEnable(){
 		if (_reset) {
 			_reset = false;
-			transform.position = _defaultPosition;
+			transform.localPosition = _defaultPosition;
 		}
 	}
 

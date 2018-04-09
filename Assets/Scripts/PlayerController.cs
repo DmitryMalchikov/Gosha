@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     public Effect ShieldEffect;
     public Effect RocketEffect;
     public ParticleSystem IceCreamPicked;
-	public ParticleSystem ObstaclesEffect;
+    public ParticleSystem ObstaclesEffect;
 
 
     private Vector3 moveDir;
@@ -74,8 +74,8 @@ public class PlayerController : MonoBehaviour
     public Tile LastTile;
 
     private float minY = 0;
-	private int DefaultLayer;
-	private int GroundLayer;
+    private int DefaultLayer;
+    private int GroundLayer;
 
     public bool OnGround
     {
@@ -114,8 +114,8 @@ public class PlayerController : MonoBehaviour
         transform.position = StartPos;
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
-		animator.SetBool (RocketHash, false);
-		//Collisions.Clear ();
+        animator.SetBool(RocketHash, false);
+        //Collisions.Clear ();
         OnGround = true;
         CurrentX = 0;
         hitsCount = 0;
@@ -129,8 +129,8 @@ public class PlayerController : MonoBehaviour
         col = GetComponent<CapsuleCollider>();
         PlayerAnimator = GetComponent<Animator>();
         _suitsItems = GetComponentsInChildren<SuitInfo>();
-		DefaultLayer = LayerMask.NameToLayer ("Default");
-		GroundLayer = LayerMask.NameToLayer ("Ground");
+        DefaultLayer = LayerMask.NameToLayer("Default");
+        GroundLayer = LayerMask.NameToLayer("Ground");
         PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
     }
 
@@ -248,27 +248,29 @@ public class PlayerController : MonoBehaviour
         if (GameController.Instance.Rocket)
             return;
 
-		StartCoroutine (StartJump ());
+        StartCoroutine(StartJump());
     }
 
-	IEnumerator StartJump(){
-		yield return new WaitUntil (() => isMoving == false && tempOnGround == true);
+    IEnumerator StartJump()
+    {
+        yield return new WaitUntil(() => isMoving == false && tempOnGround == true);
 
-		if (col.height == 0.35f)
-			StandUp();
+        if (col.height == 0.35f)
+            StandUp();
 
-		if (OnGround)
-		{
-			animator.SetTrigger(JumpHash);
-			//moveDir.x = rb.velocity.x;
-			moveDir.y = JumpSpeed;
-			rb.velocity = moveDir;
-			isJumping = true;
+        if (OnGround)
+        {
+            animator.SetTrigger(JumpHash);
+            //moveDir.x = rb.velocity.x;
+            moveDir.y = JumpSpeed;
+            rb.velocity = moveDir;
+            isJumping = true;
+            tempOnGround = false;
 
-			AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
-			TasksManager.Instance.CheckTasks(TasksTypes.Jump);
-		}
-	}
+            AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
+            TasksManager.Instance.CheckTasks(TasksTypes.Jump);
+        }
+    }
 
     public void Crouch()
     {
@@ -363,9 +365,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-		if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer) {
-			return;
-		}
+        if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer)
+        {
+            return;
+        }
 
         Vector3 normal = collision.contacts[0].normal;
         //float angleUp = Vector3.Angle (normal, Vector3.up);
@@ -430,14 +433,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-		if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer) {
-			return;
-		}
-
-        tempOnGround = false;
+        if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer)
+        {
+            return;
+        }
+        
         var toRemove = Collisions.Find(col => col.Object == collision.gameObject);
         if (toRemove != null)
         {
+            tempOnGround = false;
             Collisions.Remove(toRemove);
             //Collisions -= 1;
             //			if (Collisions <= 0) {
@@ -450,7 +454,6 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SetOnGround()
     {
-
         int waitCount = -1;
 
         yield return new WaitUntil(() => { waitCount++; return !isMoving; });
@@ -458,7 +461,6 @@ public class PlayerController : MonoBehaviour
 
         if (!tempOnGround)
         {
-
             if (Collisions.Count == 0)
             {
                 if (waitCount > 0)
@@ -534,19 +536,20 @@ public class PlayerController : MonoBehaviour
 
     public void RemoveObstcles()
     {
-		ObstaclesEffect.Play ();
+        ObstaclesEffect.Play();
 
-		StartCoroutine (WaitEffect ());
+        StartCoroutine(WaitEffect());
     }
 
-	IEnumerator WaitEffect(){
-		yield return null;
-		var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 7f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
-		for (int i = 0; i < obstacles.Length; i++)
-		{
-			obstacles[i].transform.parent.gameObject.SetActive(false);
-		}
-	}
+    IEnumerator WaitEffect()
+    {
+        yield return null;
+        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 7f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
+        for (int i = 0; i < obstacles.Length; i++)
+        {
+            obstacles[i].transform.parent.gameObject.SetActive(false);
+        }
+    }
 
     public void PutOnSuit(string suitName)
     {
