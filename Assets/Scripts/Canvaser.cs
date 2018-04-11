@@ -164,7 +164,7 @@ public class Canvaser : MonoBehaviour
 
     public static void ShowLoading(bool toShow)
     {
-        Instance.Loading.SetActive(toShow);
+        //Instance.Loading.SetActive(toShow);
     }
 
     public void SetGameOverPanel()
