@@ -245,5 +245,6 @@ public class SuitsPanel : MonoBehaviour {
         PreopenCase.SetActive(true);
         Idle.SetActive(false);
         LootManager.Instance.OpenCaseAsync(SuitsScroll.CasesIds[SuitsScroll.selectedPanID]);
+        AudioManager.PlayCaseOpen();
     }
 }

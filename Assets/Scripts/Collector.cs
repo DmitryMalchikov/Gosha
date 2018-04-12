@@ -55,6 +55,7 @@ public class Collector : MonoBehaviour {
     {
         GameController.Instance.Magnet = true;
 		PlayerController.TurnOnEffect (EffectType.Magnet);
+        AudioManager.PlayMagnetEffect();
 
         Canvaser.Instance.GamePanel.Magnet.Activate(true);
         while (GameController.Instance.MagnetTimeLeft > 0)
@@ -69,7 +70,9 @@ public class Collector : MonoBehaviour {
         //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
         Collider.size = StandardSize;
         GameController.Instance.Magnet = false;
-		PlayerController.TurnOffEffect (EffectType.Magnet);
+		PlayerController.TurnOffEffect (EffectType.Magnet);       
+        AudioManager.StopEffectsSound();
+        AudioManager.PlayEffectEnd();
     }
 
     public void ResetSas()

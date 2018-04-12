@@ -19,33 +19,21 @@ public class BoxPrize : MonoBehaviour {
         switch(name)
         {
             case "Ice cream":
-                IceCream.SetActive(true);
-                ActiveObj = IceCream;
-                break;
-            case "Shield":
-                Shield.SetActive(true);
-                ActiveObj = Shield;
-                break;
-            case "Freeze":
-                Freeze.SetActive(true);
-                ActiveObj = Freeze;
-                break;
-            case "Magnet":
-                Magnet.SetActive(true);
-                ActiveObj = Magnet;
-                break;
             case "Мороженое":
                 IceCream.SetActive(true);
                 ActiveObj = IceCream;
                 break;
+            case "Shield":
             case "Щит":
                 Shield.SetActive(true);
                 ActiveObj = Shield;
                 break;
+            case "Freeze":
             case "Заморозка":
                 Freeze.SetActive(true);
                 ActiveObj = Freeze;
                 break;
+            case "Magnet":
             case "Магнит":
                 Magnet.SetActive(true);
                 ActiveObj = Magnet;
@@ -54,7 +42,7 @@ public class BoxPrize : MonoBehaviour {
                 IceCream.SetActive(true);
                 ActiveObj = IceCream;
                 break;
-
+                //ФИЛИПП!!! Вставь AudioManager.PlayCardGet() если выпала карточка
         }
     }
 

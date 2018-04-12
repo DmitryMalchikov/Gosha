@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class RocketCoins : MonoBehaviour
 {
-
     public Vector3 StartPosition;
-
-
+    
     void Update()
     {
         transform.Translate(GameController.Instance.Speed * Time.deltaTime);

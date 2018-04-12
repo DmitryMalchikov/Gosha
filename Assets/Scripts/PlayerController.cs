@@ -275,7 +275,7 @@ public class PlayerController : MonoBehaviour
     public void Crouch()
     {
 
-        if (GameController.Instance.Rocket)
+        if (GameController.Instance.Rocket || !GameController.Instance.Started)
             return;
 
         if (!OnGround)
@@ -342,6 +342,7 @@ public class PlayerController : MonoBehaviour
         animator.ResetTrigger(HitRight);
         animator.ResetTrigger(Left);
         animator.ResetTrigger(Right);
+        animator.ResetTrigger(CrouchHash);
         CameraFollow.Instance.offset.z = -2.5f;
         LastGroundY = StartPos.y;
     }
@@ -420,11 +421,12 @@ public class PlayerController : MonoBehaviour
     {
         //LastTile.DisableCollider (collision.collider);
         GameController.Instance.Shield = false;
-        GameController.Instance.ShieldTimeLeft = 0;
+        //GameController.Instance.ShieldTimeLeft = 0;
         RemoveObstcles();
         //LastTile.ClearObstacles();
         //LastTile = null;
         rb.velocity = velocityBeforePhysics;
+        AudioManager.PlayShieldHitEffect();
     }
 
     private void MoveToPosition(Vector3 position)
@@ -532,6 +534,10 @@ public class PlayerController : MonoBehaviour
         Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
         GameController.Instance.Shield = false;
         TurnOffEffect(EffectType.Shield);
+        if (GameController.Instance.ShieldTimeLeft <= 0)
+        {
+            AudioManager.PlayEffectEnd();
+        }
     }
 
     public void RemoveObstcles()

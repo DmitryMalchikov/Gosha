@@ -9,5 +9,6 @@ public class Magnet : MonoBehaviour, IPickable
     {
         Collector.Instance.UseMagnet();
         gameObject.SetActive(false);
+        AudioManager.PlayEffectPickup();
     }
 }

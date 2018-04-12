@@ -5,30 +5,35 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour, IPickable
 {
-	private bool _reset = false;
-	private Vector3 _defaultPosition;
+    private bool _reset = false;
+    private Vector3 _defaultPosition;
 
     public virtual void PickUp()
-    {   
-      	GameController.Instance.AddCoin();
-      	gameObject.SetActive(false);         
+    {
+        GameController.Instance.AddCoin();
+        gameObject.SetActive(false);
+        AudioManager.PlayIceCreamPickup();
     }
 
-	void Start(){
-		_defaultPosition = transform.localPosition;
-	}
+    void Start()
+    {
+        _defaultPosition = transform.localPosition;
+    }
 
-	void OnEnable(){
-		if (_reset) {
-			_reset = false;
-			transform.localPosition = _defaultPosition;
-		}
-	}
+    void OnEnable()
+    {
+        if (_reset)
+        {
+            _reset = false;
+            transform.localPosition = _defaultPosition;
+        }
+    }
 
-	public void OnMagnet(){
-		_reset = true;
-		StartCoroutine (MoveToPlayer ());
-	}
+    public void OnMagnet()
+    {
+        _reset = true;
+        StartCoroutine(MoveToPlayer());
+    }
 
     IEnumerator MoveToPlayer()
     {
@@ -37,8 +42,8 @@ public class Coin : MonoBehaviour, IPickable
         while (true)
         {
             yield return GameController.Frame;
-			transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, startSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, startSpeed * Time.deltaTime);
             startSpeed += GameController.Instance.CoinSpeed * GameController.Instance.Speed.z;
-        }        
+        }
     }
 }

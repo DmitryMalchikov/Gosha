@@ -342,7 +342,8 @@ public class GameController : MonoBehaviour
             return PlayerController.Instance.transform.position.y >= RocketHeight;
         });
 
-		PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
+        AudioManager.PlayRocketEffect();
+        PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
         PlayerController.Instance.col.enabled = true;
         PlayerController.Instance.rb.velocity = Vector3.zero;
 		PlayerController.Instance.rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -357,7 +358,9 @@ public class GameController : MonoBehaviour
         }
 
         Rocket = false;
-		PlayerController.TurnOffEffect (EffectType.Rocket);
+		PlayerController.TurnOffEffect (EffectType.Rocket);         
+        AudioManager.StopEffectsSound();
+        AudioManager.PlayEffectEnd();
 
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
         Canvaser.Instance.GamePanel.Rocket.Activate(false);
@@ -411,6 +414,7 @@ public class GameController : MonoBehaviour
     IEnumerator ReturnSpeed()
     {
         Deceleration = true;
+        AudioManager.PlayFreezeStartEffect();
 
 		PlayerController.TurnOnEffect (EffectType.Freeze);
 
@@ -428,6 +432,7 @@ public class GameController : MonoBehaviour
         Deceleration = false;
         NormalSpeed = false;
 		PlayerController.TurnOffEffect (EffectType.Freeze);
+        AudioManager.PlayEffectEnd();
 
         var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
 

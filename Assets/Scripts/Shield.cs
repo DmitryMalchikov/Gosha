@@ -9,5 +9,6 @@ public class Shield : MonoBehaviour, IPickable
     {
         PlayerController.Instance.ApplyShield();
         gameObject.SetActive(false);
+        AudioManager.PlayEffectPickup();
     }
 }

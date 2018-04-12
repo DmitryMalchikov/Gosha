@@ -7,5 +7,6 @@ public class Rocket : MonoBehaviour, IPickable {
     {
         GameController.Instance.ApplyRocket();
         gameObject.SetActive(false);
+        AudioManager.PlayEffectPickup();
     }
 }
