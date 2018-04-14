@@ -63,6 +63,8 @@ public class ItemInfo : MonoBehaviour
     {
         ItemID = item.ItemId;
         NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
+        curItem = item;
+        ImgSource.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(item.Name));
     }
     public void SetBonus(InventoryItem item)
     {

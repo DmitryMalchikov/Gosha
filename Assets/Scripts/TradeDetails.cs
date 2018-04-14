@@ -23,11 +23,13 @@ public class TradeDetails : MonoBehaviour {
     public void Accept()
     {
         TradeManager.Instance.AcceptTradeAsync(info.Id);
+        LoginManager.Instance.GetUserInfoAsync();
     }
 
     public void Decline()
     {
         TradeManager.Instance.DeclineTradeAsync(info.Id);
+        LoginManager.Instance.GetUserInfoAsync();
     }
 
     public void SetDetails(TradeOfferModel model)
@@ -48,7 +50,7 @@ public class TradeDetails : MonoBehaviour {
             SecondUserName.text = LoginManager.Instance.User.Nickname;
             AcceptBtn.gameObject.SetActive(true);
         }
-
+        
         FirstUserItemName.text = model.OfferItem.Name;
         if(model.OfferItem.Name == "Ice cream")
         {
@@ -58,6 +60,22 @@ public class TradeDetails : MonoBehaviour {
         if(model.RequestItem.Name == "Ice cream")
         {
             SecondUserItemName.text += ": " + model.RequestItem.Amount;
+        }
+        if (model.OfferItem.Name.Contains("Card"))
+        {
+            FirstUserItemImg.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.OfferItem.Name));
+        }
+        else
+        {
+            FirstUserItemImg.sprite = Resources.Load<Sprite>("Bonus" + model.OfferItem.ItemId);
+        }
+        if (model.RequestItem.Name.Contains("Card"))
+        {
+            SecondUserItemImg.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.RequestItem.Name));
+        }
+        else
+        {
+            SecondUserItemImg.sprite = Resources.Load<Sprite>("Bonus" + model.RequestItem.ItemId);
         }
         gameObject.SetActive(true);
     }

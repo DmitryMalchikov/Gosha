@@ -319,5 +319,14 @@ public class Canvaser : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public string AddBrackets(string input)
+    {
+        int index = input.LastIndexOf(" ");
+        input = input.Insert(index + 1, "(");
+        input += ")";
+        input = input.Replace(" Card", "");
+        return input;
+    }
 }
 
