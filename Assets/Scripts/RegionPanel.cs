@@ -8,6 +8,7 @@ public class RegionPanel : MonoBehaviour {
     public RegionModel info;
     public Text RegionName;
     public Toggle ToggleBox;
+	public Image Flag;
 
     public void ChooseRegion(bool isChosen)
     {
@@ -22,6 +23,7 @@ public class RegionPanel : MonoBehaviour {
     {
         info = model;
         RegionName.text = info.Name;
+		Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
     }
 	// Use this for initialization
 	void Start () {

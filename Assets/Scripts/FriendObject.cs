@@ -24,6 +24,8 @@ public class FriendObject : MonoBehaviour
 
     public Image Avatar;
 
+	public GameObject YouPanel;
+
 
     public void AcceptFriend(bool isAccepted)
     {
@@ -137,8 +139,11 @@ public class FriendObject : MonoBehaviour
         OpenText.SetActive(false);
         InfoButton.SetActive(false);
         Name.text = LocalizationManager.GetLocalizedValue("you");
+		Name.color = Color.white;
         Position.text = position.ToString();
-        Avatar.sprite = Canvaser.Instance.Avatar;
+		Position.color = Color.white;
+		Avatar.sprite = Canvaser.Instance.Avatar;
+		YouPanel.SetActive(true);
     }
 
     public void Trade()
