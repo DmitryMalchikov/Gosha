@@ -85,6 +85,7 @@ public class SuitsPanel : MonoBehaviour {
         {
             InventoryManager.Instance.GetMyCasesAsync();
         }
+        LoginManager.Instance.GetUserInfo();
     }
 
     public void SetCurrentCostume(string Name, bool HasSuit)

@@ -138,11 +138,16 @@ public class FriendsManager : MonoBehaviour
             Debug.Log("OK");
             FriendOfferModel result = JsonConvert.DeserializeObject<FriendOfferModel>(response.Text);
             if (result.Id != 0)
+            {
                 Canvaser.Instance.FriendsPanel.PlayerSearchResult.SetPlayerObject(result);
+                Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
+            }
             else
+            {
                 Canvaser.Instance.FriendsPanel.PlayerSearchResult.Warning.SetActive(true);
+                Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
+            }
 
-            Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
             //show info
         }));
     }
