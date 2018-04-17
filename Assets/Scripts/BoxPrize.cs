@@ -52,7 +52,7 @@ public class BoxPrize : MonoBehaviour {
     public void PrizeOut(bool toOut)
     {
         anim.SetBool("Out",toOut);
-        if(currentName.Contains("Card"))
+        if(toOut && !string.IsNullOrEmpty(currentName) && currentName.Contains("Card"))
         {
             AudioManager.PlayCardGet();
         }
