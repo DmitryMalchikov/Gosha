@@ -565,6 +565,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void TakeOffSuits()
+    {
+        for (int i = 0; i < _suitsItems.Length; i++)
+        {
+            _suitsItems[i].gameObject.SetActive(false);
+        }
+    }
+
     public static void TurnOnEffect(EffectType type)
     {
         switch (type)

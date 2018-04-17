@@ -287,6 +287,8 @@ public class LoginManager : MonoBehaviour
 		PlayerPrefs.DeleteKey ("refresh_token_gosha");
 		PlayerPrefs.DeleteKey ("refresh_expires_in_gosha");
 		PlayerPrefs.DeleteKey ("provider_gosha");
+        PlayerPrefs.DeleteKey("CurrentSuit");
+        PlayerController.Instance.TakeOffSuits();
         OneSignal.SetSubscription(false);
         Headers = null;
         userToken = null;

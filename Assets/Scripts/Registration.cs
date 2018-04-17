@@ -92,6 +92,7 @@ public class Registration : MonoBehaviour
 
     public void NextPage()
     {
+        WarningPanel.gameObject.SetActive(false);
         if (!(PageNum == 4))
         {
             content.SetTrigger("Next");
@@ -101,9 +102,9 @@ public class Registration : MonoBehaviour
 
     public void Prev()
     {
+        WarningPanel.gameObject.SetActive(false);
         if (PageNum == 1)
         {
-            WarningPanel.gameObject.SetActive(false);
             if (!LangPanel.activeInHierarchy)
             {
                 LangPanel.SetActive(true);

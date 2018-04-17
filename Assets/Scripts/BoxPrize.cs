@@ -8,14 +8,18 @@ public class BoxPrize : MonoBehaviour {
     public GameObject Freeze;
     public GameObject Magnet;
     public GameObject Shield;
+    public PrizeCard Card;
 
     public Animator anim;
 
     GameObject ActiveObj;
 
+    string currentName;
+
     public void SetPrize(string name)
     {
         Debug.Log(name);
+        currentName = name;
         switch(name)
         {
             case "Ice cream":
@@ -39,16 +43,19 @@ public class BoxPrize : MonoBehaviour {
                 ActiveObj = Magnet;
                 break;
             default:
-                IceCream.SetActive(true);
-                ActiveObj = IceCream;
+                Card.SetCard(Canvaser.Instance.AddBrackets(name));
+                ActiveObj = Card.gameObject;
                 break;
-                //ФИЛИПП!!! Вставь AudioManager.PlayCardGet() если выпала карточка
         }
     }
 
     public void PrizeOut(bool toOut)
     {
         anim.SetBool("Out",toOut);
+        if(currentName.Contains("Card"))
+        {
+            AudioManager.PlayCardGet();
+        }
     }
 
     public void TurnOffPrizes()
