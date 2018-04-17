@@ -102,6 +102,8 @@ public class Canvaser : MonoBehaviour
     public GameObject LoadingPanel;
     public GameObject ErrorWindow;
 
+    public Text CasesCount;
+
     private static Stack<BackButton> _backButtons = new Stack<BackButton>();
 
     public void CloseLoading()
@@ -217,6 +219,7 @@ public class Canvaser : MonoBehaviour
         TradesNotification.SetCount(info.IncomingTrades);
         DuelsNotification.SetCount(info.IncomingDuels);
         CasesNotification.SetCount(info.Cases);
+        CasesCount.text = ": " + info.Cases;
     }
 
     public void OpenShopPanel()

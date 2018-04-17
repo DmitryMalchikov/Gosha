@@ -15,6 +15,9 @@ public class DuelsPanel : MonoBehaviour {
 
     public DuelResult ResultPanel;
 
+    public GameObject NoDuelsMsg;
+    public GameObject NoRequestsMsg;
+
     public void Open()
     {
         Canvaser.ShowLoading(true);
@@ -29,12 +32,14 @@ public class DuelsPanel : MonoBehaviour {
     }
 
     public void SetDuels(List<DuelModel> duels)
-    {        
+    {
+        NoDuelsMsg.SetActive(duels.Count == 0);
         SetContent(DuelsContent, DuelObject, duels, Duels);        
     }
 
     public void SetRequests(List<DuelModel> requests)
     {
+        NoRequestsMsg.SetActive(requests.Count == 0);
         gameObject.SetActive(true);
         SetContent(RequestsContent, RequestObject, requests, Requests);
     }

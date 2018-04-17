@@ -38,6 +38,9 @@ public class Friends : MonoBehaviour
 
     public List<FriendObject> FriendObjects;
 
+    public GameObject NoFriendsMsg;
+    public GameObject NoRequestsMsg;
+
     public void OpenFriendsPanel()
     {
         Canvaser.ShowLoading(true);
@@ -46,20 +49,22 @@ public class Friends : MonoBehaviour
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
 
-        Synchroniser.OnActionsReady += ()=> gameObject.SetActive(true);
+        Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
         Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
 
-        FriendsManager.Instance.GetFriendsRequestsAsync(() =>Synchroniser.SetReady(0));
-        FriendsManager.Instance.GetFriendsAsync(() => Synchroniser.SetReady(1));        
+        FriendsManager.Instance.GetFriendsRequestsAsync(() => Synchroniser.SetReady(0));
+        FriendsManager.Instance.GetFriendsAsync(() => Synchroniser.SetReady(1));
     }
 
     public void SetFriendRequests(List<FriendModel> requests)
     {
+        NoRequestsMsg.SetActive(requests.Count == 0);
         SetContentWith(requests, RequestsContent, RequestObject);
     }
 
     public void SetFriends(List<FriendModel> friends)
     {
+        NoFriendsMsg.SetActive(friends.Count == 0);
         SetContentWith(friends, FriendsContent, FriendObject);
         FriendObjects = new List<FriendObject>(FriendsContent.GetComponentsInChildren<FriendObject>());
     }

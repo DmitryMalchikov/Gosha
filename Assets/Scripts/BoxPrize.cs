@@ -24,6 +24,7 @@ public class BoxPrize : MonoBehaviour {
         {
             case "Ice cream":
             case "Мороженое":
+            case null:
                 IceCream.SetActive(true);
                 ActiveObj = IceCream;
                 break;
