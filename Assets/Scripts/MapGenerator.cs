@@ -54,21 +54,35 @@ public class MapGenerator : MonoBehaviour
 
         for (int i = 0; i < StartTilesNumber; i++)
         {
-
-            var number = Random.Range(0, _avaliableTiles.Count);
-
-            _avaliableTiles[number].gameObject.SetActive(true);
-			_avaliableTiles [number].EnableObstcles ();
-			_avaliableTiles [number].EnableIceCreams ();
-            //TODO: Turn on all coins and etc
+            Tile _currentNewTile = null;
 
             if (_lastTile)
             {
-                _avaliableTiles[number].transform.localPosition = _lastTile.transform.localPosition - Vector3.forward * TileSize * TileScale;
+                var inactiveTiles = _lastTile.InactiveTiles;
+                if (inactiveTiles.Count > 0)
+                {
+                    var number = Random.Range(0, inactiveTiles.Count);
+                    _currentNewTile = inactiveTiles[number];
+                }
             }
 
-            _lastTile = _avaliableTiles[number];
-            _avaliableTiles.RemoveAt(number);
+            if (!_currentNewTile)
+            {
+                var number = Random.Range(0, _avaliableTiles.Count);
+                _currentNewTile = _avaliableTiles[number];
+            }
+
+            _currentNewTile.gameObject.SetActive(true);
+            _currentNewTile.EnableObstcles();
+            _currentNewTile.EnableIceCreams();
+
+            if (_lastTile)
+            {
+                _currentNewTile.transform.localPosition = _lastTile.transform.localPosition - Vector3.forward * TileSize * TileScale;
+            }
+
+            _lastTile = _currentNewTile;
+            _avaliableTiles.Remove(_currentNewTile);
 
             if (i != 0)
             {
@@ -81,44 +95,38 @@ public class MapGenerator : MonoBehaviour
         }
 
         StartTile.gameObject.SetActive(true);
-        //TODO: Turn on all coins and etc
-
         StartTile.transform.position = _lastTile.transform.position - Vector3.forward * TileSize * transform.localScale.z;
-		StartTile.EnableObstcles ();
+        StartTile.EnableObstcles();
 
         _lastTile = tempLast;
 
-		IceCreamRotator.SetRotator (true);
+        IceCreamRotator.SetRotator(true);
     }
 
     public void NextTile()
     {
         if (_avaliableTiles.Count == 0) return;
 
-        if (_lastTile && _lastTile.CanGoAfter.Count > 0)
+        if (_lastTile && _lastTile.CanGoAfter.Count > 0 && _lastTile.InactiveTiles.Count > 0)
         {
-            for (int i = 0; i < _lastTile.CanGoAfter.Count; i++)
-            {
-                if (!_lastTile.CanGoAfter[i].gameObject.activeInHierarchy)
-				{
-					_lastTile.CanGoAfter [i].EnableObstcles ();
-					_lastTile.CanGoAfter [i].EnableIceCreams ();
-                    _lastTile.CanGoAfter[i].gameObject.SetActive(true);
-                    _lastTile.CanGoAfter[i].GenerateBonus();
-                    _lastTile.CanGoAfter[i].GenerateBox();
-                    _lastTile.CanGoAfter[i].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
-                    _lastTile = _lastTile.CanGoAfter[i];
-                    _avaliableTiles.Remove(_lastTile);
-                    break;
-                }
-            }
+            var inactiveTiles = _lastTile.InactiveTiles;
+            int number = Random.Range(0, inactiveTiles.Count);
+
+            inactiveTiles[number].EnableObstcles();
+            inactiveTiles[number].EnableIceCreams();
+            inactiveTiles[number].gameObject.SetActive(true);
+            inactiveTiles[number].GenerateBonus();
+            inactiveTiles[number].GenerateBox();
+            inactiveTiles[number].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
+            _lastTile = inactiveTiles[number];
+            _avaliableTiles.Remove(_lastTile);
         }
         else
         {
             var number = Random.Range(0, _avaliableTiles.Count);
 
-			_avaliableTiles [number].EnableObstcles ();
-			_avaliableTiles [number].EnableIceCreams ();
+            _avaliableTiles[number].EnableObstcles();
+            _avaliableTiles[number].EnableIceCreams();
             _avaliableTiles[number].gameObject.SetActive(true);
             _avaliableTiles[number].GenerateBonus();
             _avaliableTiles[number].GenerateBox();

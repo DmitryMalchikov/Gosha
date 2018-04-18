@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -15,20 +16,23 @@ public class Tile : MonoBehaviour
 
     public List<Tile> CanGoAfter = new List<Tile>();
 
+    public List<Tile> InactiveTiles { get { return CanGoAfter.Where(t => t.gameObject.activeInHierarchy == false).ToList(); } }
+
     byte counter = 0;
 
     public bool CarsStarted = false;
 
     public List<Transform> IceCreamTrucks;
 
-	[HideInInspector]
-	public List<Collider> DisabledColliders = new List<Collider> ();
+    [HideInInspector]
+    public List<Collider> DisabledColliders = new List<Collider>();
 
-	private void Update(){
-		if (!GameController.Instance.Started) return;
+    private void Update()
+    {
+        if (!GameController.Instance.Started) return;
 
-		transform.Translate(GameController.Instance.Speed * Time.deltaTime);
-	}
+        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+    }
 
     private void FixedUpdate()
     {
@@ -46,26 +50,26 @@ public class Tile : MonoBehaviour
             }
         }
 
-		if(!CarsStarted && transform.position.z < MapGenerator.Instance.TileSize/2)
+        if (!CarsStarted && transform.position.z < MapGenerator.Instance.TileSize / 2)
         {
             Obstacles.StartCars();
             CarsStarted = true;
         }
 
-        if (transform.position.z < -MapGenerator.Instance.TileSize/2 - 10)
+        if (transform.position.z < -MapGenerator.Instance.TileSize / 2 - 10)
         {
             Generated = false;
 
             for (int i = 0; i < Bonus.childCount; i++)
             {
                 Bonus.GetChild(i).gameObject.SetActive(false);
-            }            
+            }
 
-			//EnableColliders ();
-			CarsStarted = false;
-			Obstacles.StopCars();
-			//EnableObstcles ();
-			//Obstacles.gameObject.SetActive(true);
+            //EnableColliders ();
+            CarsStarted = false;
+            Obstacles.StopCars();
+            //EnableObstcles ();
+            //Obstacles.gameObject.SetActive(true);
 
             if (!StartTile)
             {
@@ -96,28 +100,32 @@ public class Tile : MonoBehaviour
 
     IEnumerator NextTile()
     {
-		yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
         MapGenerator.Instance.NextTile();
         Generated = true;
     }
 
-	public void DisableCollider(Collider col){
-		DisabledColliders.Add (col);
-		col.enabled = false;
-	}
+    public void DisableCollider(Collider col)
+    {
+        DisabledColliders.Add(col);
+        col.enabled = false;
+    }
 
-	public void EnableObstcles(){
-		for (int i = 0; i < Obstacles.transform.childCount; i++) {
-			Obstacles.transform.GetChild (i).gameObject.SetActive (true);
-		}
-	}
+    public void EnableObstcles()
+    {
+        for (int i = 0; i < Obstacles.transform.childCount; i++)
+        {
+            Obstacles.transform.GetChild(i).gameObject.SetActive(true);
+        }
+    }
 
-	public void EnableIceCreams(){
-		for (int i = 0; i < IceCreams.childCount; i++)
-		{
-			IceCreams.GetChild(i).gameObject.SetActive(true);
-		}
+    public void EnableIceCreams()
+    {
+        for (int i = 0; i < IceCreams.childCount; i++)
+        {
+            IceCreams.GetChild(i).gameObject.SetActive(true);
+        }
         for (int i = 0; i < IceCreamTrucks.Count; i++)
         {
             Coin[] TruckCoins = IceCreamTrucks[i].GetComponentsInChildren<Coin>();
@@ -126,14 +134,16 @@ public class Tile : MonoBehaviour
                 TruckCoins[j].gameObject.SetActive(true);
             }
         }
-	}
+    }
 
-	void EnableColliders(){
-		for (int i = 0; i < DisabledColliders.Count; i++) {
-			DisabledColliders [i].enabled = true;
-		}
+    void EnableColliders()
+    {
+        for (int i = 0; i < DisabledColliders.Count; i++)
+        {
+            DisabledColliders[i].enabled = true;
+        }
 
-		DisabledColliders.Clear ();
-	}
+        DisabledColliders.Clear();
+    }
 }
 
