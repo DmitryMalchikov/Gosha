@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,10 +9,7 @@ public class WeeklyTask : MonoBehaviour {
 
     public Text Task;
     public Text TimeLeft;
-    //public Image Prize;
     PlayerTaskModel info;
-    //public GameObject box;
-    //public Transform CasesContent;
 
     public GameObject IsLocked;
 
@@ -21,10 +17,6 @@ public class WeeklyTask : MonoBehaviour {
     {
         info = model;
         Task.text = model.GenerateDescription();
-        //for (int i = 0; i < model.Reward; i++)
-        //{
-        //    Instantiate(box, CasesContent);
-        //}
 
         if(info.PlayerProgress >= info.ActionsCount)
         {

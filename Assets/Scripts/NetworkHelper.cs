@@ -9,7 +9,6 @@ using UnityEngine;
 
 public static class NetworkHelper
 {
-
     public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
         // Create a request for the URL. 
@@ -41,8 +40,6 @@ public static class NetworkHelper
         {
             stream.Write(data, 0, data.Length);
         }
-
-
 
         try
         {

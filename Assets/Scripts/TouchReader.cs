@@ -33,7 +33,7 @@ public class TouchReader : MonoBehaviour {
 
     void OnMouseDown()
     {
-        if (GameController.Instance.Started)
+        if (GameController.Instance.Started && Time.timeScale > 0)
         {
             pos = Input.mousePosition;
             sas = true;
@@ -54,7 +54,7 @@ public class TouchReader : MonoBehaviour {
     void OnMouseDrag()
     {
 
-        if (GameController.Instance.Started && sas)
+        if (GameController.Instance.Started && sas && Time.timeScale > 0)
         {
             //Debug.Log(Input.mousePosition.x - pos.x);
             if (Mathf.Abs(Input.mousePosition.y - pos.y) > Mathf.Abs(Input.mousePosition.x - pos.x))
@@ -111,33 +111,4 @@ public class TouchReader : MonoBehaviour {
 		}
 	}
 	#endif
-
-    //private void Update()
-    //{
-    //}
-
-    //void OnMouseUp()
-    //{
-    //    Debug.Log("Up");
-    //    if (sas)
-    //    {
-    //        if (Mathf.Abs(Input.mousePosition.y - pos.y) > Mathf.Abs(Input.mousePosition.x - pos.x))
-    //        {
-    //            if ((Input.mousePosition.y - pos.y) > sqrMag)
-    //            {
-    //                PC.Jump();
-    //            }
-    //            else if (Input.mousePosition.y - pos.y < sqrMag)
-    //            {
-    //                PC.Crouch();
-    //            }
-    //        }
-    //        else if (Mathf.Abs(Input.mousePosition.x - pos.x) > sqrMag)
-    //        {
-    //            PC.Move((Input.mousePosition.x - pos.x) > 0);
-    //        }
-    //        sas = false;
-    //    }
-    //}
-
 }
