@@ -42,7 +42,14 @@ public class IceCreamChanger : MonoBehaviour {
         {
             yield return new WaitForSeconds(Time.deltaTime);
             lerp += Time.deltaTime / Duration;
-            CurrentCount = (int)Mathf.Lerp(CurrentCount, endVal, lerp);
+            if (Mathf.Abs(endVal - CurrentCount) < 4)
+            {
+                CurrentCount += ((endVal - CurrentCount) > 0) ? 1 : -1;
+            }
+            else
+            {
+                CurrentCount = (int)Mathf.Lerp(CurrentCount, endVal, lerp);
+            }
             IceCream.text = CurrentCount.ToString();
         }
         //CurrentCount++;

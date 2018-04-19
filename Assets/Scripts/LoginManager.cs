@@ -120,20 +120,21 @@ public class LoginManager : MonoBehaviour
 
     public void GetTokenAsync()
     {
-        string email, password;
 
-       	email = Email.text;
-       	password = Password.text;
+        GetTokenAsync(Email.text, Password.text);
+    }
 
+    public void GetTokenAsync(string email, string password)
+    {
         StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), "application/json", (response) =>
         {
-			userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
-			
-			PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
-			PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+            userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
 
-			OneSignal.SetSubscription(true);
-			OneSignal.SyncHashedEmail(userToken.Email);
+            PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
+            PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+
+            OneSignal.SetSubscription(true);
+            OneSignal.SyncHashedEmail(userToken.Email);
 
             LoginCanvas.Instance.EnableWarning(false);
 
@@ -192,6 +193,7 @@ public class LoginManager : MonoBehaviour
     {
         StartCoroutine(NetworkHelper.SendRequest(RegisterUrl, model, "application/json", (response) =>
         {
+            GetTokenAsync(model.Email, model.Password);
             Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
         }));

@@ -14,12 +14,19 @@ public class ShowTradesPanel : MonoBehaviour {
     public void SetTrades(List<TradeOfferModel> trades)
     {
         ClearContent();
-        Title.text = trades.Count + LocalizationManager.GetLocalizedValue("tradeoffers");
-        foreach (TradeOfferModel item in trades)
+        if (trades.Count == 0)
         {
-            TradeInfo newTrade = Instantiate(TradeInfoObject, Content).GetComponent<TradeInfo>();
-            newTrade.SetTrade(item);
-            Trades.Add(newTrade);
+            Title.text = LocalizationManager.GetLocalizedValue("nooffers");
+        }
+        else
+        {
+            Title.text = trades.Count + LocalizationManager.GetLocalizedValue("tradeoffers");
+            foreach (TradeOfferModel item in trades)
+            {
+                TradeInfo newTrade = Instantiate(TradeInfoObject, Content).GetComponent<TradeInfo>();
+                newTrade.SetTrade(item);
+                Trades.Add(newTrade);
+            }
         }
         gameObject.SetActive(true);
     }

@@ -40,6 +40,7 @@ public class AudioManager : MonoBehaviour
     {
        Source.PlayOneShot(Instance.BtnTap);
     }
+    
 
     public static void StopEffectsSound()
     {

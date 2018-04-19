@@ -9,7 +9,13 @@ public class SoundButton : MonoBehaviour
     private IEnumerator Start()
     {
         yield return new WaitUntil(() => AudioManager.Instance);
-        
-        GetComponent<Button>().onClick.AddListener(() => AudioManager.PlayBtnTapSound());
+        if (GetComponent<Button>())
+        {
+            GetComponent<Button>().onClick.AddListener(() => AudioManager.PlayBtnTapSound());
+        }
+        else if(GetComponent<Toggle>())
+        {
+            GetComponent<Toggle>().onValueChanged.AddListener((value) => AudioManager.PlayBtnTapSound());
+        }
     }
 }

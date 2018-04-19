@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class RegionPanel : MonoBehaviour {
 
     public RegionModel info;
-    public Text RegionName;
+    public LocalizedText RegionName;
     public Toggle ToggleBox;
 	public Image Flag;
 
@@ -22,7 +22,7 @@ public class RegionPanel : MonoBehaviour {
     public void SetRegionPanel(RegionModel model)
     {
         info = model;
-        RegionName.text = info.Name;
+        RegionName.Key = info.Name;
 		Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
     }
 	// Use this for initialization

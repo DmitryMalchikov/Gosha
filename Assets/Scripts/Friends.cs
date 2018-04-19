@@ -174,6 +174,14 @@ public class Friends : MonoBehaviour
         DuelPanel.SetActive(true);
     }
 
+    public void CorrectBet(string bet)
+    {
+        if (int.Parse(bet) > LoginManager.Instance.User.IceCream)
+        {
+            DuelBet.text = LoginManager.Instance.User.IceCream.ToString();
+        }
+    }
+
     public void SetDuel()
     {
         if (!string.IsNullOrEmpty(DuelBet.text))
