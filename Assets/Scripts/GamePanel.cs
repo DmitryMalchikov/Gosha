@@ -40,5 +40,7 @@ public class GamePanel : MonoBehaviour
         ShieldCD.Activate(false);
         DeceleratorCD.Activate(false);
         RocketCD.Activate(false);
+
+        AudioManager.StopEffectsSound();
     }
 }

@@ -339,7 +339,8 @@ public class PlayerController : MonoBehaviour
         animator.ResetTrigger(Right);
         animator.ResetTrigger(CrouchHash);
         CameraFollow.Instance.offset.z = -2.5f;
-        //LastGroundY = StartPos.y;
+        Canvaser.Instance.GamePanel.TurdOffBonuses();
+        GameController.TurnOffAllBonuses();
     }
 
     private void OnGrounded(Collision collision)
@@ -414,12 +415,8 @@ public class PlayerController : MonoBehaviour
 
     private void ShieldHit()
     {
-        //LastTile.DisableCollider (collision.collider);
         GameController.Instance.Shield = false;
-        //GameController.Instance.ShieldTimeLeft = 0;
         RemoveObstcles();
-        //LastTile.ClearObstacles();
-        //LastTile = null;
         rb.velocity = velocityBeforePhysics;
         AudioManager.PlayShieldHitEffect();
     }
@@ -440,13 +437,8 @@ public class PlayerController : MonoBehaviour
         {
             tempOnGround = false;
             Collisions.Remove(toRemove);
-            //Collisions -= 1;
-            //			if (Collisions <= 0) {
-            //				Collisions = 0;
-            //			}
             StartCoroutine(SetOnGround());
         }
-        //}
     }
 
     IEnumerator SetOnGround()
@@ -525,6 +517,7 @@ public class PlayerController : MonoBehaviour
             GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
         }
+
         Canvaser.Instance.GamePanel.Shield.Activate(false);
         Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
         GameController.Instance.Shield = false;
@@ -540,6 +533,14 @@ public class PlayerController : MonoBehaviour
         ObstaclesEffect.Play();
 
         StartCoroutine(WaitEffect());
+    }
+
+    public static void ResetPositionForContinue()
+    {
+        Instance.animator.SetBool(StartedHash, true);
+        Instance.animator.SetTrigger("Reset");
+        Instance.animator.transform.rotation = new Quaternion();
+        Instance.transform.position += Vector3.right * (Instance.CurrentX - Instance.transform.position.x);
     }
 
     IEnumerator WaitEffect()

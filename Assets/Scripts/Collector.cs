@@ -78,7 +78,6 @@ public class Collector : MonoBehaviour {
     public void ResetSas()
     {
         StopAllCoroutines();
-        //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
         Collider.size = StandardSize;
         GameController.Instance.Magnet = false;
     }

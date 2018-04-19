@@ -61,6 +61,8 @@ public class GameController : MonoBehaviour
     public bool Shield = false;
     public bool Magnet = false;
 
+    public bool CanUseCurrentBonus = true;
+
     public bool NormalSpeed = true;
     public bool BlockMoving = false;
 
@@ -168,12 +170,19 @@ public class GameController : MonoBehaviour
 
         AchievementsManager.Instance.SubmitAllAchievements(true);
         TasksManager.Instance.SubmitAllTasks(true);
-        StopAllCoroutines();
+        TurnOffAllBonuses();
         PlayerController.Instance.ResetSas();
-        Collector.Instance.ResetSas();
-        Canvaser.Instance.GamePanel.TurdOffBonuses();
         CoinGenerator.Instance.TurnOffCoins();
         MapGenerator.Instance.StartGeneration();
+    }
+
+    public static void TurnOffAllBonuses()
+    {
+        Collector.Instance.ResetSas();
+        Canvaser.Instance.GamePanel.TurdOffBonuses();
+        Instance.Shield = false;
+        Instance.Rocket = false;
+        Instance.Deceleration = false;
     }
 
     private void OnApplicationPause(bool pause)
@@ -201,12 +210,8 @@ public class GameController : MonoBehaviour
     {
         Continued = true;
         Started = true;
-        PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
-		PlayerController.Instance.animator.SetTrigger("Reset");
-		PlayerController.Instance.animator.transform.rotation = new Quaternion ();
-		PlayerController.Instance.transform.position += Vector3.right * (PlayerController.Instance.CurrentX - PlayerController.Instance.transform.position.x);
-        Canvaser.Instance.Countdown.SetActive(true);
-		PlayerController.Instance.RemoveObstcles();
+        StartCoroutine(GameStarted());
+        Canvaser.Instance.Countdown.SetActive(true);		
 		CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
     }
 
@@ -350,11 +355,16 @@ public class GameController : MonoBehaviour
         BlockMoving = false;
 
 
-        while (RocketTimeLeft > 0)
+        while (RocketTimeLeft > 0 && Rocket)
         {
             RocketTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
             yield return Frame;
+        }
+
+        if (!Rocket)
+        {
+            yield break;
         }
 
         Rocket = false;
@@ -372,6 +382,8 @@ public class GameController : MonoBehaviour
     public void UseBonus()
     {
         if (CurrentBonus == null || CurrentBonus.Amount < 1) return;
+
+        CanUseCurrentBonus = false;
 
         switch (CurrentBonus.Name)
         {
@@ -419,13 +431,18 @@ public class GameController : MonoBehaviour
 		PlayerController.TurnOnEffect (EffectType.Freeze);
 
         Canvaser.Instance.GamePanel.Decelerator.Activate(true);
-        while (DecelerationTimeLeft > 0)
+        while (DecelerationTimeLeft > 0 && Deceleration)
         {
             yield return Frame;
             DecelerationTimeLeft -= Time.deltaTime;
 
             Canvaser.Instance.GamePanel.Decelerator.SetTimer(DecelerationTimeLeft);
         }
+
+        if (!Deceleration)
+        {
+            yield break;
+        } 
 
         Canvaser.Instance.GamePanel.Decelerator.Activate(false);
         Canvaser.Instance.GamePanel.DeceleratorCD.OpenCooldownPanel();

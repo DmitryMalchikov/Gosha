@@ -29,6 +29,7 @@ public class BonusCooldown : MonoBehaviour {
     IEnumerator ShowCooldown()
     {
         yield return new WaitForSeconds(Cooldown);
+        GameController.Instance.CanUseCurrentBonus = true;
         Activate(false);
     }
 }

@@ -46,7 +46,10 @@ public class TouchReader : MonoBehaviour {
             else if (!wasMove)
             {
                 Debug.Log("Double tap");
-                GameController.Instance.UseBonus();
+                if (GameController.Instance.CanUseCurrentBonus)
+                {
+                    GameController.Instance.UseBonus();
+                }
             }
         }
     }

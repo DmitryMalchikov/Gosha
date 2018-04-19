@@ -46,12 +46,10 @@ public class ContinuePanel : MonoBehaviour {
 			ContinuePanel.Instance.gameObject.SetActive(false);
 			GameController.Instance.ContinueGameForMoney(); 
 		}
-        //ScoreManager.Instance.ContinueForMoney();
     }
 
     public void FinishRun()
     {
-        //Canvaser.Instance.SetGameOverPanel();
         gameObject.SetActive(false);
         GameController.Instance.SuperFinish();        
     }
