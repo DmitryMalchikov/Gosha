@@ -60,8 +60,6 @@ public class CameraFollow : MonoBehaviour {
 		} else {
 			_originalPos = new Vector3 (x, y, z);
 		}
-
-		//transform.LookAt (target);
 	}
 
     public void ChangeCamera()

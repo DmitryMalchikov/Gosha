@@ -111,11 +111,11 @@ public class PlayerController : MonoBehaviour
         StandUp();
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeAll;
+        Collisions.RemoveAll(col => col.Object.layer != GroundLayer);
         transform.position = StartPos;
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
         animator.SetBool(RocketHash, false);
-        //Collisions.Clear ();
         OnGround = true;
         CurrentX = 0;
         hitsCount = 0;
@@ -140,10 +140,6 @@ public class PlayerController : MonoBehaviour
         {
             LastGroundY = transform.position.y;
         }
-
-        if (!GameController.Instance.Started)
-            return;
-
         else if (LastGroundY > transform.position.y && rb.velocity.y < 0)
         {
             if (transform.position.y >= minY)
@@ -152,6 +148,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (!GameController.Instance.Started)
+            return;
+
         if (((!OnGround || !tempOnGround) && rb.velocity.y > 0 && !isMoving) && !OnRamp)
         {
             StickToGround();
@@ -159,15 +158,11 @@ public class PlayerController : MonoBehaviour
 
         if (isMoving)
         {
-
-
             bool back = false;
             back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
 
             if (Mathf.Abs(transform.position.x - CurrentX) < 0.01f || back)
             {
-                //zeroX.Set (0, rb.velocity.y, 0);
-                //rb.velocity = zeroX;
                 moveDir = Vector3.zero;
                 rb.constraints = FreezeExceptJump;
                 isMoving = false;
@@ -344,7 +339,7 @@ public class PlayerController : MonoBehaviour
         animator.ResetTrigger(Right);
         animator.ResetTrigger(CrouchHash);
         CameraFollow.Instance.offset.z = -2.5f;
-        LastGroundY = StartPos.y;
+        //LastGroundY = StartPos.y;
     }
 
     private void OnGrounded(Collision collision)
@@ -439,7 +434,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        
+
         var toRemove = Collisions.Find(col => col.Object == collision.gameObject);
         if (toRemove != null)
         {
