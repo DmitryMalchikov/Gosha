@@ -4,6 +4,8 @@ public class RocketCoin : Coin
 {
     void Update()
     {
+        if (!GameController.Instance.Started) return;
+
         transform.Translate(GameController.Instance.Speed * Time.deltaTime, Space.World);
 
         if (transform.position.z < -18)

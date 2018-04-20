@@ -115,7 +115,6 @@ public class PlayerController : MonoBehaviour
         transform.position = StartPos;
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
-        animator.SetBool(RocketHash, false);
         OnGround = true;
         CurrentX = 0;
         hitsCount = 0;
@@ -506,22 +505,34 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator RemoveShield()
+    public static void TurnShieldOn()
     {
         GameController.Instance.Shield = true;
         TurnOnEffect(EffectType.Shield);
         Canvaser.Instance.GamePanel.Shield.Activate(true);
+    }
+
+    public static void TurnShieldOff()
+    {
+        GameController.Instance.Shield = false;
+        TurnOffEffect(EffectType.Shield);
+        Canvaser.Instance.GamePanel.Shield.Activate(false);
+    }
+
+    IEnumerator RemoveShield()
+    {
+        TurnShieldOn();
+
         while (GameController.Instance.ShieldTimeLeft > 0 && GameController.Instance.Shield)
         {
             yield return GameController.Frame;
             GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
         }
-
-        Canvaser.Instance.GamePanel.Shield.Activate(false);
+        
         Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
-        GameController.Instance.Shield = false;
-        TurnOffEffect(EffectType.Shield);
+        TurnShieldOff();
+
         if (GameController.Instance.ShieldTimeLeft <= 0)
         {
             AudioManager.PlayEffectEnd();

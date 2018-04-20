@@ -53,7 +53,7 @@ public class DuelInfo : MonoBehaviour {
 
         while (true)
         {
-            var time = (info.ExpireDate - DateTime.Now);
+            var time = (info.ExpireDate - DateTime.UtcNow);
 
             Time.text = string.Format("{0:00}ч {1:00}мин", time.Hours, time.Minutes);
 

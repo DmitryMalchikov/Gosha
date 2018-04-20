@@ -38,47 +38,54 @@ public class Collector : MonoBehaviour {
         }
     }
 
+    public static void SwitchMagnetOn()
+    {
+        Instance.Collider.size = Instance.MagnetSize;
+        GameController.Instance.Magnet = true;
+        PlayerController.TurnOnEffect(EffectType.Magnet);
+        AudioManager.PlayMagnetEffect();
+        Canvaser.Instance.GamePanel.Magnet.Activate(true);
+    }
+
+    public static void SwitchMagnetOff()
+    {
+        Instance.Collider.size = Instance.StandardSize;
+        GameController.Instance.Magnet = false;
+        PlayerController.TurnOffEffect(EffectType.Magnet);
+        AudioManager.StopEffectsSound();
+        Canvaser.Instance.GamePanel.Magnet.Activate(false);
+    }
+
     public void UseMagnet()
     {
         GameController.Instance.MagnetTimeLeft = GameController.Instance.MagnetTime;
 
         if (!GameController.Instance.Magnet)
         {
-            //Collider.center = Vector3.forward * (MagnetSize.z / 2 - 1);
-            Collider.size = MagnetSize;
-
             StartCoroutine(DefaultSize());
         }
     }
 
     IEnumerator DefaultSize()
     {
-        GameController.Instance.Magnet = true;
-		PlayerController.TurnOnEffect (EffectType.Magnet);
-        AudioManager.PlayMagnetEffect();
+        SwitchMagnetOn();
 
-        Canvaser.Instance.GamePanel.Magnet.Activate(true);
         while (GameController.Instance.MagnetTimeLeft > 0)
         {
             yield return GameController.Frame;
             GameController.Instance.MagnetTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Magnet.SetTimer(GameController.Instance.MagnetTimeLeft);
-        }
-        Canvaser.Instance.GamePanel.Magnet.Activate(false);
-        Canvaser.Instance.GamePanel.MagnetCD.OpenCooldownPanel();
+        }      
 
-        //Collider.center = Vector3.forward * (StandardSize.z / 2 - 1);
-        Collider.size = StandardSize;
-        GameController.Instance.Magnet = false;
-		PlayerController.TurnOffEffect (EffectType.Magnet);       
-        AudioManager.StopEffectsSound();
+        SwitchMagnetOff();
+
+        Canvaser.Instance.GamePanel.MagnetCD.OpenCooldownPanel();
         AudioManager.PlayEffectEnd();
     }
 
-    public void ResetSas()
+    public void ResetMagnet()
     {
         StopAllCoroutines();
-        Collider.size = StandardSize;
-        GameController.Instance.Magnet = false;
+        SwitchMagnetOff();
     }
 }

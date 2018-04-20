@@ -76,7 +76,7 @@ public class TournamentPanel : MonoBehaviour {
     {
         while (true)
         {
-            var time = (info.ExpireDate - DateTime.Now);
+            var time = (info.ExpireDate - DateTime.UtcNow);
 
 			StringBuilder timeLeft = new StringBuilder ();
 

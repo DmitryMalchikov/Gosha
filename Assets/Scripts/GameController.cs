@@ -67,16 +67,13 @@ public class GameController : MonoBehaviour
     public bool BlockMoving = false;
 
     Vector3 CurrentSpeed;
-
-    public Transform mainCamera;
+    
     public Vector3 RocketSwitchSpeed;
 
     public float returnTime = 1f;
 
     public int BonusChance;
     public int BoxChance = 1;
-
-    public RocketCoins rocketCoins;
 
     public List<BonusesOn> ActiveBonuses;
 
@@ -92,7 +89,6 @@ public class GameController : MonoBehaviour
 
     public bool Continued = false;
 	public string CancelBtn = "Cancel";
-	public TextureAnimator MainRoad;
 
     CurvedWorld_Controller curvController;
 
@@ -178,11 +174,12 @@ public class GameController : MonoBehaviour
 
     public static void TurnOffAllBonuses()
     {
-        Collector.Instance.ResetSas();
+        Collector.Instance.ResetMagnet();
         Canvaser.Instance.GamePanel.TurdOffBonuses();
-        Instance.Shield = false;
-        Instance.Rocket = false;
-        Instance.Deceleration = false;
+        TurnRocketOff();
+        TurnFreezeOff();
+        PlayerController.TurnShieldOff();
+        Instance.NormalSpeed = true;
     }
 
     private void OnApplicationPause(bool pause)
@@ -326,29 +323,52 @@ public class GameController : MonoBehaviour
         }
     }
 
-    IEnumerator UseRocket()
+    public static void TurnRocketOn()
     {
-		PlayerController.TurnOnEffect (EffectType.Rocket);
-        Rocket = true;
-        BlockMoving = true;
-        StartCoroutine(CoinGenerator.Instance.StartGeneration());
-
+        PlayerController.TurnOnEffect(EffectType.Rocket);
+        Instance.Rocket = true;
+        Instance.BlockMoving = true;
         PlayerController.Instance.rb.useGravity = false;
-        PlayerController.Instance.rb.velocity += Vector3.up * (RocketPower - PlayerController.Instance.rb.velocity.y);
-        //PlayerController.Instance.rb.AddForce(Vector3.up * RocketPower, ForceMode.Acceleration);
         PlayerController.Instance.col.enabled = false;
-		PlayerController.Instance.Collisions.Clear();
+        PlayerController.Instance.Collisions.Clear();
         PlayerController.Instance.OnGround = false;
         Canvaser.Instance.GamePanel.Rocket.Activate(true);
         PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, true);
         PlayerController.Instance.animator.SetTrigger("RocketTrigger");
+    }
+
+    public static void TurnRocketOff()
+    {
+        PlayerController.TurnOffEffect(EffectType.Rocket);
+        Instance.Rocket = false;
+        Instance.BlockMoving = false;
+        PlayerController.Instance.rb.useGravity = true;
+        PlayerController.Instance.col.enabled = true;
+        Canvaser.Instance.GamePanel.Rocket.Activate(false);
+        PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
+        PlayerController.Instance.animator.ResetTrigger("RocketTrigger");
+        PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
+        AudioManager.StopEffectsSound();
+    }
+
+    IEnumerator UseRocket()
+    {
+        StartCoroutine(CoinGenerator.Instance.StartGeneration());
+
+        TurnRocketOn();
+        PlayerController.Instance.rb.velocity += Vector3.up * (RocketPower - PlayerController.Instance.rb.velocity.y);
 
         yield return new WaitUntil(() =>
         {
             RocketTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
-            return PlayerController.Instance.transform.position.y >= RocketHeight;
+            return PlayerController.Instance.transform.position.y >= RocketHeight || !Rocket;
         });
+
+        if (!Rocket)
+        {
+            yield break;
+        }
 
         AudioManager.PlayRocketEffect();
         PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
@@ -369,17 +389,10 @@ public class GameController : MonoBehaviour
         {
             yield break;
         }
-
-        Rocket = false;
-		PlayerController.TurnOffEffect (EffectType.Rocket);         
-        AudioManager.StopEffectsSound();
+        TurnRocketOff();
         AudioManager.PlayEffectEnd();
-
-        PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
-        Canvaser.Instance.GamePanel.Rocket.Activate(false);
+        
         Canvaser.Instance.GamePanel.RocketCD.OpenCooldownPanel();
-        PlayerController.Instance.rb.useGravity = true;
-		PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
     }
 
     public void UseBonus()
@@ -405,6 +418,21 @@ public class GameController : MonoBehaviour
         ScoreManager.Instance.UseBonusAsync(CurrentBonus.Id);
     }
 
+    public static void TurnFreezeOn()
+    {
+        Instance.Deceleration = true;
+        AudioManager.PlayFreezeStartEffect();
+        PlayerController.TurnOnEffect(EffectType.Freeze);
+        Canvaser.Instance.GamePanel.Decelerator.Activate(true);
+    }
+
+    public static void TurnFreezeOff()
+    {
+        Instance.Deceleration = false;
+        PlayerController.TurnOffEffect(EffectType.Freeze);
+        Canvaser.Instance.GamePanel.Decelerator.Activate(false);
+    }
+
     public void ApplyDeceleration()
     {
         DecelerationTimeLeft = DecelerationTime;
@@ -428,12 +456,8 @@ public class GameController : MonoBehaviour
 
     IEnumerator ReturnSpeed()
     {
-        Deceleration = true;
-        AudioManager.PlayFreezeStartEffect();
+        TurnFreezeOn();
 
-		PlayerController.TurnOnEffect (EffectType.Freeze);
-
-        Canvaser.Instance.GamePanel.Decelerator.Activate(true);
         while (DecelerationTimeLeft > 0 && Deceleration)
         {
             yield return Frame;
@@ -445,13 +469,11 @@ public class GameController : MonoBehaviour
         if (!Deceleration)
         {
             yield break;
-        } 
+        }
 
-        Canvaser.Instance.GamePanel.Decelerator.Activate(false);
+        TurnFreezeOff();
         Canvaser.Instance.GamePanel.DeceleratorCD.OpenCooldownPanel();
-        Deceleration = false;
         NormalSpeed = false;
-		PlayerController.TurnOffEffect (EffectType.Freeze);
         AudioManager.PlayEffectEnd();
 
         var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);

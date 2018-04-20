@@ -41,9 +41,10 @@ public class CoinGenerator : MonoBehaviour
 
     public void TurnOffCoins()
     {
+        _avaliableCoins = new List<Coin>(_coins);
+
         for (int i = 0; i < _coins.Length; i++)
         {
-            ResetCoin(_coins[i]);
             _coins[i].gameObject.SetActive(false);
         }
        
@@ -156,7 +157,7 @@ public class CoinGenerator : MonoBehaviour
         _totalCoins += 1;
 		PreviousRot -= Vector3.up * IceCreamRotator.Instance.AngleDelta;
 
-        _avaliableCoins.RemoveAt(0);
+        _avaliableCoins.Remove(coin);
     }
 
     public void ResetCoin(Coin coin)
