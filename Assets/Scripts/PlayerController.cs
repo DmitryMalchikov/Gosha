@@ -366,6 +366,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (collision.gameObject.CompareTag("HardObstacle"))
+        {
+            OnHit(collision);
+            return;
+        }
+
         Vector3 normal = collision.contacts[0].normal;
         //float angleUp = Vector3.Angle (normal, Vector3.up);
         float angleForward = Vector3.Angle(normal, Vector3.back);
