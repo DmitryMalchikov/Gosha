@@ -313,8 +313,6 @@ public class LoginManager : MonoBehaviour
 
         var headers = new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
 
-        //WWW upload = new WWW(url, null, headers);//new WWW(URL, postForm);
-
         WWW www = new WWW(url);
 
         yield return www;
@@ -327,7 +325,7 @@ public class LoginManager : MonoBehaviour
             }
             else
             {
-                img.sprite = Resources.Load<Sprite>("Avatar");
+                img.sprite = Resources.Load<Sprite>("iTunesArtwork");
             }
         }
     }
