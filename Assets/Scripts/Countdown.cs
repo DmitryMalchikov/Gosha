@@ -25,8 +25,12 @@ public class Countdown : MonoBehaviour
             time--;
         }
 
-        PlayerController.Instance.RemoveObstcles();
-        PlayerController.ResetPositionForContinue();
+        if (!GameController.Paused)
+        {
+            PlayerController.Instance.RemoveObstcles();
+            PlayerController.ResetPositionForContinue();
+        }
+        GameController.Paused = false;
         gameObject.SetActive(false);
         Time.timeScale = 1;        
     }

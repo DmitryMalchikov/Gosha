@@ -6,8 +6,13 @@ using UnityEngine.UI;
 
 public class FBManager : MonoBehaviour
 {
+    public static FBManager Instance;
+    private string _currentAchievement;
+
     private void Awake()
     {
+        Instance = this;
+
         if (!FB.IsInitialized)
         {
             FB.Init();
@@ -27,15 +32,17 @@ public class FBManager : MonoBehaviour
     {
         if (FB.IsLoggedIn)
         {
-            Share();
+            Share(_currentAchievement);
         }
     }
 
-    public void OpenShare()
+    public void OpenShare(string achievementName)
     {
+        _currentAchievement = achievementName;
+
         if (FB.IsLoggedIn)
         {
-            Share();
+            Share(_currentAchievement);
         }
         else
         {
@@ -43,9 +50,9 @@ public class FBManager : MonoBehaviour
         }
     }
 
-    public void Share()
+    public void Share(string achievementName)
     {
-        FB.ShareLink(contentTitle: "Gosha game", contentDescription: "i earned points!", callback: OnShare);
+        FB.FeedShare(linkCaption: "Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, link: new System.Uri("http://gosha.by/Html/HomePage.html"), linkName: "Go-go Gosha!");       
     }
 
     private void OnShare(IShareResult result)

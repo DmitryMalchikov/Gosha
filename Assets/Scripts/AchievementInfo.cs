@@ -26,16 +26,16 @@ public class AchievementInfo : MonoBehaviour {
 
     public void ShareFB()
     {
-
+        FBManager.Instance.OpenShare("Kek");
     }
 
     public void ShareVK()
     {
-
+        VKManager.Instance.OpenShare("Kek");
     }
 
     public void ShareOK()
     {
-
+        OKManager.Instance.OpenShare("Kek");
     }
 }

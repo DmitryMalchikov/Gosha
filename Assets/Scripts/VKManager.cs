@@ -1,10 +1,19 @@
 ﻿using UnityEngine;
 
 public class VKManager : MonoBehaviour
-{   
+{
+    public static VKManager Instance;
+    private string _currentAchievement;
 
-    public void OpenShare()
+    private void Awake()
     {
+        Instance = this;
+    }
+
+    public void OpenShare(string achievementName)
+    {
+        _currentAchievement = achievementName;
+
         if (VK.IsLoggedIn())
         {
             WallPost();
@@ -22,7 +31,7 @@ public class VKManager : MonoBehaviour
 
     private void WallPost()
     {
-        VK.WallPost("sas", "https://vk.com/gordiri", "sas", (response) =>
+        VK.WallPost("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", (response) =>
         {
             if (string.IsNullOrEmpty(response))
             {

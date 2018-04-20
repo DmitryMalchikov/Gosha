@@ -193,9 +193,12 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public static bool Paused = false;
+
     public void PauseGame()
     {
         Time.timeScale = 0;
+        Paused = true;
         Canvaser.Instance.PausePanel.SetActive(true);
     }
 

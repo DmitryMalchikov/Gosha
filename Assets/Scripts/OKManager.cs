@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class OKManager : MonoBehaviour
-{   
+{
+    public static OKManager Instance;
+    private string _currentAchievement;
 
     private void Awake()
     {
+        Instance = this;
+
         if (!OK.IsInitialized)
         {
             OK.Init();
         }
     }
 
-    public void OpenShare()
+    public void OpenShare(string achievementName)
     {
+        _currentAchievement = achievementName;
+
         if (!OK.IsLoggedIn)
         {
             LogIn();
         }
         else
         {
-            Share("", "", new Texture2D(20, 20));
+            Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
         }
     }
 
@@ -35,7 +41,7 @@ public class OKManager : MonoBehaviour
 
     private void OnLogIn(bool success)
     {
-        Share("", "", new Texture2D(20, 20));
+        Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
     }
 
     private void Share(string text, string title, Texture2D image)
