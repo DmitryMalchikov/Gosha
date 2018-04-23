@@ -22,7 +22,7 @@ public class BoxPrize : MonoBehaviour {
         currentName = name;
         switch(name)
         {
-            case "Ice cream":
+            case "IceCream":
             case "Мороженое":
             case null:
                 IceCream.SetActive(true);
