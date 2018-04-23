@@ -71,12 +71,12 @@ const char* MESSAGE_FAILED_COPY = "Failed to copy the image";
     }
 
     NSString *imageName = self.outputFileName;
-    if ([imageName hasSuffix:@".png"] == NO) {
-        imageName = [imageName stringByAppendingString:@".png"];
+    if ([imageName hasSuffix:@".jpg"] == NO) {
+        imageName = [imageName stringByAppendingString:@".jpg"];
     }
 
     NSString *imageSavePath = [(NSString *)[paths objectAtIndex:0] stringByAppendingPathComponent:imageName];
-    NSData *png = UIImagePNGRepresentation(image);
+    NSData *png = UIImageJPEGRepresentation(image, 0.8);
     if (png == nil) {
         UnitySendMessage(CALLBACK_OBJECT, CALLBACK_METHOD_FAILURE, MESSAGE_FAILED_COPY);
         [self dismissPicker];

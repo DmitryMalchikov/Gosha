@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Facebook.Unity;
+using Odnoklassniki;
 
 public delegate void ResultCallback();
 
@@ -292,6 +294,9 @@ public class LoginManager : MonoBehaviour
         PlayerPrefs.DeleteKey("CurrentSuit");
         PlayerController.Instance.TakeOffSuits();
         OneSignal.SetSubscription(false);
+		FB.LogOut ();
+		OK.Logout ();
+		VK.LogOut ();
         Headers = null;
         userToken = null;
     }

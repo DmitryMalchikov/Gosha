@@ -30,9 +30,9 @@ public class SampleWebView : MonoBehaviour
 		#else 
 		if (!webObj)
 		{
-		webObj = GetComponent<WebViewObject>();
-		webObj.LoadURL(url);
+		webObj = GetComponent<WebViewObject>();		
 		}
+		webObj.LoadURL(url);
 		#endif
 		}
 

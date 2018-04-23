@@ -224,7 +224,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -386,7 +386,7 @@ ModelImporter:
     - serializedVersion: 16
       name: smash
       takeName: smash
-      firstFrame: 0
+      firstFrame: 5
       lastFrame: 35
       wrapMode: 0
       orientationOffsetY: 0
@@ -1244,7 +1244,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -2264,7 +2264,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -2596,8 +2596,8 @@ ModelImporter:
     - serializedVersion: 16
       name: obstacle_right
       takeName: obstacle_right
-      firstFrame: 0
-      lastFrame: 24
+      firstFrame: 7
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -2766,8 +2766,8 @@ ModelImporter:
     - serializedVersion: 16
       name: obstacle_left
       takeName: obstacle_left
-      firstFrame: 0
-      lastFrame: 24
+      firstFrame: 7
+      lastFrame: 21
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -2936,8 +2936,8 @@ ModelImporter:
     - serializedVersion: 16
       name: run_right
       takeName: run_right
-      firstFrame: 0
-      lastFrame: 24
+      firstFrame: 5
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -3106,8 +3106,8 @@ ModelImporter:
     - serializedVersion: 16
       name: run_left
       takeName: run_left
-      firstFrame: 0
-      lastFrame: 24
+      firstFrame: 5
+      lastFrame: 19.9
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

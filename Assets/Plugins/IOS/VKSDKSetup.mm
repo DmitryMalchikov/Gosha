@@ -14,7 +14,6 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 
 static VKSDKSetup *_instance = [VKSDKSetup sharedInstance];
 static VKSdk *sdkInstance = nil;
-static const char *GameObjectName;
 static const char *LoginSuccessCallback = "OnLoginSuccess";
 static const char *LoginFailedCallback = "OnLoginError";
 static const char *ShareSuccessCallback = "OnShareSuccess";
@@ -22,6 +21,9 @@ static const char *ShareFailedCallback = "OnShareError";
 static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 
 @interface VKSDKSetup() <VKSdkDelegate, VKSdkUIDelegate>
+{
+    NSString *gameObjectName;
+}
 @end
 @implementation VKSDKSetup
 + (VKSDKSetup *)sharedInstance
@@ -57,8 +59,12 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 
 -(void)login
 {
-    
     [VKSdk authorize:SCOPE];
+}
+
+-(void)logout
+{
+    [VKSdk forceLogout];
 }
 
 -(void)WallPost : (const char *)link
@@ -72,10 +78,10 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
     shareDialog.shareLink = [[VKShareLink alloc] initWithTitle:[NSString stringWithUTF8String:linkTitle]  link:[NSURL URLWithString:[NSString stringWithUTF8String:link]]]; //4
     [shareDialog setCompletionHandler:^(VKShareDialogController *dialog, VKShareDialogControllerResult result) {
         if (result == VKShareDialogControllerResultDone){
-            UnitySendMessage(GameObjectName, ShareSuccessCallback, "");
+            UnitySendMessage([gameObjectName UTF8String], ShareSuccessCallback, "");
         }
         else{
-               UnitySendMessage(GameObjectName, ShareFailedCallback, "");
+               UnitySendMessage([gameObjectName UTF8String], ShareFailedCallback, "");
         }
         [UnityGetGLViewController() dismissViewControllerAnimated:YES completion:nil];
     }]; //5
@@ -83,15 +89,15 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 }
 - (void)vkSdkAccessAuthorizationFinishedWithResult:(VKAuthorizationResult *)result {
     if ([result token]) {
-        UnitySendMessage(GameObjectName, LoginSuccessCallback, "");
+        UnitySendMessage([gameObjectName UTF8String], LoginSuccessCallback, "");
     }
     else{
-        UnitySendMessage(GameObjectName, LoginFailedCallback, "");
+        UnitySendMessage([gameObjectName UTF8String], LoginFailedCallback, "");
     }
 }
 
 - (void)vkSdkUserAuthorizationFailed {
-    UnitySendMessage(GameObjectName, LoginFailedCallback, "");
+    UnitySendMessage([gameObjectName UTF8String], LoginFailedCallback, "");
 }
 
 - (void)vkSdkNeedCaptchaEnter:(VKError *)captchaError {
@@ -105,7 +111,7 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 - (void)initSDK : (const char*) _appId
      gameObject : (const char*) gameObject
 {
-    GameObjectName = gameObject;
+    gameObjectName = [NSString stringWithUTF8String:gameObject];
     
     sdkInstance = [VKSdk initializeWithAppId:[NSString stringWithUTF8String:_appId]];
     [sdkInstance registerDelegate:self];
@@ -137,6 +143,11 @@ extern "C" {
     void VKLogin()
     {
         [[VKSDKSetup sharedInstance] login];
+    }
+    
+    void VKLogout()
+    {
+        [[VKSDKSetup sharedInstance] logout];
     }
     
     bool VKLoggedIn(){

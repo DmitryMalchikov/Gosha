@@ -56,7 +56,10 @@ public class FBManager : MonoBehaviour
 
     public void Share(string achievementName)
     {
-        FB.FeedShare(linkCaption: "Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, link: new System.Uri("http://gosha.by/Html/HomePage.html"), linkName: "Go-go Gosha!");       
+        FB.FeedShare(linkCaption: "Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, 
+			link: new System.Uri("http://gosha.by/Html/HomePage.html"), 
+			linkName: "Go-go Gosha!",
+			callback: OnShare);       
     }
 
     private void OnShare(IShareResult result)

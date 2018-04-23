@@ -29,6 +29,9 @@ public class VK : MonoBehaviour {
 	private static extern void VKLogin();
 
 	[DllImport("__Internal")]
+	private static extern void VKLogout();
+
+	[DllImport("__Internal")]
 	private static extern void VKInit(string appId, string gameObject);
 
 	[DllImport("__Internal")]
@@ -106,24 +109,7 @@ public class VK : MonoBehaviour {
 		#endif
     }
 
-    //public void call(string data)
-    //{
-    //    Dictionary<string, object> request = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-
-    //    string requestName = request.Keys.ToList()[0];
-    //    if (requestName.IndexOf("response") == 0)
-    //    {
-    //        int indexStartId = 8;
-    //        if (requestName.IndexOf("responseError") == 0)
-    //        {
-    //            indexStartId = 13;
-    //        }
-    //        string idRequare = requestName.Substring(indexStartId);
-    //        CallBack myFunc = mapFunction[idRequare];
-    //        mapFunction.Remove(idRequare);
-
-    //        object requestData = request[requestName];
-    //        myFunc(requestData);
-    //    }
-    //}
+	public static void LogOut(){
+		VKLogout ();
+	}
 }

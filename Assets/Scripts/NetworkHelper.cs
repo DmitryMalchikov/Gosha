@@ -137,12 +137,18 @@ public static class NetworkHelper
 		#endif
         yield return localFile;
         if (localFile.error == null)
-            Debug.Log("Loaded file successfully");
+			Debug.Log("Loaded file successfully" + localFile.texture == null);
         else
         {
             Debug.Log("Open file error: " + localFile.error);
             yield break; // stop the coroutine here
         }
+
+		if (localFile.texture == null) {
+			Debug.Log ("Texture error");
+			yield break;
+		}
+
         WWWForm postForm = new WWWForm();
         // version 1
         //postForm.AddBinaryData("theFile",localFile.bytes);

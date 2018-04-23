@@ -37,6 +37,10 @@ public class VKSdkPlist : MonoBehaviour {
 			new Dictionary<string,object> {
 				{ "CFBundleURLName", "vk-sdk" },
 				{ "CFBundleURLSchemes", new List<object> { "vk6227224" } }
+			}, 
+			new Dictionary<string,object> {
+				{ "CFBundleURLName", "com.FinnAndJake.GogoGosha" },
+				{ "CFBundleURLSchemes", new List<object> { "goshaapp" } }
 			}
 		};
 

@@ -27,12 +27,12 @@ public class OKManager : MonoBehaviour
 		} else if (OK.AccessTokenExpiresAt < DateTime.Now) {
 				OK.RefreshOAuth(success =>
 					{
-					Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+					Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
 					});
 		}
         else
         {
-            Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+			Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
         }
     }
 
@@ -46,10 +46,10 @@ public class OKManager : MonoBehaviour
 
     private void OnLogIn(bool success)
     {
-        Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+		Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
     }
 
-    private void Share(string text, string title, Texture2D image)
+	private void Share(string text, string link, string title, Texture2D image)
     {
         OK.OpenPublishDialog(
             response =>
@@ -66,7 +66,8 @@ public class OKManager : MonoBehaviour
             new List<OKMedia>()
             {
                 OKMedia.Text(text),
-                OKMedia.Photo(image)
+                OKMedia.Photo(image),
+				OKMedia.Link(link)
             });
     }
 }
