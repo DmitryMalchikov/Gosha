@@ -38,6 +38,22 @@ namespace Odnoklassniki
 			}
 		}
 
+		public static DateTime AccessTokenExpiresAt
+		{
+			get
+			{ 
+				return (odnoklassniki as IOSOdnoklassniki).AccessTokenExpiresAt;
+			}
+		}
+
+		public static DateTime RefreshTokenExpiresAt
+		{
+			get
+			{ 
+				return (odnoklassniki as IOSOdnoklassniki).RefreshTokenExpiresAt;
+			}
+		}
+
 		public static bool IsLoggedIn
 		{
 			get

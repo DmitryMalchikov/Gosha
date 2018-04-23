@@ -124,7 +124,7 @@ namespace Odnoklassniki
 			set { PlayerPrefs.SetString(PrefsAccessTokenExpiration, value.ToString()); }
 		}
 
-		protected DateTime RefreshTokenExpiresAt
+		public DateTime RefreshTokenExpiresAt
 		{
 			get
 			{
@@ -277,6 +277,9 @@ namespace Odnoklassniki
 				return;
 			}
 			AccessToken = args[0];
+			#if UNITY_IOS
+			AccessTokenExpiresAt = DateTime.Now.AddSeconds(int.Parse(args[2]));
+			#endif
 			//temp fix for permissions_granted change
 			SessionSecretKey = args[1].Split('&')[0];
 			authRequested = OKAuthType.None;

@@ -11,8 +11,8 @@
 
 #pragma mark Config
 
-const char* CALLBACK_OBJECT = "Unimgpicker";
-const char* CALLBACK_METHOD = "OnComplete";
+const char* CALLBACK_OBJECT = "Manager";
+const char* CALLBACK_METHOD = "SendImage";
 const char* CALLBACK_METHOD_FAILURE = "OnFailure";
 
 const char* MESSAGE_FAILED_PICK = "Failed to pick the image";

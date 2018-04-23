@@ -15,13 +15,17 @@ public class FBManager : MonoBehaviour
 
         if (!FB.IsInitialized)
         {
-            FB.Init();
+			FB.Init(OnInitComplete);
         }
         else
         {
             FB.ActivateApp();
         }
     }
+
+	private void OnInitComplete(){
+		Debug.Log("Init completed");
+	}
 
     public void LogIn()
     {

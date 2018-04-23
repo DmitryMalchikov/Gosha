@@ -6,7 +6,7 @@
 #import "UnityAppController.h"
 #import "UI/UnityView.h"
 #import "UI/UnityViewControllerBase.h"
- 
+#import "SafariView.h"
  
 @interface UnityOKProxyAppController : UnityAppController
  
@@ -58,6 +58,10 @@
 		UnitySendMessage("Odnoklassniki", "AuthSuccessIOS", [message UTF8String]);
 	}
 
+    if ([[url scheme] isEqualToString:@"ok1253336064"]){
+        [[[SafariView sharedInstance] presentedSafariViewController] dismissViewControllerAnimated:true completion:nil];
+    }
+    
 	return [super application:application
 		openURL:url
 		sourceApplication:sourceApplication

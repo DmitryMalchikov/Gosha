@@ -28,14 +28,11 @@ public class SampleWebView : MonoBehaviour
         unityActivityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         unityActivityClass.Call("openBrowser", url, _ua, "Logins.html#");
 		#else 
-		if (!initialized)
+		if (!webObj)
 		{
 		webObj = GetComponent<WebViewObject>();
-		webObj.Init(ua : _ua, ld: CallOnLoaded);
-			initialized = true;
-		}
-		webObj.SetVisibility(true);
 		webObj.LoadURL(url);
+		}
 		#endif
 		}
 

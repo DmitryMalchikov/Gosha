@@ -29,39 +29,44 @@ namespace Odnoklassniki.WebView {
 		[DllImport("__Internal")]
 		private static extern void _ClearCookies(string name);
 
+		[DllImport("__Internal")]
+		private static extern void SafariView_LoadURL(
+		string url);
+
 
 		public static void Init(string name)
 		{
 			webViewName = name;
-			_Init(webViewName);
+			//_Init(webViewName);
 		}
 
 		public static void Load(string url)
 		{
-			_Load(webViewName, url);
+			//_Load(webViewName, url);
+			SafariView_LoadURL(url);
 		}
 
 		public static void Show()
 		{
-			_Show(webViewName);
+			//_Show(webViewName);
 		}
 
 		public static void Hide()
 		{
-			_Hide(webViewName);
+			//_Hide(webViewName);
 		}
 
 		public static void ClearCookies() {
-			_ClearCookies(webViewName);
+			//_ClearCookies(webViewName);
 		}
 
 		public static void Destroy()
 		{
-			_Destroy(webViewName);
+			//_Destroy(webViewName);
 		}
 
 		public static void Resize() {
-			_Resize(webViewName);
+			//_Resize(webViewName);
 		}
 	}
 }

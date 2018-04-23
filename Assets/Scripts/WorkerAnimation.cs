@@ -16,6 +16,9 @@ public class WorkerAnimation : MonoBehaviour
 
     private void OnEnable()
     {
+		if (!_animator) {
+			_animator = GetComponent<Animator> ();
+		}
         _animator.enabled = true;
     }
 }

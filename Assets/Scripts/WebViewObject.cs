@@ -161,9 +161,12 @@ public class WebViewObject : MonoBehaviour
     [DllImport("WebView")]
     private static extern void _CWebViewPlugin_LoadURL(
         IntPtr instance, string url);
+	[DllImport("WebView")]
+	private static extern void SafariView_LoadURL(
+	string url);
     [DllImport("WebView")]
     private static extern void _CWebViewPlugin_LoadHTML(
-        IntPtr instance, string html, string baseUrl);
+	IntPtr instance,string html, string baseUrl);
     [DllImport("WebView")]
     private static extern void _CWebViewPlugin_EvaluateJS(
         IntPtr instance, string url);
@@ -217,6 +220,9 @@ public class WebViewObject : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void _CWebViewPlugin_LoadURL(
         IntPtr instance, string url);
+	[DllImport("__Internal")]
+	private static extern void SafariView_LoadURL(
+	string url);
     [DllImport("__Internal")]
     private static extern void _CWebViewPlugin_LoadHTML(
         IntPtr instance, string html, string baseUrl);
@@ -394,9 +400,9 @@ public class WebViewObject : MonoBehaviour
 #if UNITY_WEBPLAYER
         Application.ExternalCall("unityWebView.loadURL", name, url);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
-        if (webView == IntPtr.Zero)
-            return;
-        _CWebViewPlugin_LoadURL(webView, url);
+        //if (webView == IntPtr.Zero)
+            //return;
+        SafariView_LoadURL(url);
 #elif UNITY_ANDROID
         if (webView == null)
             return;

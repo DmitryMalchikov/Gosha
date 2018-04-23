@@ -21,6 +21,7 @@
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
+#import <SafariServices/SafariServices.h>
 
 // NOTE: we need extern without "C" before unity 4.5
 //extern UIViewController *UnityGetGLViewController();

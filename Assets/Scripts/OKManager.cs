@@ -1,6 +1,7 @@
 ﻿using Odnoklassniki;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class OKManager : MonoBehaviour
 {
@@ -21,10 +22,14 @@ public class OKManager : MonoBehaviour
     {
         _currentAchievement = achievementName;
 
-        if (!OK.IsLoggedIn)
-        {
-            LogIn();
-        }
+		if (!OK.IsLoggedIn) {
+			LogIn ();
+		} else if (OK.AccessTokenExpiresAt < DateTime.Now) {
+				OK.RefreshOAuth(success =>
+					{
+					Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+					});
+		}
         else
         {
             Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
@@ -49,11 +54,11 @@ public class OKManager : MonoBehaviour
         OK.OpenPublishDialog(
             response =>
             {
-                if (response.Object != null && response.Object.ContainsKey("error_code"))
+				if (response != null && response.Object != null && response.Object.ContainsKey("error_code"))
                 {
 
                 }
-                else
+				else if (response != null)
                 {
 					AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareOK);
                 }
