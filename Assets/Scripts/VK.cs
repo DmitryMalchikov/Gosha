@@ -2,13 +2,14 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-public class VK : MonoBehaviour {
+public class VK : MonoBehaviour
+{
     //public delegate void CallBack(object obj);
     public delegate void ActionResult(string msg);
 
     static event ActionResult OnLogin;
     static event ActionResult OnShare;
-    static public string AppId= "6227224";
+    static public string AppId = "6227224";
 
     //static private Dictionary<string, CallBack> mapFunction = new Dictionary<string, CallBack>();
     static AndroidJavaObject ajo;
@@ -24,7 +25,7 @@ public class VK : MonoBehaviour {
     //    mapFunction[_apiCall(method, JsonConvert.SerializeObject(data))] = onResponse;
     //}
 
-	#if UNITY_IOS
+#if UNITY_IOS
 	[DllImport("__Internal")]
 	private static extern void VKLogin();
 
@@ -39,40 +40,40 @@ public class VK : MonoBehaviour {
 
 	[DllImport("__Internal")]
 	private static extern bool WallPost(string link, string linkTitle, string text, string imageLink);
-	#endif
+#endif
 
     private void Start()
     {
         Init();
     }
 
-	public void Init()
+    public void Init()
     {
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         ajo = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         ajo.Call("VKinit", AppId, name);
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		VKInit("6227224", name);
-		#endif
+#endif
     }
 
     public static bool IsLoggedIn()
     {
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         return ajo.Call<string>("VKcall", "isLoggedIn", "") == "1";
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		return VKLoggedIn();
-		#endif
+#endif
     }
 
     public static void Login(ActionResult callback)
-    {        
-		#if UNITY_ANDROID
+    {
+#if UNITY_ANDROID
         OnLogin += callback;
         ajo.Call<string>("VKcall", "login", JsonConvert.SerializeObject(scopes));
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		VKLogin();
-		#endif
+#endif
     }
 
     public void OnLoginError()
@@ -102,14 +103,18 @@ public class VK : MonoBehaviour {
     public static void WallPost(string message, string link, string linkTitle, ActionResult callback)
     {
         OnShare += callback;
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         ajo.Call("openVKShareDialog", message, link, linkTitle);
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		WallPost(link, linkTitle, message, "");
-		#endif
+#endif
     }
 
-	public static void LogOut(){
-		VKLogout ();
-	}
+    public static void LogOut()
+    {
+#if UNITY_IOS
+        VKLogout ();
+#elif UNITY_ANDROID
+#endif
+    }
 }

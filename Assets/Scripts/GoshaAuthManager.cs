@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Runtime.InteropServices;
 using RestSharp.Contrib;
 
-public class GoshaAuthManager : MonoBehaviour {
-	#if UNITY_IOS
+public class GoshaAuthManager : MonoBehaviour
+{
+#if UNITY_IOS
 	[DllImport("__Internal")]
 	private static extern void GoshaInit(string gameObject);
-	#endif
+
 
 	public void OnGoshaAuthorization(string url){
 
@@ -27,4 +26,5 @@ public class GoshaAuthManager : MonoBehaviour {
 	void Start(){
 		GoshaInit (name);
 	}
+#endif
 }
