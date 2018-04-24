@@ -9,6 +9,7 @@ public class AdsPanel : MonoBehaviour {
     public void OpenAds()
     {
         gameObject.SetActive(true);
+        Canvaser.Instance.DoubleIcecreamClicked = false;
     }
 
 	public void DoubleScore()

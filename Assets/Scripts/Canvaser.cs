@@ -105,6 +105,14 @@ public class Canvaser : MonoBehaviour
 
     private static Stack<BackButton> _backButtons = new Stack<BackButton>();
 
+    public bool SomePanelOpened;
+    public bool DoubleIcecreamClicked;
+
+    public void OpenPanel(bool val)
+    {
+        SomePanelOpened = val;
+    }
+
     public void CloseLoading()
     {
         LoadingPanel.GetComponent<Animator>().SetBool("Loaded", true);
@@ -170,7 +178,7 @@ public class Canvaser : MonoBehaviour
 
     public void SetGameOverPanel()
     {
-		DoubleScoreButton.SetActive(true);
+        DoubleScoreButton.SetActive(true);
         GameOverCases.text = string.Format("x{0}",GameController.Instance.CurrentBoxes);
         GameOverDistance.text = score + LocalizationManager.GetLocalizedValue("meter");
         GameOverIceCream.SetIceCream(coins);
@@ -183,13 +191,18 @@ public class Canvaser : MonoBehaviour
 
     public void TurnOffGameOverPanel()
     {
-        GameOverPanel.SetActive(false);
-        CasesPanel.CaseCamera.SetActive(false);
+        if (!DoubleIcecreamClicked)
+        {
+            GameOverPanel.SetActive(false);
+            CasesPanel.CaseCamera.SetActive(false);
+            MainMenu.SetActive(true);
+        }
     }
 
     public void DoubleScore()
-	{
-		DoubleScoreButton.SetActive(false);
+    {
+        DoubleIcecreamClicked = true;
+        DoubleScoreButton.SetActive(false);
 		ADSPanel.transform.SetAsLastSibling();
 		//LoadingPanel.transform.SetAsLastSibling();
 		ADSPanel.DoubleScore();
@@ -207,9 +220,12 @@ public class Canvaser : MonoBehaviour
 
     public void StartRun()
     {
-        MainMenu.SetActive(false);
-        CameraFollow.Instance.ChangeCamera();
-        PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
+        if (!SomePanelOpened)
+        {
+            MainMenu.SetActive(false);
+            CameraFollow.Instance.ChangeCamera();
+            PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
+        }
     }
 
     public void SetNotifications(UserInfoModel info)

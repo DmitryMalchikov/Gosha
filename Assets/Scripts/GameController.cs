@@ -156,6 +156,7 @@ public class GameController : MonoBehaviour
         if (InDuel)
         {
             DuelManager.Instance.SubmitDuelResultAsync(DuelID, (int)CurrentPoints);
+            Canvaser.Instance.Duels.Open();
             InDuel = false;
         }
 
