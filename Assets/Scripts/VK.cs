@@ -68,8 +68,8 @@ public class VK : MonoBehaviour
 
     public static void Login(ActionResult callback)
     {
-#if UNITY_ANDROID
         OnLogin += callback;
+		#if UNITY_ANDROID
         ajo.Call<string>("VKcall", "login", JsonConvert.SerializeObject(scopes));
 #elif UNITY_IOS
 		VKLogin();
@@ -78,26 +78,34 @@ public class VK : MonoBehaviour
 
     public void OnLoginError()
     {
-        OnLogin("error");
-        OnLogin = null;
+		if (OnLogin != null) {
+			OnLogin ("error");
+			OnLogin = null;
+		}
     }
 
     public void OnLoginSuccess()
     {
-        OnLogin("success");
-        OnLogin = null;
+		if (OnLogin != null) {
+			OnLogin ("success");
+			OnLogin = null;
+		}
     }
 
     public void OnShareSuccess()
     {
-        OnShare("");
-        OnShare = null;
+		if (OnShare != null) {
+			OnShare ("");
+			OnShare = null;
+		}
     }
 
     public void OnShareError(string message)
     {
-        OnShare(message);
-        OnShare = null;
+		if (OnShare != null) {
+			OnShare (message);
+			OnShare = null;
+		}
     }
 
     public static void WallPost(string message, string link, string linkTitle, ActionResult callback)

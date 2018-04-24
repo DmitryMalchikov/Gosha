@@ -19,6 +19,8 @@
 	sourceApplication:(NSString *)sourceApplication
 	annotation:(id)annotation {
 
+    if ([[url scheme] isEqualToString:@"ok1253336064"])
+    {
 	NSLog(@"Received callback: %@", [url absoluteString]);
 	NSString* urlData = url.query ? url.query : url.fragment;
 	NSLog(@"Data: %@", urlData);
@@ -60,6 +62,7 @@
 
     if ([[url scheme] isEqualToString:@"ok1253336064"]){
         [[[SafariView sharedInstance] presentedSafariViewController] dismissViewControllerAnimated:true completion:nil];
+    }
     }
     
 	return [super application:application

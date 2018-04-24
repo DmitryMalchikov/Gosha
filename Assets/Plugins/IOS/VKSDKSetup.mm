@@ -23,6 +23,8 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 @interface VKSDKSetup() <VKSdkDelegate, VKSdkUIDelegate>
 {
     NSString *gameObjectName;
+    NSString *lastAction;
+    BOOL authResult;
 }
 @end
 @implementation VKSDKSetup
@@ -59,6 +61,7 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 
 -(void)login
 {
+    lastAction = @"Auth";
     [VKSdk authorize:SCOPE];
 }
 
@@ -72,6 +75,7 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
             text:(const char *)text
        imageLink: (const char *)imageLink
 {
+    lastAction = @"Share";
     VKShareDialogController * shareDialog = [VKShareDialogController new];
     shareDialog.text = [NSString stringWithUTF8String:text];
     shareDialog.vkImages = @[[NSString stringWithUTF8String: imageLink]]; //3
@@ -81,7 +85,7 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
             UnitySendMessage([gameObjectName UTF8String], ShareSuccessCallback, "");
         }
         else{
-               UnitySendMessage([gameObjectName UTF8String], ShareFailedCallback, "");
+               UnitySendMessage([gameObjectName UTF8String], ShareFailedCallback, "Failed");
         }
         [UnityGetGLViewController() dismissViewControllerAnimated:YES completion:nil];
     }]; //5
@@ -89,10 +93,10 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 }
 - (void)vkSdkAccessAuthorizationFinishedWithResult:(VKAuthorizationResult *)result {
     if ([result token]) {
-        UnitySendMessage([gameObjectName UTF8String], LoginSuccessCallback, "");
+        authResult = YES;
     }
     else{
-        UnitySendMessage([gameObjectName UTF8String], LoginFailedCallback, "");
+        authResult = NO;
     }
 }
 
@@ -106,6 +110,19 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
 
 - (void)vkSdkShouldPresentViewController:(UIViewController *)controller {
     [UnityGetGLViewController() presentViewController:controller animated:YES completion:nil];
+}
+
+-(void)vkSdkDidDismissViewController:(UIViewController *)controller{
+    if ([lastAction isEqualToString:@"Auth"]){
+        if (authResult == YES){
+            UnitySendMessage([gameObjectName UTF8String], LoginSuccessCallback, "");
+        }
+        else{         
+            UnitySendMessage([gameObjectName UTF8String], LoginFailedCallback, "");
+        }
+    }
+    
+    lastAction = @"";
 }
 
 - (void)initSDK : (const char*) _appId
