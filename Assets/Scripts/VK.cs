@@ -108,11 +108,11 @@ public class VK : MonoBehaviour
 		}
     }
 
-    public static void WallPost(string message, string link, string linkTitle, ActionResult callback)
+    public static void WallPost(string message, string link, string linkTitle, string imageUrl, ActionResult callback)
     {
         OnShare += callback;
 #if UNITY_ANDROID
-        ajo.Call("openVKShareDialog", message, link, linkTitle);
+        ajo.Call("openVKShareDialog", message, link, linkTitle, imageUrl);
 #elif UNITY_IOS
 		WallPost(link, linkTitle, message, "");
 #endif

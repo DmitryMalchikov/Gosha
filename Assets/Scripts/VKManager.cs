@@ -31,17 +31,18 @@ public class VKManager : MonoBehaviour
 
     private void WallPost()
     {
-        VK.WallPost("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", (response) =>
-        {
-            if (string.IsNullOrEmpty(response))
-            {
-					AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareVK);
-            }
-            else
-            {
+        VK.WallPost("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl
+            , (response) =>
+         {
+             if (string.IsNullOrEmpty(response))
+             {
+                 AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareVK);
+             }
+             else
+             {
 
-            }
-        });
+             }
+         });
     }
 
     private void OnLogIn(string result)

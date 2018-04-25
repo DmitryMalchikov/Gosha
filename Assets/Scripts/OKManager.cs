@@ -23,14 +23,17 @@ public class OKManager : MonoBehaviour
     {
         _currentAchievement = achievementName;
 
-		if (!OK.IsLoggedIn) {
-			LogIn ();
-		} else if (OK.AccessTokenExpiresAt < DateTime.Now) {
-				OK.RefreshOAuth(success =>
-					{
-                        StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
-					});
-		}
+        if (!OK.IsLoggedIn)
+        {
+            LogIn();
+        }
+        else if (OK.AccessTokenExpiresAt < DateTime.Now)
+        {
+            OK.RefreshOAuth(success =>
+                {
+                    StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
+                });
+        }
         else
         {
             StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
@@ -47,28 +50,30 @@ public class OKManager : MonoBehaviour
 
     private void OnLogIn(bool success)
     {
-		StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
+        if (success)
+        {
+            StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
+        }
     }
 
-	private void Share(string text, string link, string title, Texture2D image)
+    private void Share(string text, string link, string title, Texture2D image)
     {
         OK.OpenPublishDialog(
             response =>
             {
-				if (response != null && response.Object != null && response.Object.ContainsKey("error_code"))
+                if (response != null && response.Object != null && response.Object.ContainsKey("error_code"))
                 {
-
                 }
-				else if (response != null)
+                else if (response != null)
                 {
-					AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareOK);
+                    AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareOK);
                 }
             },
             new List<OKMedia>()
             {
                 OKMedia.Text(text),
                 OKMedia.Photo(image),
-				OKMedia.Link(link)
+                OKMedia.Link(link)
             });
     }
 
