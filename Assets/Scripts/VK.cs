@@ -114,7 +114,7 @@ public class VK : MonoBehaviour
 #if UNITY_ANDROID
         ajo.Call("openVKShareDialog", message, link, linkTitle, imageUrl);
 #elif UNITY_IOS
-		WallPost(link, linkTitle, message, "");
+		WallPost(link, linkTitle, message, imageUrl);
 #endif
     }
 

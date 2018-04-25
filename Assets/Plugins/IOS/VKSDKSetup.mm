@@ -18,7 +18,7 @@ static const char *LoginSuccessCallback = "OnLoginSuccess";
 static const char *LoginFailedCallback = "OnLoginError";
 static const char *ShareSuccessCallback = "OnShareSuccess";
 static const char *ShareFailedCallback = "OnShareError";
-static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
+static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL, VK_PER_PHOTOS];
 
 @interface VKSDKSetup() <VKSdkDelegate, VKSdkUIDelegate>
 {
@@ -78,7 +78,10 @@ static NSArray *SCOPE = @[VK_PER_WALL, VK_PER_EMAIL];
     lastAction = @"Share";
     VKShareDialogController * shareDialog = [VKShareDialogController new];
     shareDialog.text = [NSString stringWithUTF8String:text];
-    shareDialog.vkImages = @[[NSString stringWithUTF8String: imageLink]]; //3
+    NSData *imageData =[[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:imageLink]]];
+    UIImage *img = [[UIImage alloc] initWithData:imageData];
+    VKUploadImage *image = [VKUploadImage uploadImageWithImage:img andParams:[VKImageParameters jpegImageWithQuality:1.0]];
+    shareDialog.uploadImages = @[image];
     shareDialog.shareLink = [[VKShareLink alloc] initWithTitle:[NSString stringWithUTF8String:linkTitle]  link:[NSURL URLWithString:[NSString stringWithUTF8String:link]]]; //4
     [shareDialog setCompletionHandler:^(VKShareDialogController *dialog, VKShareDialogControllerResult result) {
         if (result == VKShareDialogControllerResultDone){
