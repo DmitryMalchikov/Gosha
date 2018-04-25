@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using Facebook.Unity;
 using Odnoklassniki;
+using System.Text.RegularExpressions;
 
 public delegate void ResultCallback();
 
@@ -30,6 +31,7 @@ public class LoginManager : MonoBehaviour
     public string ExternalRegisterUrl = "/api/account/RegisterExternal";
     public string ImageUploadUrl = "/api/user/UploadImage";
     public string ExternalLoginUrl = "/api/Account/ExternalLogin?provider={0}&response_type=token&client_id=self&redirect_uri=http%3A%2F%2F10.10.0.91.xip.io%3A58629%2FHtml%2FLogins.html&state=nBr4ZiNZQ6-0cA6x-7rBx6e8dM7na5HMzvm6EyroYNA1";
+    public string ShareImageUrl = "http://gosha.by/Resources/ShareScreen.png";
 
     public string GetRegionsUrl = "/api/account/regions";
 
@@ -259,7 +261,7 @@ public class LoginManager : MonoBehaviour
 			Canvaser.Instance.RegistrationPanel.ExternalRegistration (email);
 		} else {
 			Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
-			var seconds = int.Parse (expires);
+			var seconds = int.Parse (Regex.Replace(expires, "\\D", string.Empty));
 			PlayerPrefs.SetString ("provider_gosha", LoginProvider);
 			PlayerPrefs.SetString ("refresh_token_gosha", refresh);
 			PlayerPrefs.SetString ("refresh_expires_in_gosha", DateTime.Now.AddSeconds(seconds).ToString());

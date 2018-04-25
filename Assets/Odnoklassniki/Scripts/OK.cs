@@ -42,7 +42,7 @@ namespace Odnoklassniki
 		{
 			get
 			{ 
-				return (odnoklassniki as IOSOdnoklassniki).AccessTokenExpiresAt;
+				return (odnoklassniki as AbstractOdnoklassniki).AccessTokenExpiresAt;
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace Odnoklassniki
 		{
 			get
 			{ 
-				return (odnoklassniki as IOSOdnoklassniki).RefreshTokenExpiresAt;
+				return (odnoklassniki as AbstractOdnoklassniki).RefreshTokenExpiresAt;
 			}
 		}
 

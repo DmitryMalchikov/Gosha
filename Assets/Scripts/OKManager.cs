@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class OKManager : MonoBehaviour
 {
@@ -27,12 +28,12 @@ public class OKManager : MonoBehaviour
 		} else if (OK.AccessTokenExpiresAt < DateTime.Now) {
 				OK.RefreshOAuth(success =>
 					{
-					Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+                        StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
 					});
 		}
         else
         {
-			Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+            StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
         }
     }
 
@@ -46,7 +47,7 @@ public class OKManager : MonoBehaviour
 
     private void OnLogIn(bool success)
     {
-		Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", Resources.Load<Texture2D>("ShareScreen"));
+		StartCoroutine(Share("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl));
     }
 
 	private void Share(string text, string link, string title, Texture2D image)
@@ -69,5 +70,16 @@ public class OKManager : MonoBehaviour
                 OKMedia.Photo(image),
 				OKMedia.Link(link)
             });
+    }
+
+    IEnumerator Share(string text, string link, string title, string imageLink)
+    {
+        WWW image = new WWW(imageLink);
+        yield return image;
+
+        if (image.texture)
+        {
+            Share(text, link, title, image.texture);
+        }
     }
 }
