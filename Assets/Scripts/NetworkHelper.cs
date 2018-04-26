@@ -311,6 +311,7 @@ public class PlayerTasksAnswer
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public Bonus Reward { get; set; }
 }
 
 public class SubmitTaskModel
@@ -357,7 +358,28 @@ public class Bonus
 	public string Type { get; set; }
     public int Amount { get; set; }
     public int Id { get; set; }
+    public NameLocalization Name { get; set; }
+}
+
+public class NameLocalization
+{
     public string Name { get; set; }
+    public string NameRu { get; set; }
+
+    public NameLocalization() { }
+
+    public NameLocalization(string name, string nameRu)
+    {
+        Name = name;
+        NameRu = nameRu;
+    }
+
+    public void SetNames(string name, string nameRu)
+    {
+        Name = name;
+        NameRu = NameRu;
+    }
+
 }
 
 public class InputInt

@@ -23,23 +23,19 @@ public class BoxPrize : MonoBehaviour {
         switch(name)
         {
             case "IceCream":
-            case "Мороженое":
             case null:
                 IceCream.SetActive(true);
                 ActiveObj = IceCream;
                 break;
             case "Shield":
-            case "Щит":
                 Shield.SetActive(true);
                 ActiveObj = Shield;
                 break;
             case "Freeze":
-            case "Заморозка":
                 Freeze.SetActive(true);
                 ActiveObj = Freeze;
                 break;
             case "Magnet":
-            case "Магнит":
                 Magnet.SetActive(true);
                 ActiveObj = Magnet;
                 break;

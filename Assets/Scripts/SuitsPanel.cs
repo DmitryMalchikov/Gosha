@@ -49,7 +49,7 @@ public class SuitsPanel : MonoBehaviour {
         {
             PrizeAmountTxt.text = bonus.Amount.ToString();
         }
-        BoxPrizeObj.SetPrize(bonus.Name);
+        BoxPrizeObj.SetPrize(bonus.Name.Name);
         StartCoroutine(WaitForOpen());
     }
 

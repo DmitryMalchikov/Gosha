@@ -402,7 +402,7 @@ public class GameController : MonoBehaviour
 
         CanUseCurrentBonus = false;
 
-        switch (CurrentBonus.Name)
+        switch (CurrentBonus.Name.Name)
         {
             case "Shield":
                 PlayerController.Instance.ApplyShield();
