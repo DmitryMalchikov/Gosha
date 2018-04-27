@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     public bool UseHardTouch = true;
     public float Step = 2;
+    [Range(0,1)]
     public float GravityOnPercent = .75f;
     public float CurrentX = 0;
     public float nextStep;
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
         StandUp();
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        Collisions.RemoveAll(col => col.Object.layer != GroundLayer);
+        Collisions.RemoveAll(col => col.Object.name != "Ground");
         transform.position = StartPos;
         animator.transform.rotation = Quaternion.identity;
         animator.SetTrigger("Reset");
@@ -160,6 +161,12 @@ public class PlayerController : MonoBehaviour
             bool back = false;
             back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
 
+            if (Mathf.Abs(transform.position.x - CurrentX) < FallDistance && !GameController.Instance.Rocket)
+            {
+                rb.useGravity = true;
+                rb.constraints = FreezeExceptJump;
+            }
+
             if (Mathf.Abs(transform.position.x - CurrentX) < 0.01f || back)
             {
                 moveDir = Vector3.zero;
@@ -198,6 +205,18 @@ public class PlayerController : MonoBehaviour
                 tempOnGround = true;
                 OnGround = true;
             }
+        }
+    }
+
+    public void CheckGround()
+    {
+        RaycastHit hit;
+        if (!Physics.Raycast(new Ray(transform.position + Vector3.up, Vector3.down), out hit, 1.5f, environmentMask))
+        {
+            rb.useGravity = true;
+            OnGround = false;
+            tempOnGround = false;
+            rb.constraints = FreezeExceptJump;
         }
     }
 
@@ -368,7 +387,14 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("HardObstacle"))
         {
-            OnHit(collision);
+            if (GameController.Instance.Shield)
+            {
+                ShieldHit();
+            }
+            else
+            {
+                OnHit(collision);
+            }
             return;
         }
 
@@ -535,7 +561,7 @@ public class PlayerController : MonoBehaviour
             GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
         }
-        
+
         Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
         TurnShieldOff();
 

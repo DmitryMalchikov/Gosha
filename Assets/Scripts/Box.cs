@@ -6,6 +6,6 @@ public class Box : MonoBehaviour, IPickable
     {
         AudioManager.PlayIceCreamPickup();
         GameController.Instance.AddBox();
-        gameObject.SetActive(false);
+        transform.parent.gameObject.SetActive(false);
     }
 }

@@ -90,6 +90,7 @@ public class Tile : MonoBehaviour
         {
             int rand = Random.Range(0, 4);
 
+            Bonus.gameObject.SetActive(true);
             Bonus.GetChild(rand).gameObject.SetActive(true);
         }
     }
@@ -126,6 +127,8 @@ public class Tile : MonoBehaviour
 
     public void EnableIceCreams()
     {
+        IceCreams.gameObject.SetActive(true);
+
         for (int i = 0; i < IceCreams.childCount; i++)
         {
             IceCreams.GetChild(i).gameObject.SetActive(true);

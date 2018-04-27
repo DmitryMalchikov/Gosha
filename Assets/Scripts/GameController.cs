@@ -46,6 +46,8 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public static float SpeedMultiplyer = 1;
+
     public float CurrentPoints = 0;
     public int CurrentCoins = 0;
     public int CurrentBoxes = 0;
@@ -115,6 +117,7 @@ public class GameController : MonoBehaviour
         Started = true;
         Continued = false;
         Speed.z = StartSpeed;
+        SpeedMultiplyer = 1;
         CurrentCoins = 0;
         CurrentBoxes = 0;
         CurrentPoints = 0;
@@ -146,7 +149,9 @@ public class GameController : MonoBehaviour
         Canvaser.Instance.SetGameOverPanel();
 		IceCreamRotator.SetRotator (false);
         Speed.z = 0;
+        SpeedMultiplyer = 0;
         Started = false;
+        Paused = false;
         CameraFollow.Instance.ChangeCamera();
         PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
@@ -450,6 +455,7 @@ public class GameController : MonoBehaviour
                 Speed = CurrentSpeed * 0.7f;
                 NormalSpeed = true;
             }
+            SpeedMultiplyer = Speed.z / StartSpeed;
 
             StartCoroutine(ReturnSpeed());
         }
@@ -484,6 +490,7 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
 
             Speed.z += increaseValue;
+            SpeedMultiplyer = Speed.z / StartSpeed;
         }
 
         NormalSpeed = true;
@@ -500,6 +507,7 @@ public class GameController : MonoBehaviour
                 {
 					CurrentSpeed.z -= IncreaseValue;
                     Speed = CurrentSpeed;
+                    SpeedMultiplyer = Speed.z / StartSpeed;
                 }
             }
         }
