@@ -44,16 +44,11 @@ public class Friends : MonoBehaviour
     public void OpenFriendsPanel()
     {
         Canvaser.ShowLoading(true);
-        Synchroniser.NewSync(2);
 
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
-
-        Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
-        Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
-
-        FriendsManager.Instance.GetFriendsRequestsAsync(() => Synchroniser.SetReady(0));
-        FriendsManager.Instance.GetFriendsAsync(() => Synchroniser.SetReady(1));
+        
+        FriendsManager.Instance.GetFriendsAsync(() => gameObject.SetActive(true));
     }
 
     public void SetFriendRequests(List<FriendModel> requests)

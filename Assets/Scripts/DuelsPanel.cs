@@ -22,13 +22,8 @@ public class DuelsPanel : MonoBehaviour {
     {
         Canvaser.ShowLoading(true);
 
-        Synchroniser.NewSync(2);
-        Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
-        Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
-
         ClearDuelPanel();
-        DuelManager.Instance.GetDuelRequestsAsync(() => Synchroniser.SetReady(0));
-        DuelManager.Instance.GetDuelsAsync(() => Synchroniser.SetReady(1));
+        DuelManager.Instance.GetDuelsAsync(() => gameObject.SetActive(true));
     }
 
     public void SetDuels(List<DuelModel> duels)

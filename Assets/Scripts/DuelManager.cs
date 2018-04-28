@@ -8,9 +8,8 @@ public class DuelManager : MonoBehaviour
 
     public static DuelManager Instance { get; private set; }
 
+    public string FullDuelsInfo = "/api/duels/getallduels";
     public string OfferDuelUrl = "/api/duels/offerduel";
-    public string DuelRequestsUrl = "/api/duels/duelrequests";
-    public string DuelOffersUrl = "/api/duels/dueloffers";
     public string AcceptDuelUrl = "/api/duels/acceptduel";
     public string DeclineDuelUrl = "/api/duels/declineduel";
     public string CancelDuelUrl = "/api/duels/cancelduel";
@@ -29,9 +28,8 @@ public class DuelManager : MonoBehaviour
     }
     public void SetUrls()
     {
+        FullDuelsInfo = ServerInfo.GetUrl(FullDuelsInfo);
         OfferDuelUrl = ServerInfo.GetUrl(OfferDuelUrl);
-        DuelRequestsUrl = ServerInfo.GetUrl(DuelRequestsUrl);
-        DuelOffersUrl = ServerInfo.GetUrl(DuelOffersUrl);
         AcceptDuelUrl = ServerInfo.GetUrl(AcceptDuelUrl);
         DeclineDuelUrl = ServerInfo.GetUrl(DeclineDuelUrl);
         CancelDuelUrl = ServerInfo.GetUrl(CancelDuelUrl);
@@ -52,23 +50,13 @@ public class DuelManager : MonoBehaviour
     }
     public void GetDuelsAsync(ResultCallback callback = null)
     {
-        StartCoroutine(NetworkHelper.SendRequest(DuelOffersUrl, null, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(FullDuelsInfo, null, "application/json", (response) =>
         {
             Debug.Log("OK");
-            Canvaser.Instance.Duels.SetDuels(JsonConvert.DeserializeObject<List<DuelModel>>(response.Text));
+            DuelsFullInfoModel model = JsonConvert.DeserializeObject<DuelsFullInfoModel>(response.Text);
 
-            if (callback != null)
-            {
-                callback();
-            }
-        }));
-    }
-    public void GetDuelRequestsAsync(ResultCallback callback = null)
-    {
-        StartCoroutine(NetworkHelper.SendRequest(DuelRequestsUrl, null, "application/json", (response) =>
-        {
-            Debug.Log("OK");
-            Canvaser.Instance.Duels.SetRequests(JsonConvert.DeserializeObject<List<DuelModel>>(response.Text));
+            Canvaser.Instance.Duels.SetDuels(model.DuelOffers);
+            Canvaser.Instance.Duels.SetRequests(model.DuelRequests);
 
             if (callback != null)
             {

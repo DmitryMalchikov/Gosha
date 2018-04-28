@@ -7,8 +7,7 @@ public class FriendsManager : MonoBehaviour
 
     public static FriendsManager Instance { get; private set; }
     public string GetFriendsOffersUrl = "/api/friends/friendoffers";
-
-    public string GetFriendsRequestsUrl = "/api/friends/friendrequests";
+    
     public string GetFriendsUrl = "/api/friends/friendslist";
     public string OfferFriendshipUrl = "/api/friends/offerfriendship";
     public string AcceptFriendshipUrl = "/api/friends/acceptfrienship";
@@ -28,7 +27,6 @@ public class FriendsManager : MonoBehaviour
     public void SetUrls()
     {
         GetFriendsOffersUrl = ServerInfo.GetUrl(GetFriendsOffersUrl);
-        GetFriendsRequestsUrl = ServerInfo.GetUrl(GetFriendsRequestsUrl);
         GetFriendsUrl = ServerInfo.GetUrl(GetFriendsUrl);
         OfferFriendshipUrl = ServerInfo.GetUrl(OfferFriendshipUrl);
         AcceptFriendshipUrl = ServerInfo.GetUrl(AcceptFriendshipUrl);
@@ -37,28 +35,15 @@ public class FriendsManager : MonoBehaviour
         SearchPlayersUrl = ServerInfo.GetUrl(SearchPlayersUrl);
     }
 
-    public void GetFriendsRequestsAsync(ResultCallback callback=null)
-    {
-        StartCoroutine(NetworkHelper.SendRequest(GetFriendsRequestsUrl, null, "application/x-www-form-urlencoded", (response) =>
-        {
-            Debug.Log("OK");
-            List<FriendModel> friendRequests = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
-            Canvaser.Instance.FriendsPanel.SetFriendRequests(friendRequests);
-
-            if (callback != null)
-            {
-                callback();
-            }
-        }));
-    }
-
     public void GetFriendsAsync(ResultCallback callback = null)
     {
         StartCoroutine(NetworkHelper.SendRequest(GetFriendsUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");
-            List<FriendModel> friends = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
-            Canvaser.Instance.FriendsPanel.SetFriends(friends);
+            FullFriendInfoModel model = JsonConvert.DeserializeObject<FullFriendInfoModel>(response.Text);
+
+            Canvaser.Instance.FriendsPanel.SetFriends(model.Friends);
+            Canvaser.Instance.FriendsPanel.SetFriendRequests(model.FriendRequests);
 
             if (callback != null)
             {

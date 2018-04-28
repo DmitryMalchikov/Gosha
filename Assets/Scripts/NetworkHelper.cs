@@ -498,6 +498,12 @@ public class FriendModel
     public string Region { get; set; }
 }
 
+public class FullFriendInfoModel
+{
+    public List<FriendModel> Friends { get; set; }
+    public List<FriendModel> FriendRequests { get; set; }
+}
+
 public class PlayerSearchModel
 {
     public string SearchString { get; set; }
@@ -526,6 +532,12 @@ public class DuelModel
     public int UserId { get; set; }
     public DateTime ExpireDate { get; set; }
     public int Status { get; set; }
+}
+
+public class DuelsFullInfoModel
+{
+    public List<DuelModel> DuelOffers { get; set; }
+    public List<DuelModel> DuelRequests { get; set; }
 }
 
 public class TradeItemsModel
