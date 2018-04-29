@@ -66,7 +66,7 @@ public class Canvaser : MonoBehaviour
     public Image GameAvatar;
     public LocalizedText SettingsRegion;
 
-    public Text Test;
+    public Text Nickname;
     public ToggleGroup BonusesToggleGroup;
     public AudioMixer MusicMixer;
 	public AudioMixer EffectsMixer;

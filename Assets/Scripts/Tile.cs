@@ -24,6 +24,8 @@ public class Tile : MonoBehaviour
 
     public List<Transform> IceCreamTrucks;
 
+    bool BonusLastTile;
+
     [HideInInspector]
     public List<Collider> DisabledColliders = new List<Collider>();
 
@@ -133,13 +135,21 @@ public class Tile : MonoBehaviour
         {
             IceCreams.GetChild(i).gameObject.SetActive(true);
         }
-        for (int i = 0; i < IceCreamTrucks.Count; i++)
+        if (BonusLastTile)
         {
-            Coin[] TruckCoins = IceCreamTrucks[i].GetComponentsInChildren<Coin>();
-            for (int j = 0; j < TruckCoins.Length; j++)
+            BonusLastTile = false;
+        }
+        else
+        {
+            for (int i = 0; i < IceCreamTrucks.Count; i++)
             {
-                TruckCoins[j].gameObject.SetActive(true);
+                Coin[] TruckCoins = IceCreamTrucks[i].GetComponentsInChildren<Coin>();
+                for (int j = 0; j < TruckCoins.Length; j++)
+                {
+                    TruckCoins[j].gameObject.SetActive(true);
+                }
             }
+            BonusLastTile = true;
         }
     }
 

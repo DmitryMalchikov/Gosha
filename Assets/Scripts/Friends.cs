@@ -41,6 +41,11 @@ public class Friends : MonoBehaviour
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
 
+    public bool IsFriend(int id)
+    {
+        return FriendObjects.Find(x => x.Info.Id == id) != null;
+    }
+
     public void OpenFriendsPanel()
     {
         Canvaser.ShowLoading(true);
@@ -141,7 +146,7 @@ public class Friends : MonoBehaviour
         {
             for (int i = 0; i < FriendObjects.Count; i++)
             {
-                if (!FriendObjects[i].Info.Nickname.Contains(name))
+                if (!FriendObjects[i].Info.Nickname.ToLower().Contains(name.ToLower()))
                 {
                     FriendObjects[i].gameObject.SetActive(false);
                 }

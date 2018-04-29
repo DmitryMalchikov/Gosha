@@ -151,10 +151,23 @@ public class FriendObject : MonoBehaviour
         Canvaser.Instance.FriendsPanel.Trade(Info);
     }
 
+    public void ShowLeaderInfo()
+    {
+        if (Canvaser.Instance.FriendsPanel.IsFriend(Info.Id))
+        {
+            Canvaser.Instance.FriendsPanel.FriendInfo.SetOfferInfo(this);
+        }
+        else
+        {
+            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this);
+        }
+    }
+
     public void SetTournamentObject(FriendModel friend, int place)
     {
         Info = friend;
         Name.text = string.Format("{0}. {1}", place + 1, friend.Nickname);
         Record.text = friend.Highscore + LocalizationManager.GetLocalizedValue("meter");
+        LoginManager.Instance.GetUserImage(friend.Id, Avatar);
     }
 }

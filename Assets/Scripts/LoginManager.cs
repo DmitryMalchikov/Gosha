@@ -169,6 +169,7 @@ public class LoginManager : MonoBehaviour
         {
             UserInfoModel info = JsonConvert.DeserializeObject<UserInfoModel>(response.Text);
             User = info;
+            Canvaser.Instance.Nickname.text = User.Nickname;
             Canvaser.Instance.SBonuses.SetStartBonuses(info.Bonuses);
             AchievementsManager.Instance.LoadAchievements(info.Achievements);
             TasksManager.Instance.LoadTasks(info.WeeklyTasks);
@@ -355,7 +356,7 @@ public class LoginManager : MonoBehaviour
         {
             Canvaser.Instance.SetAvatar(Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f));
         }
-        else
+        else  
         {
             Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("Avatar"));
         }
