@@ -523,6 +523,11 @@ public class FriendOfferModel
     public int FriendshipStatus { get; set; }
 }
 
+public class FriendOfferStatisticsModel : FriendOfferModel
+{
+    public int Points { get; set; }
+}
+
 public class DuelModel
 {
     public int Id { get; set; }

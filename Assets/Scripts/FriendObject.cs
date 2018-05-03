@@ -163,11 +163,11 @@ public class FriendObject : MonoBehaviour
         }
     }
 
-    public void SetTournamentObject(FriendModel friend, int place)
+    public void SetTournamentObject(FriendOfferModel friend, int place)
     {
-        Info = friend;
+        OfferInfo = friend;
         Name.text = string.Format("{0}. {1}", place + 1, friend.Nickname);
-        Record.text = friend.Highscore + LocalizationManager.GetLocalizedValue("meter");
+        Record.text = (friend as FriendOfferStatisticsModel).Points + LocalizationManager.GetLocalizedValue("meter");
         LoginManager.Instance.GetUserImage(friend.Id, Avatar);
     }
 }

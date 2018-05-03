@@ -31,7 +31,7 @@ public class StatisticsManager : MonoBehaviour
         Canvaser.ShowLoading(true);
         StartCoroutine(NetworkHelper.SendRequest(GetTournamentLeadersUrl, null, "application/json", (response) =>
         {
-            List<FriendModel> info = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
+            List<FriendOfferStatisticsModel> info = JsonConvert.DeserializeObject<List<FriendOfferStatisticsModel>>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentTable(info);
             Canvaser.ShowLoading(false);
         }));
@@ -43,7 +43,7 @@ public class StatisticsManager : MonoBehaviour
 
         StartCoroutine(NetworkHelper.SendRequest(GetAllStatisticsUrl, value, "application/json", (response) =>
         {
-            List<FriendModel> info = JsonConvert.DeserializeObject<List<FriendModel>>(response.Text);
+            List<FriendOfferStatisticsModel> info = JsonConvert.DeserializeObject<List<FriendOfferStatisticsModel>>(response.Text);
 
             if (period == 2)
             {

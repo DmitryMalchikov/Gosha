@@ -49,7 +49,7 @@ public class TournamentPanel : MonoBehaviour {
 		Canvaser.Instance.WeeklyTasksBtn.interactable = model.AvaliableWeeklyTasks;
     }
 
-    public void SetTournamentTable(List<FriendModel> models)
+    public void SetTournamentTable(List<FriendOfferStatisticsModel> models)
     {
         ClearContent();
 

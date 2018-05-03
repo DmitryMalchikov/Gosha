@@ -48,7 +48,7 @@ public class StatisticsPanel : MonoBehaviour {
         StatisticsManager.Instance.GetAllStatisticsAsync(val);
     }
 
-    public void SetAllTimeLeaders(List<FriendModel> leaders)
+    public void SetAllTimeLeaders(List<FriendOfferStatisticsModel> leaders)
     {
         ClearContent(AllTimeLeadersContent, AllTimeLeaders);
         for (int i = 0; i < leaders.Count; i++)
@@ -60,7 +60,7 @@ public class StatisticsPanel : MonoBehaviour {
         
     }
 
-    public void SetLeaders(List<FriendModel> leaders)
+    public void SetLeaders(List<FriendOfferStatisticsModel> leaders)
     {
         ClearContent(LeadersContent, Leaders);
         for (int i = 0; i < leaders.Count; i++)
