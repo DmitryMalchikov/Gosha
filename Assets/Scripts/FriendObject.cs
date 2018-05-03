@@ -99,7 +99,7 @@ public class FriendObject : MonoBehaviour
             if (isFriend)
                 Canvaser.Instance.FriendsPanel.FriendInfo.SetInfo(this);
             else
-                Canvaser.Instance.FriendsPanel.RequesterInfo.SetInfo(this);
+                Canvaser.Instance.FriendsPanel.RequesterInfo.SetInfo(this,false);
         }
     }
 

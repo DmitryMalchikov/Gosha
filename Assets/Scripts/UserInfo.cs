@@ -17,7 +17,7 @@ public class UserInfo : MonoBehaviour {
 
 
 
-    public void SetInfo(FriendObject user)
+    public void SetInfo(FriendObject user, bool isFriend = true)
     {
         info = user;
         Name.text = user.Info.Nickname;
@@ -27,7 +27,10 @@ public class UserInfo : MonoBehaviour {
         IceCreamCount.text = user.Info.IceCream.ToString();
         Avatar.sprite = user.Avatar.sprite;
         //Avatar.SetNativeSize();
-        TradeBtn.interactable = LoginManager.Instance.User.CanOfferTrade;
+        if (isFriend)
+        {
+            TradeBtn.interactable = LoginManager.Instance.User.CanOfferTrade;
+        }
         gameObject.SetActive(true);
     }
 

@@ -33,7 +33,7 @@ public class TouchReader : MonoBehaviour {
 
     void OnMouseDown()
     {
-        if (GameController.Instance.Started && Time.timeScale > 0)
+        if (!Canvaser.Instance.MainMenu.activeInHierarchy && GameController.Instance.Started && Time.timeScale > 0)
         {
             pos = Input.mousePosition;
             sas = true;
