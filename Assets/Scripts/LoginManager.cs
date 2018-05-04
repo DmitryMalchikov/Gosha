@@ -70,57 +70,66 @@ public class LoginManager : MonoBehaviour
     {
         SetUrls();
         //LoginProvider = PlayerPrefs.GetString("provider");
-		string refreshExpires = PlayerPrefs.GetString("refresh_expires_in_gosha");
+        string refreshExpires = PlayerPrefs.GetString("refresh_expires_in_gosha");
 
-		if (string.IsNullOrEmpty (refreshExpires)) {
-			Canvaser.Instance.CloseLoading ();
-		} else {
-			DateTime refreshExpireDate = DateTime.Parse (refreshExpires);
+        if (string.IsNullOrEmpty(refreshExpires))
+        {
+            Canvaser.Instance.CloseLoading();
+        }
+        else
+        {
+            DateTime refreshExpireDate = DateTime.Parse(refreshExpires);
 
-			if (refreshExpireDate > DateTime.Now) {
-				var refreshToken = PlayerPrefs.GetString ("refresh_token_gosha");
-				GetTokenByRefreshAsync (refreshToken);
-			} else {
-				var provider = PlayerPrefs.GetString ("provider_gosha");
+            if (refreshExpireDate > DateTime.Now)
+            {
+                var refreshToken = PlayerPrefs.GetString("refresh_token_gosha");
+                GetTokenByRefreshAsync(refreshToken);
+            }
+            else
+            {
+                var provider = PlayerPrefs.GetString("provider_gosha");
 
-				if (!string.IsNullOrEmpty (provider)) {
-					OpenExternalLogin (provider);
-				} else {
-					Canvaser.Instance.CloseLoading ();
-				}
-			}
-		}
+                if (!string.IsNullOrEmpty(provider))
+                {
+                    OpenExternalLogin(provider);
+                }
+                else
+                {
+                    Canvaser.Instance.CloseLoading();
+                }
+            }
+        }
     }
 
-	public void GetTokenByRefreshAsync(string refreshToken)
-	{
-		StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), "application/json", (response) =>
-			{
-				userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
+    public void GetTokenByRefreshAsync(string refreshToken)
+    {
+        StartCoroutine(NetworkHelper.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), "application/json", (response) =>
+            {
+                userToken = JsonConvert.DeserializeObject<AccessToken>(response.Text);
 
-				OneSignal.SetSubscription(true);
-				OneSignal.SyncHashedEmail(userToken.Email);
+                OneSignal.SetSubscription(true);
+                OneSignal.SyncHashedEmail(userToken.Email);
 
-				PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
-				PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+                PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
+                PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
 
-				LoginCanvas.Instance.EnableWarning(false);
+                LoginCanvas.Instance.EnableWarning(false);
 
-				Debug.Log(userToken.Token);
+                Debug.Log(userToken.Token);
 
-				LoginCanvas.Instance.Enable(false);
+                LoginCanvas.Instance.Enable(false);
 
-				Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
-				GetUserInfoAsync();
-				AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-				AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-				AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
-			},
-			(response) =>
-			{
-				LoginCanvas.Instance.EnableWarning(true);
-			}));
-	}  
+                Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
+                GetUserInfoAsync();
+                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+                AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+            },
+            (response) =>
+            {
+                LoginCanvas.Instance.EnableWarning(true);
+            }));
+    }
 
     public void GetTokenAsync()
     {
@@ -163,7 +172,7 @@ public class LoginManager : MonoBehaviour
         GetUserInfoAsync();
     }
 
-    public void GetUserInfoAsync(ResultCallback callback=null)
+    public void GetUserInfoAsync(ResultCallback callback = null)
     {
         StartCoroutine(NetworkHelper.SendRequest(UserInfoUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
@@ -185,6 +194,8 @@ public class LoginManager : MonoBehaviour
                 Canvaser.Instance.DailyBonus.gameObject.SetActive(true);
             }
             GetAvatarImage();
+
+            NotificationsManager.Register(User.Id);
 
             if (callback != null)
             {
@@ -256,22 +267,25 @@ public class LoginManager : MonoBehaviour
         SampleWebView.Instance.OpenWindow(string.Format(ExternalLoginUrl, provider));
     }
 
-	public void CheckExternalRegister(string refresh, string expires, string email)
+    public void CheckExternalRegister(string refresh, string expires, string email)
     {
-		if (string.IsNullOrEmpty(refresh)) {
-			Canvaser.Instance.RegistrationPanel.ExternalRegistration (email);
-		} else {
-			Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
-			var seconds = int.Parse (Regex.Replace(expires, "\\D", string.Empty));
-			PlayerPrefs.SetString ("provider_gosha", LoginProvider);
-			PlayerPrefs.SetString ("refresh_token_gosha", refresh);
-			PlayerPrefs.SetString ("refresh_expires_in_gosha", DateTime.Now.AddSeconds(seconds).ToString());
-			OneSignal.SetSubscription (true);
-			OneSignal.SyncHashedEmail (email);
-			Canvaser.Instance.LoginPanel.SetActive (false);
-			GetUserInfoAsync ();
-			Canvaser.Instance.MainMenu.SetActive (true);
-		}
+        if (string.IsNullOrEmpty(refresh))
+        {
+            Canvaser.Instance.RegistrationPanel.ExternalRegistration(email);
+        }
+        else
+        {
+            Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
+            var seconds = int.Parse(Regex.Replace(expires, "\\D", string.Empty));
+            PlayerPrefs.SetString("provider_gosha", LoginProvider);
+            PlayerPrefs.SetString("refresh_token_gosha", refresh);
+            PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(seconds).ToString());
+            OneSignal.SetSubscription(true);
+            OneSignal.SyncHashedEmail(email);
+            Canvaser.Instance.LoginPanel.SetActive(false);
+            GetUserInfoAsync();
+            Canvaser.Instance.MainMenu.SetActive(true);
+        }
     }
 
     public void RegisterExternal(RegisterExternalBindingModel model)
@@ -291,15 +305,15 @@ public class LoginManager : MonoBehaviour
 
     public void LogOut()
     {
-		PlayerPrefs.DeleteKey ("refresh_token_gosha");
-		PlayerPrefs.DeleteKey ("refresh_expires_in_gosha");
-		PlayerPrefs.DeleteKey ("provider_gosha");
+        PlayerPrefs.DeleteKey("refresh_token_gosha");
+        PlayerPrefs.DeleteKey("refresh_expires_in_gosha");
+        PlayerPrefs.DeleteKey("provider_gosha");
         PlayerPrefs.DeleteKey("CurrentSuit");
         PlayerController.Instance.TakeOffSuits();
         OneSignal.SetSubscription(false);
-		FB.LogOut ();
-		OK.Logout ();
-		VK.LogOut ();
+        FB.LogOut();
+        OK.Logout();
+        VK.LogOut();
         Headers = null;
         userToken = null;
     }
@@ -307,7 +321,7 @@ public class LoginManager : MonoBehaviour
     public void SendImage(string path)
     {
         Debug.Log("Send Image: " + path);
-		StartCoroutine(NetworkHelper.SendImage(path, ImageUploadUrl));
+        StartCoroutine(NetworkHelper.SendImage(path, ImageUploadUrl));
     }
 
     public void GetUserImage(int userId, Image img)
@@ -356,7 +370,7 @@ public class LoginManager : MonoBehaviour
         {
             Canvaser.Instance.SetAvatar(Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f));
         }
-        else  
+        else
         {
             Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("Avatar"));
         }
