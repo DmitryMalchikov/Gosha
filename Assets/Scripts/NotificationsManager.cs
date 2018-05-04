@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class NotificationsManager : MonoBehaviour
 {
-    public delegate void NotificationReceivedHandler(string playerNickname);
+    public delegate void NotificationReceivedHandler(string playerNickname, int playerId);
+    public delegate void RegisterResultHandler();
 
     public static NotificationsManager Instance;
 
     public event NotificationReceivedHandler OnFriendNotification;
     public event NotificationReceivedHandler OnTradeNotification;
     public event NotificationReceivedHandler OnDuelNotification;
-    public event NotificationReceivedHandler OnRegisterSuccess;
-    public event NotificationReceivedHandler OnRegisterError;
+    public event RegisterResultHandler OnRegisterSuccess;
+    public event RegisterResultHandler OnRegisterError;
 
     IHubProxy proxy;
     HubConnection connection;
@@ -28,15 +29,16 @@ public class NotificationsManager : MonoBehaviour
 
     void Start()
     {
-        connection = new HubConnection("http://goshagame-001-site2.atempurl.com");
+        connection = new HubConnection(ServerInfo.GetUrl(""));
         proxy = connection.CreateProxy("NotificationsHub");
 
         proxy.Subscribe("FriendNotification").Data += data =>
         {
-            Debug.Log(data[0]);
+            Debug.Log("Notification");
             if (OnFriendNotification != null)
             {
-                OnFriendNotification(data[0].ToString());
+                var parameters = data[0] as JToken;
+                OnFriendNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
             }
         };
 
@@ -45,7 +47,8 @@ public class NotificationsManager : MonoBehaviour
             Debug.Log("Trade not");
             if (OnTradeNotification != null)
             {
-                OnTradeNotification(data[0].ToString());
+                var parameters = data[0] as JToken;
+                OnTradeNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
             }
         };
 
@@ -54,7 +57,8 @@ public class NotificationsManager : MonoBehaviour
             Debug.Log("Duel not");
             if (OnDuelNotification != null)
             {
-                OnDuelNotification(data[0].ToString());
+                var parameters = data[0] as JToken;
+                OnDuelNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
             }
         };
 
@@ -84,14 +88,14 @@ public class NotificationsManager : MonoBehaviour
             {
                 if (OnRegisterSuccess != null)
                 {
-                    OnRegisterSuccess("");
+                    OnRegisterSuccess();
                 }
             }
             else
             {
                 if (OnRegisterError != null)
                 {
-                    OnRegisterError("");
+                    OnRegisterError();
                 }
             }
         };
