@@ -33,6 +33,17 @@ public class LocalizationManager : MonoBehaviour
         {
             CurrentLanguage = (Language)lang;
         }
+        else
+        {
+            if (Application.systemLanguage == SystemLanguage.Russian)
+            {
+                CurrentLanguage = Language.RU;
+            }
+            else
+            {
+                CurrentLanguage = Language.EN;
+            }
+        }
 
         yield return LoadLocalizedText(localizationFileNames[CurrentLanguage]);
         Canvaser.Instance.LanguageDropdown.value = (int)CurrentLanguage - 1;
