@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
-using SignalR.Client._20.Hubs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using uSignalR.Hubs;
 
 public class NotificationsManager : MonoBehaviour
 {
-    public delegate void NotificationReceivedHandler(string playerNickname, int playerId);
+    public delegate void NotificationReceivedHandler(int playerId, string playerNickname);
     public delegate void RegisterResultHandler();
 
     public static NotificationsManager Instance;
@@ -21,6 +21,8 @@ public class NotificationsManager : MonoBehaviour
     HubConnection connection;
     static bool _initialized = false;
     static bool _connectionStarted = false;
+
+    public List<NotificationObject> Notifications = new List<NotificationObject>();
 
     private void Awake()
     {
@@ -38,7 +40,7 @@ public class NotificationsManager : MonoBehaviour
             if (OnFriendNotification != null)
             {
                 var parameters = data[0] as JToken;
-                OnFriendNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
+                Notifications.Add(new NotificationObject(parameters["UserId"].ToObject<int>(), parameters["UserNickname"].ToString(), NotificationType.FriendRequest));
             }
         };
 
@@ -48,7 +50,7 @@ public class NotificationsManager : MonoBehaviour
             if (OnTradeNotification != null)
             {
                 var parameters = data[0] as JToken;
-                OnTradeNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
+                Notifications.Add(new NotificationObject(parameters["UserId"].ToObject<int>(), parameters["UserNickname"].ToString(), NotificationType.TradeRequest));
             }
         };
 
@@ -58,12 +60,14 @@ public class NotificationsManager : MonoBehaviour
             if (OnDuelNotification != null)
             {
                 var parameters = data[0] as JToken;
-                OnDuelNotification(parameters["UserNickname"].ToString(), parameters["UserId"].ToObject<int>());
+                Notifications.Add(new NotificationObject(parameters["UserId"].ToObject<int>(), parameters["UserNickname"].ToString(), NotificationType.DuelRequest));
             }
         };
 
         connection.Start();
         _connectionStarted = true;
+
+        StartCoroutine(CheckNotifications());
     }
 
     static bool _sending = false;
@@ -80,9 +84,10 @@ public class NotificationsManager : MonoBehaviour
     IEnumerator WaitPoxy(int userId)
     {
         yield return new WaitUntil(() => _connectionStarted);
-        proxy.Invoke("Register", userId).Finished += (sender, e) =>
+        proxy.Invoke<object>("Register", userId).ContinueWith((task) =>
         {
-            var result = e.Result as JToken;
+            Debug.Log("Registered");
+            var result = task.Result as JToken;
             bool success = result["Registered"].ToObject<bool>();
             if (success)
             {
@@ -98,12 +103,66 @@ public class NotificationsManager : MonoBehaviour
                     OnRegisterError();
                 }
             }
-        };
+        });
         _initialized = true;
+    }
+
+    IEnumerator CheckNotifications()
+    {
+        while (true)
+        {
+            if (Notifications.Count == 0)
+            {
+                yield return null;
+            }
+
+            for (int i = 0; i < Notifications.Count; i++)
+            {
+                InvokeEvent(Notifications[i]);
+                Notifications.RemoveAt(i);
+                i--;
+                yield return null;
+            }
+        }
+    }
+
+    private void InvokeEvent(NotificationObject not)
+    {
+        switch (not.Type)
+        {
+            case NotificationType.DuelRequest:
+                OnDuelNotification(not.UserId, not.UserNickname);
+                break;
+            case NotificationType.FriendRequest:
+                OnFriendNotification(not.UserId, not.UserNickname);
+                break;
+            case NotificationType.TradeRequest:
+                OnTradeNotification(not.UserId, not.UserNickname);
+                break;
+        }
     }
 
     private void OnApplicationQuit()
     {
         connection.Stop();
+    }
+}
+
+public enum NotificationType
+{
+    FriendRequest, DuelRequest, TradeRequest
+}
+
+public class NotificationObject
+{
+    public int UserId { get; set; }
+    public string UserNickname { get; set; }
+    public NotificationType Type { get; set; }
+
+    public NotificationObject(int id, string nick, NotificationType type)
+    {
+        UserId = id;
+        UserNickname = nick;
+        Type = type;
     }
 }
