@@ -46,6 +46,17 @@ public class Friends : MonoBehaviour
         return FriendObjects.Find(x => x.Info.Id == id) != null;
     }
 
+    public void OpenDirectlyOffers()
+    {
+        Canvaser.ShowLoading(true);
+
+        CleanContent(FriendsContent);
+        CleanContent(RequestsContent);
+
+
+        FriendsManager.Instance.GetFriendsAsync(() => OpenFriendOffersPanel());
+    }
+
     public void OpenFriendsPanel()
     {
         Canvaser.ShowLoading(true);
@@ -71,6 +82,10 @@ public class Friends : MonoBehaviour
 
     public void SetFriendOffers(List<FriendOfferModel> friends)
     {
+        if(!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+        }
         for (int i = 0; i < friends.Count; i++)
         {
             var newFriend = Instantiate(FriendOfferObject, FriendOffersContent);

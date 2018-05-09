@@ -11,7 +11,7 @@ public class ContinuePanel : MonoBehaviour {
     public Text CountDown;
 	public Text ContinueCostText;
     public int time;
-    public int ContinueCost = 2000;
+    public int ContinueCost = 500;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class ContinuePanel : MonoBehaviour {
     public void Continue()
     {
 		if (LoginManager.Instance.User.IceCream >= ContinueCost) {
-			ContinuePanel.Instance.gameObject.SetActive(false);
+			gameObject.SetActive(false);
 			GameController.Instance.ContinueGameForMoney(); 
 		}
     }

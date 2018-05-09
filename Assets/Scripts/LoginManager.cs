@@ -211,6 +211,7 @@ public class LoginManager : MonoBehaviour
         {
             GetTokenAsync(model.Email, model.Password);
             Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
+            Canvaser.Instance.RegistrationPanel.PageNum = 1;
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
         }));
     }
@@ -372,7 +373,7 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
-            Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("Avatar"));
+            Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("iTunesArtwork"));
         }
 
     }

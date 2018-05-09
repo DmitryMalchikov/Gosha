@@ -108,6 +108,8 @@ public class Canvaser : MonoBehaviour
     public bool SomePanelOpened;
     public bool DoubleIcecreamClicked;
 
+    public NotificationPanel NotificationsPanel;
+
     public void OpenPanel(bool val)
     {
         SomePanelOpened = val;

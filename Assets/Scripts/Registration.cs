@@ -131,7 +131,6 @@ public class Registration : MonoBehaviour
                 CheckNick(Nick.text);
                 break;
             case 4:
-
                 ComparePasswords(Password.text, ConfirmPassword.text);
                 break;
         }
