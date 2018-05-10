@@ -208,18 +208,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void CheckGround()
-    {
-        RaycastHit hit;
-        if (!Physics.Raycast(new Ray(transform.position + Vector3.up, Vector3.down), out hit, 1.5f, environmentMask))
-        {
-            rb.useGravity = true;
-            OnGround = false;
-            tempOnGround = false;
-            rb.constraints = FreezeExceptJump;
-        }
-    }
-
     public void Move(bool right)
     {
         if (GameController.Instance.BlockMoving) return;
@@ -238,8 +226,7 @@ public class PlayerController : MonoBehaviour
                     animator.SetTrigger(Left);
                 }
             }
-
-            //rb.velocity += new Vector3 (-rb.velocity.x, 0, 0);
+            
             if (OnGround)
             {
                 rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -247,11 +234,6 @@ public class PlayerController : MonoBehaviour
 
             CurrentX += dir * Step;
             moveDir = Vector3.right * dir;
-            //            if (OnGround)
-            //            {
-            //                moveDir.y = -100;
-            //            }
-            //rb.AddForce(moveDir, ForceMode.Acceleration);
             isMoving = true;
         }
     }
@@ -274,9 +256,9 @@ public class PlayerController : MonoBehaviour
         if (OnGround)
         {
             animator.SetTrigger(JumpHash);
-            //moveDir.x = rb.velocity.x;
-            moveDir.y = JumpSpeed;
-            rb.velocity = moveDir;
+            Vector3 jumpDir = Vector3.up * JumpSpeed;
+            rb.AddForce(jumpDir, ForceMode.VelocityChange);
+            rb.useGravity = true;
             isJumping = true;
             tempOnGround = false;
 
@@ -307,7 +289,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnSideHit(Vector3 normal, Collision collision)
     {
-        //Collisions.Add(new CollisionInfo(){Ground = false, Object = collision.gameObject});
         dir = Mathf.Sign(normal.x);
         if (OnGround)
         {
@@ -324,15 +305,9 @@ public class PlayerController : MonoBehaviour
         {
             CurrentX += dir * Step;
         }
-        //moveDir.x = dir * moveSpeed/2;
-        //		if (OnGround) {
-        //			moveDir.y = -100;
-        //		}
 
         moveDir = Vector3.right * dir;
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        //rb.velocity += new Vector3 (-rb.velocity.x, -rb.velocity.y, 0);
-        //rb.AddForce (moveDir, ForceMode.Acceleration);
         isMoving = true;
 
         hitsCount++;
@@ -341,7 +316,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnHit(Collision collision)
     {
-        //Collisions.Add(new CollisionInfo(){Ground = false, Object = collision.gameObject});
         animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
         lastHit = collision.collider;
         lastHit.enabled = false;
@@ -399,10 +373,8 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 normal = collision.contacts[0].normal;
-        //float angleUp = Vector3.Angle (normal, Vector3.up);
         float angleForward = Vector3.Angle(normal, Vector3.back);
         Vector2 normal2 = new Vector2(normal.x, normal.z);
-        //float angle = Vector2.Angle(normal2, Vector2.down);
 
         if (Mathf.Abs(normal.x) < 0.1f && normal.y > 0 && angleForward != 0)
         {
@@ -487,7 +459,6 @@ public class PlayerController : MonoBehaviour
                 {
                     transform.position += Vector3.down * .1f;
                 }
-                //Collisions = 0;
                 OnGround = false;
                 tempOnGround = true;
 
