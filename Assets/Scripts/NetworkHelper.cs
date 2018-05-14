@@ -130,24 +130,25 @@ public static class NetworkHelper
     public static IEnumerator SendImage(string fileName, string URL)
     {
         //Canvaser.Instance.Test.text = fileName;
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         WWW localFile = new WWW("file://" + fileName);
-		#elif UNITY_IOS
+#elif UNITY_IOS
 		WWW localFile = new WWW("file://" + fileName);
-		#endif
+#endif
         yield return localFile;
         if (localFile.error == null)
-			Debug.Log("Loaded file successfully" + localFile.texture == null);
+            Debug.Log("Loaded file successfully" + localFile.texture == null);
         else
         {
             Debug.Log("Open file error: " + localFile.error);
             yield break; // stop the coroutine here
         }
 
-		if (localFile.texture == null) {
-			Debug.Log ("Texture error");
-			yield break;
-		}
+        if (localFile.texture == null)
+        {
+            Debug.Log("Texture error");
+            yield break;
+        }
 
         WWWForm postForm = new WWWForm();
         // version 1
@@ -164,7 +165,7 @@ public static class NetworkHelper
         if (upload.error == null)
             Debug.Log("upload done :");
         else
-			Debug.Log("Error during upload: " + upload.error + " URL: " + URL);
+            Debug.Log("Error during upload: " + upload.error + " URL: " + URL);
 
         LoginManager.Instance.GetAvatarImage();
     }
@@ -199,17 +200,17 @@ public class InputString
 
 public class AccessToken
 {
-	[JsonProperty(PropertyName = "access_token")]
-	public string Token { get; set; }
+    [JsonProperty(PropertyName = "access_token")]
+    public string Token { get; set; }
 
-	[JsonProperty(PropertyName="userName")]
-	public string Email{ get; set;}
+    [JsonProperty(PropertyName = "userName")]
+    public string Email { get; set; }
 
-	[JsonProperty(PropertyName="refresh_token")]
-	public string RefreshToken{ get; set;}
+    [JsonProperty(PropertyName = "refresh_token")]
+    public string RefreshToken { get; set; }
 
-	[JsonProperty(PropertyName = "refresh_expires_in")]
-	public float RefreshExpireIn { get; set; }
+    [JsonProperty(PropertyName = "refresh_expires_in")]
+    public float RefreshExpireIn { get; set; }
 }
 
 public class Header
@@ -269,7 +270,7 @@ public class TournamentModel
     public DateTime ExpireDate { get; set; }
     public string Name { get; set; }
     public string Prizes { get; set; }
-	public bool AvaliableWeeklyTasks{ get; set;}
+    public bool AvaliableWeeklyTasks { get; set; }
 }
 
 public class ItemBuyModel
@@ -288,7 +289,7 @@ public class SubmitScoreModel : SubmitModel
     public int IceCreamCount { get; set; }
     public int CasesCount { get; set; }
     public int Distance { get; set; }
-	public bool NotContinued{ get; set;}
+    public bool NotContinued { get; set; }
     public Dictionary<int, byte> Uses { get; set; }
 }
 
@@ -330,6 +331,9 @@ public class UserInfoModel
     public int IncomingFriendships { get; set; }
     public int IncomingTrades { get; set; }
     public int IncomingDuels { get; set; }
+    public int NewFriendships { get; set; }
+    public int NewTrades { get; set; }
+    public int NewDuels { get; set; }
     public int DaysInRow { get; set; }
     public bool GotDailyBonus { get; set; }
     public int DuelWins { get; set; }
@@ -337,7 +341,6 @@ public class UserInfoModel
     public bool CanOfferTrade { get; set; }
     public DateTime? BunnedUntil { get; set; }
     public int Cases { get; set; }
-
     public List<PlayerTasks> Achievements { get; set; }
     public List<PlayerTasks> WeeklyTasks { get; set; }
     public List<BonusUpgrade> BonusUpgrades { get; set; }
@@ -349,13 +352,12 @@ public class UserInfoModel
         WeeklyTasks = new List<PlayerTasks>();
         BonusUpgrades = new List<BonusUpgrade>();
         Bonuses = new List<Bonus>();
-        //Tournaments = new List<PlayerAchievementModel>();
     }
 }
 
 public class Bonus
 {
-	public string Type { get; set; }
+    public string Type { get; set; }
     public int Amount { get; set; }
     public int Id { get; set; }
     public NameLocalization Name { get; set; }
@@ -612,10 +614,10 @@ public class ShopCard : ShopItem
 
 public class ShopModel
 {
-	public List<ShopCard> Cards { get; set; }
-	public List<ShopItem> Bonuses { get; set; }
-	public List<ShopItem> Cases { get; set; }
-	public List<ShopItem> BonusUpgrades { get; set; }
+    public List<ShopCard> Cards { get; set; }
+    public List<ShopItem> Bonuses { get; set; }
+    public List<ShopItem> Cases { get; set; }
+    public List<ShopItem> BonusUpgrades { get; set; }
 }
 
 public class DuelResultModel
@@ -680,6 +682,6 @@ public class RegionModel
 {
     public string Name { get; set; }
     public int Id { get; set; }
-	public string PhonePattern{ get; set;}
-	public string PhonePlaceholder{ get; set;}
+    public string PhonePattern { get; set; }
+    public string PhonePlaceholder { get; set; }
 }
