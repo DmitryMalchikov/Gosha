@@ -12,7 +12,7 @@ public class OneSignalManager : MonoBehaviour
           .HandleNotificationOpened(HandleNotificationOpened)
           .EndInit();
 
-        OneSignal.inFocusDisplayType = OneSignal.OSInFocusDisplayOption.Notification;
+        OneSignal.inFocusDisplayType = OneSignal.OSInFocusDisplayOption.None;
 
         // Call syncHashedEmail anywhere in your app if you have the user's email.
         // This improves the effectiveness of OneSignal's "best-time" notification scheduling feature.
