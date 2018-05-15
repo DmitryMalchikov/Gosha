@@ -41,20 +41,28 @@ public class Friends : MonoBehaviour
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
 
+    public Toggle FriendsToggle;
+    public Toggle RequestsToggle;
+
     public bool IsFriend(int id)
     {
         return FriendObjects.Find(x => x.Info.Id == id) != null;
     }
 
-    public void OpenDirectlyOffers()
+    public void OpenDirectlyRequests()
     {
         Canvaser.ShowLoading(true);
 
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
+        
+        FriendsManager.Instance.GetFriendsAsync(() => OpenRequests());
+    }
 
-
-        FriendsManager.Instance.GetFriendsAsync(() => OpenFriendOffersPanel());
+    void OpenRequests()
+    {
+        gameObject.SetActive(true);
+        RequestsToggle.isOn = true;
     }
 
     public void OpenFriendsPanel()

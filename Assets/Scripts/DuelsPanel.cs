@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DuelsPanel : MonoBehaviour {
 
@@ -18,6 +19,10 @@ public class DuelsPanel : MonoBehaviour {
     public GameObject NoDuelsMsg;
     public GameObject NoRequestsMsg;
 
+
+    public Toggle DuelsToggle;
+    public Toggle RequestsToggle;
+
     public void Open()
     {
         Canvaser.ShowLoading(true);
@@ -26,6 +31,18 @@ public class DuelsPanel : MonoBehaviour {
         DuelManager.Instance.GetDuelsAsync(() => gameObject.SetActive(true));
     }
 
+    public void OpenDirectlyRequests()
+    {
+        Canvaser.ShowLoading(true);
+
+        ClearDuelPanel();
+        DuelManager.Instance.GetDuelsAsync(() => OpenRequests());
+    }
+    void OpenRequests()
+    {
+        gameObject.SetActive(true);
+        RequestsToggle.isOn = true;
+    }
     public void SetDuels(List<DuelModel> duels)
     {
         NoDuelsMsg.SetActive(duels.Count == 0);

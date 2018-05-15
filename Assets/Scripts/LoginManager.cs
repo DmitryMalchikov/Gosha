@@ -197,6 +197,10 @@ public class LoginManager : MonoBehaviour
 
             NotificationsManager.Register(User.Id);
 
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.TradeRequest, User.NewTrades);
+
             if (callback != null)
             {
                 callback();

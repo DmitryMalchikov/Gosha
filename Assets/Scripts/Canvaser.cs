@@ -108,7 +108,22 @@ public class Canvaser : MonoBehaviour
     public bool SomePanelOpened;
     public bool DoubleIcecreamClicked;
 
-    public NotificationPanel NotificationsPanel;
+    public List<NotificationPanel> NotificationsPanels;
+
+    public void OpenNotificationPanel(NotificationType notType, int count)
+    {
+        if (count > 0)
+        {
+            for (int i = 0; i < NotificationsPanels.Count; i++)
+            {
+                if (!NotificationsPanels[i].gameObject.activeInHierarchy)
+                {
+                    NotificationsPanels[i].OpenNotification(notType, count);
+                    break;
+                }
+            }
+        }
+    }
 
     public void OpenPanel(bool val)
     {

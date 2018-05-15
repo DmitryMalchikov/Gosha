@@ -18,17 +18,17 @@ public class NotificationPanel : MonoBehaviour {
         switch(type)
         {
             case NotificationType.DuelRequest:
-                typeText = "duelrequests";
+                typeText = "notificationduel";
                 break;
             case NotificationType.FriendRequest:
-                typeText = "friendrequests";
+                typeText = "notificationfriendship";
                 break;
             case NotificationType.TradeRequest:
-                typeText = "traderequests";
+                typeText = "notificationtrade";
                 break;
         }
 
-        NotificationText.text = string.Format(LocalizationManager.GetLocalizedValue("youhavenewnotifications"), count, LocalizationManager.GetLocalizedValue(typeText));
+        NotificationText.text = string.Format(LocalizationManager.GetLocalizedValue("youhavenewnotifications"), LocalizationManager.GetLocalizedValue(typeText), count);
 
         gameObject.SetActive(true);
 
@@ -40,10 +40,10 @@ public class NotificationPanel : MonoBehaviour {
         switch(_currentType)
         {
             case NotificationType.DuelRequest:
-                Canvaser.Instance.Duels.Open();
+                Canvaser.Instance.Duels.OpenDirectlyRequests();
                 break;
             case NotificationType.FriendRequest:
-                Canvaser.Instance.FriendsPanel.OpenDirectlyOffers();
+                Canvaser.Instance.FriendsPanel.OpenDirectlyRequests();
                 break;
             case NotificationType.TradeRequest:
                 Canvaser.Instance.GetTrades();
