@@ -195,7 +195,7 @@ public class LoginManager : MonoBehaviour
             }
             GetAvatarImage();
 
-            NotificationsManager.Register(User.Id);
+            //NotificationsManager.Register(User.Id);
 
             Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
             Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);

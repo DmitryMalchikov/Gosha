@@ -560,7 +560,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator WaitEffect()
     {
         yield return null;
-        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 7f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
+        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 8.5f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
         for (int i = 0; i < obstacles.Length; i++)
         {
             obstacles[i].transform.parent.gameObject.SetActive(false);
