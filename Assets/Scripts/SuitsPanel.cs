@@ -45,9 +45,10 @@ public class SuitsPanel : MonoBehaviour {
     public void SetPrize(Bonus bonus)
     {
         //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
+        PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + ((LocalizationManager.CurrentLanguage == Language.EN) ? bonus.Name.Name : bonus.Name.NameRu);
         if (bonus.Amount > 1)
         {
-            PrizeAmountTxt.text = bonus.Amount.ToString();
+            PrizeAmountTxt.text +=  "(" + bonus.Amount.ToString() + ")";
         }
         BoxPrizeObj.SetPrize(bonus.Name.Name);
         StartCoroutine(WaitForOpen());

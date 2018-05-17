@@ -40,6 +40,7 @@ public class Friends : MonoBehaviour
 
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
+    public GameObject FriendNotFoundMsg;
 
     public Toggle FriendsToggle;
     public Toggle RequestsToggle;
@@ -86,6 +87,8 @@ public class Friends : MonoBehaviour
         NoFriendsMsg.SetActive(friends.Count == 0);
         SetContentWith(friends, FriendsContent, FriendObject);
         FriendObjects = new List<FriendObject>(FriendsContent.GetComponentsInChildren<FriendObject>());
+        FriendNotFoundMsg.SetActive(false);
+        FriendSearchInput.text = "";
     }
 
     public void SetFriendOffers(List<FriendOfferModel> friends)
@@ -167,6 +170,7 @@ public class Friends : MonoBehaviour
         }
         else
         {
+            bool found = false;
             for (int i = 0; i < FriendObjects.Count; i++)
             {
                 if (!FriendObjects[i].Info.Nickname.ToLower().Contains(name.ToLower()))
@@ -175,9 +179,11 @@ public class Friends : MonoBehaviour
                 }
                 else
                 {
+                    found = true;
                     FriendObjects[i].gameObject.SetActive(true);
                 }
             }
+            FriendNotFoundMsg.SetActive(!found);
         }
     }
 

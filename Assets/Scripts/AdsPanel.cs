@@ -12,6 +12,11 @@ public class AdsPanel : MonoBehaviour {
         Canvaser.Instance.DoubleIcecreamClicked = false;
     }
 
+    public void OpenUrl()
+    {
+        Application.OpenURL(txt.text);
+    }
+
 	public void DoubleScore()
 	{
 		//Canvaser.Instance.LoadingPanel.SetActive(true);
