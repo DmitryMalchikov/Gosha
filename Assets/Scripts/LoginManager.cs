@@ -183,7 +183,6 @@ public class LoginManager : MonoBehaviour
             AchievementsManager.Instance.LoadAchievements(info.Achievements);
             TasksManager.Instance.LoadTasks(info.WeeklyTasks);
             Canvaser.Instance.SetNotifications(info);
-            //Canvaser.Instance.Shop.UpdatePanel(info.IceCream);
             Canvaser.Instance.SetAllIceCreams(User.IceCream);
             GameController.Instance.LoadBonusesTime(info.BonusUpgrades);
             Canvaser.Instance.DailyBonus.SetHighlights();

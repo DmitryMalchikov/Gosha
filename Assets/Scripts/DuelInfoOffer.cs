@@ -34,7 +34,7 @@ public class DuelInfoOffer : DuelInfo
         WaitText.SetActive(false);
         ResultButton.SetActive(false);
 
-        if (model.Status == 3)
+        if (model.Status == 3 || model.Status == 4)
         {
             ResultButton.SetActive(true);
         }

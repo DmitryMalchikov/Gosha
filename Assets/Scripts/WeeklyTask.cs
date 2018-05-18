@@ -34,7 +34,7 @@ public class WeeklyTask : MonoBehaviour {
 
         while (true)
         {
-            var time = (info.ExpireDate - DateTime.UtcNow);
+            var time = (info.ExpireDate - DateTime.Now.ToUniversalTime());
 
             TimeLeft.text = time.IntervalToString();
 
