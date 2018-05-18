@@ -237,12 +237,12 @@ public class Canvaser : MonoBehaviour
 
     public void StartRun()
     {
-        if (!SomePanelOpened)
-        {
+        //if (!SomePanelOpened)
+        //{
             MainMenu.SetActive(false);
             CameraFollow.Instance.ChangeCamera();
             PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
-        }
+        //}
     }
 
     public void SetNotifications(UserInfoModel info)

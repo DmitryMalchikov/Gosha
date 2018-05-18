@@ -46,6 +46,9 @@ public class DuelManager : MonoBehaviour
         {
             Debug.Log("OK");
             Canvaser.Instance.FriendsPanel.DuelOfferAnswer();
+        },(response) =>
+        {
+            Canvaser.Instance.FriendsPanel.SetDuelWarning(response.Errors.Message);
         }));
     }
     public void GetDuelsAsync(ResultCallback callback = null)

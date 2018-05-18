@@ -42,6 +42,8 @@ public class SuitsPanel : MonoBehaviour {
 
     public BoxPrize BoxPrizeObj;
 
+    public NewCardsPanel NewCards;
+
     public void SetPrize(Bonus bonus)
     {
         //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
@@ -89,15 +91,27 @@ public class SuitsPanel : MonoBehaviour {
         LoginManager.Instance.GetUserInfo();
     }
 
-    public void SetCurrentCostume(string Name, bool HasSuit)
+    public void SetCurrentCostume(Costume suit)
     {
+        string Name = suit.Name;
+        bool HasSuit = suit.CostumeAmount > 0;
+        Debug.Log(Name);
         PutOnSuitBtn.gameObject.SetActive(HasSuit);
-        if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit")
+        if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit" || Name == "Unicorn Suit")
         {
             ShowSuitsCards.gameObject.SetActive(false);
+            NewCards.Close();
         }
         else
         {
+            if(HasSuit)
+            {
+                NewCards.Open(suit);
+            }
+            else
+            {
+                NewCards.Close();
+            }
             ShowSuitsCards.gameObject.SetActive(true);
             UpdateCards();
         }

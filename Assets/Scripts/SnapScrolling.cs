@@ -92,7 +92,7 @@ public class SnapScrolling : MonoBehaviour
             pansPos[i] = -instPans[i].transform.localPosition;
 
         }
-        Canvaser.Instance.Suits.SetCurrentCostume(Costumes[selectedPanID].Name, Costumes[selectedPanID].CostumeAmount > 0);
+        Canvaser.Instance.Suits.SetCurrentCostume(Costumes[selectedPanID]);
     }
 
     public void SetCases(List<InventoryItem> cases)
@@ -157,13 +157,14 @@ public class SnapScrolling : MonoBehaviour
             }
             if (selectedPanID != PrevPanID)
             {
+                Debug.Log(selectedPanID + ", " + PrevPanID);
                 if (Canvaser.Instance.CasesPanel.gameObject.activeInHierarchy)
                 {
                     Canvaser.Instance.CasesPanel.SetCurrentCase(pansImage[selectedPanID]);
                 }
                 else
                 {
-                    Canvaser.Instance.Suits.SetCurrentCostume(Costumes[selectedPanID].Name, Costumes[selectedPanID].CostumeAmount > 0);
+                    Canvaser.Instance.Suits.SetCurrentCostume(Costumes[selectedPanID]);
                 }
                 PrevPanID = selectedPanID;
             }

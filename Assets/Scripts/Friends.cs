@@ -41,6 +41,7 @@ public class Friends : MonoBehaviour
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
     public GameObject FriendNotFoundMsg;
+    public Text DuelWarningMsg;
 
     public Toggle FriendsToggle;
     public Toggle RequestsToggle;
@@ -167,6 +168,7 @@ public class Friends : MonoBehaviour
             {
                 FriendObjects[i].gameObject.SetActive(true);
             }
+            FriendNotFoundMsg.SetActive(false);
         }
         else
         {
@@ -228,6 +230,19 @@ public class Friends : MonoBehaviour
     {
         DuelPanel.SetActive(false);
         DuelOfferedPanel.SetActive(true);
+        DuelWarningMsg.gameObject.SetActive(false);
+    }
+
+    public void SetDuelWarning(string errorMsg)
+    {
+        DuelWarningMsg.text = LocalizationManager.GetLocalizedValue(errorMsg);
+        DuelWarningMsg.gameObject.SetActive(true);
+    }
+
+    public void CloseDuelOffer()
+    {
+        DuelPanel.SetActive(false);
+        DuelWarningMsg.gameObject.SetActive(false);
     }
 
     public void Trade(FriendModel info)
