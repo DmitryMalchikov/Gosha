@@ -257,7 +257,7 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-		if (Input.GetButtonDown(CancelBtn))
+		if (Input.GetButtonDown(CancelBtn) && NetworkHelper.NoRequests())
         {
             Canvaser.PressBack();
         }
