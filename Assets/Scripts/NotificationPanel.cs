@@ -31,8 +31,6 @@ public class NotificationPanel : MonoBehaviour {
         NotificationText.text = string.Format(LocalizationManager.GetLocalizedValue("youhavenewnotifications"), LocalizationManager.GetLocalizedValue(typeText), count);
 
         gameObject.SetActive(true);
-
-        Canvaser.Instance.OpenPanel(true);
     }
 
     public void GoToNotifications()
@@ -49,7 +47,6 @@ public class NotificationPanel : MonoBehaviour {
                 Canvaser.Instance.GetTrades();
                 break;
         }
-        Canvaser.Instance.OpenPanel(false);
         gameObject.SetActive(false);
     }
 }

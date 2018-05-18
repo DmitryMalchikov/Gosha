@@ -59,6 +59,7 @@ public class AdsManager : MonoBehaviour {
 
     IEnumerator DownloadImage(int adsId, Image image)
     {
+        NetworkHelper.StartRequest();
         string url = AdsImageUrl + adsId;
 
         WWW www = new WWW(url);
@@ -71,6 +72,7 @@ public class AdsManager : MonoBehaviour {
             OnAdsDownloaded();
         }
         OnAdsDownloaded = null;
+        NetworkHelper.StopRequest();
     }
 
 }

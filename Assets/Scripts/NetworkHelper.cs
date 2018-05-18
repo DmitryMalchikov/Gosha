@@ -9,6 +9,27 @@ using UnityEngine;
 
 public static class NetworkHelper
 {
+    public static int RequestsCount = 0;
+
+    public static void StartRequest()
+    {
+        RequestsCount++;
+    }
+
+    public static void StopRequest()
+    {
+        RequestsCount--;
+        if (RequestsCount < 0)
+        {
+            RequestsCount = 0;
+        }
+    }
+
+    public static bool NoRequests()
+    {
+        return RequestsCount < 1;
+    }
+
     public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
         // Create a request for the URL. 
@@ -85,6 +106,7 @@ public static class NetworkHelper
     public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
     {
         AnswerModel response = null;
+        StartRequest();
 
         ThreadHelper.RunNewThread(() =>
         {
@@ -125,16 +147,13 @@ public static class NetworkHelper
                 errorMethod(response);
             }
         }
+
+        StopRequest();
     }
 
     public static IEnumerator SendImage(string fileName, string URL)
     {
-        //Canvaser.Instance.Test.text = fileName;
-#if UNITY_ANDROID
         WWW localFile = new WWW("file://" + fileName);
-#elif UNITY_IOS
-		WWW localFile = new WWW("file://" + fileName);
-#endif
         yield return localFile;
         if (localFile.error == null)
             Debug.Log("Loaded file successfully" + localFile.texture == null);
@@ -151,16 +170,13 @@ public static class NetworkHelper
         }
 
         WWWForm postForm = new WWWForm();
-        // version 1
-        //postForm.AddBinaryData("theFile",localFile.bytes);
-        // version 2
         postForm.AddBinaryData("theFile", localFile.bytes, fileName, "image/png");
 
         var headers = postForm.headers;
         headers["Authorization"] = LoginManager.Instance.Headers.Find(h => h.Name == "Authorization").Value;
         byte[] rawData = postForm.data;
 
-        WWW upload = new WWW(URL, rawData, headers);//new WWW(URL, postForm);
+        WWW upload = new WWW(URL, rawData, headers);
         yield return upload;
         if (upload.error == null)
             Debug.Log("upload done :");

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class Canvaser : MonoBehaviour
 {
-
     public static Canvaser Instance { get; private set; }
     public static bool ErrorChecked = false;
     public static bool Error = false;
@@ -104,8 +103,7 @@ public class Canvaser : MonoBehaviour
     public Text CasesCount;
 
     private static Stack<BackButton> _backButtons = new Stack<BackButton>();
-
-    public bool SomePanelOpened;
+    
     public bool DoubleIcecreamClicked;
 
     public List<NotificationPanel> NotificationsPanels;
@@ -125,11 +123,6 @@ public class Canvaser : MonoBehaviour
         }
     }
 
-    public void OpenPanel(bool val)
-    {
-        SomePanelOpened = val;
-    }
-
     public void CloseLoading()
     {
         LoadingPanel.GetComponent<Animator>().SetBool("Loaded", true);
@@ -146,9 +139,6 @@ public class Canvaser : MonoBehaviour
     {
 		var musicVolume = PlayerPrefs.GetFloat("music_volume_gosha");
 		var effectsVolume = PlayerPrefs.GetFloat("effects_volume_gosha");
-
-		//SetMusicVolume (musicVolume);
-		//SetEffectsVolume (effectsVolume);
 
 		MusicVolumeSlider.value = musicVolume;
 		EffectsVolumeSlider.value = effectsVolume;
