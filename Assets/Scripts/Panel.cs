@@ -15,6 +15,7 @@ public class Panel : MonoBehaviour
         yield return new WaitUntil(() => Canvaser.Instance != null);
 
         panelRectTransform = transform as RectTransform;
+        panelRectTransform.SetAsLastSibling();
         if (Canvaser.Instance.ErrorWindow.activeInHierarchy)
         {
             Canvaser.Instance.ErrorWindow.transform.SetAsLastSibling();
@@ -23,9 +24,9 @@ public class Panel : MonoBehaviour
         {
             Canvaser.Instance.LoadingPanel.transform.SetAsLastSibling();
         }
-        else
+        else if (Canvaser.Instance.GameOverPanel.activeInHierarchy)
         {
-            panelRectTransform.SetAsLastSibling();
+            Canvaser.Instance.GameOverPanel.transform.SetAsLastSibling();
         }
     }
 }
