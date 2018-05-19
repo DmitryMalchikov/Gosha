@@ -24,9 +24,5 @@ public class Panel : MonoBehaviour
         {
             Canvaser.Instance.LoadingPanel.transform.SetAsLastSibling();
         }
-        else if (Canvaser.Instance.GameOverPanel.activeInHierarchy)
-        {
-            Canvaser.Instance.GameOverPanel.transform.SetAsLastSibling();
-        }
     }
 }
