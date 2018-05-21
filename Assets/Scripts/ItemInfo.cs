@@ -43,7 +43,7 @@ public class ItemInfo : MonoBehaviour
     public void SetCase(ShopItem item)
     {
         CaseInfo = item;
-        NameText.text = item.Name;
+        NameText.text = LocalizationManager.CurrentLanguage == Language.EN ? item.Name : item.NameRu;
         PriceText.text = item.Cost.ToString();
         ItemID = item.Id;
     }

@@ -22,6 +22,7 @@ public class SuitsPanel : MonoBehaviour {
     public Button GetSuitBtn;
     public Button BuyCards;
     public Button ShowSuitsCards;
+    public Button Share;
 
     public Text PrizeText;
     public GameObject PrizePanel;
@@ -100,10 +101,12 @@ public class SuitsPanel : MonoBehaviour {
         if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit" || Name == "Unicorn Suit")
         {
             ShowSuitsCards.gameObject.SetActive(false);
+            Share.gameObject.SetActive(!HasSuit);
             NewCards.Close();
         }
         else
         {
+            Share.gameObject.SetActive(false);
             if(HasSuit)
             {
                 NewCards.Open(suit);
