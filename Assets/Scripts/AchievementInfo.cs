@@ -24,6 +24,15 @@ public class AchievementInfo : MonoBehaviour {
         gameObject.SetActive(true);
     }
 
+    public void SetAchievementInfo()
+    {
+        Title.text = LocalizationManager.GetLocalizedValue("share");
+        Description.text = LocalizationManager.GetLocalizedValue("sharegamewithyourfriends");
+        SocialNetworkButtons.SetActive(true);
+        AdsManager.Instance.GetAds(ADSText, ADS);
+        gameObject.SetActive(true);
+    }
+
     public void ShareFB()
     {
         FBManager.Instance.OpenShare("Kek");
