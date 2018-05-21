@@ -25,8 +25,8 @@ public class GameController : MonoBehaviour
     //public int ScoresSpeed = 10;
     public int StartSpeed = -6;
     public int MaxSpeed = -35;
-	public float IncreaseTimeStep;
-	public float IncreaseValue;
+    public float IncreaseTimeStep;
+    public float IncreaseValue;
 
     public float ShieldTime;
     public float MagnetTime;
@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour
     public bool BlockMoving = false;
 
     Vector3 CurrentSpeed;
-    
+
     public Vector3 RocketSwitchSpeed;
 
     public float returnTime = 1f;
@@ -90,7 +90,7 @@ public class GameController : MonoBehaviour
     public Bonus CurrentBonus;
 
     public bool Continued = false;
-	public string CancelBtn = "Cancel";
+    public string CancelBtn = "Cancel";
 
     CurvedWorld_Controller curvController;
 
@@ -107,9 +107,9 @@ public class GameController : MonoBehaviour
 
     public void ResetScores()
     {
-		Rocket = false;
-		Deceleration = false;
-		Shield = false;
+        Rocket = false;
+        Deceleration = false;
+        Shield = false;
         //+ LocalizationManager.GetLocalizedValue("meter");
         //Canvaser.Instance.Coins.text = "0";
         //Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
@@ -123,8 +123,8 @@ public class GameController : MonoBehaviour
         CurrentPoints = 0;
         CurrentSpeed = Speed;
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
-		PlayerController.Instance.animator.ResetTrigger("Reset");
-		TasksManager.Instance.CheckTasks (TasksTypes.Play);
+        PlayerController.Instance.animator.ResetTrigger("Reset");
+        TasksManager.Instance.CheckTasks(TasksTypes.Play);
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());
         StartCoroutine(GameStarted());
@@ -134,7 +134,7 @@ public class GameController : MonoBehaviour
     {
         Time.timeScale = 0;
 
-		if (!Continued && !InDuel)
+        if (!Continued && !InDuel)
         {
             Canvaser.Instance.ContinueForMoney.OpenContinuePanel();
         }
@@ -147,7 +147,7 @@ public class GameController : MonoBehaviour
     public void SuperFinish()
     {
         Canvaser.Instance.SetGameOverPanel();
-		IceCreamRotator.SetRotator (false);
+        IceCreamRotator.SetRotator(false);
         Speed.z = 0;
         SpeedMultiplyer = 0;
         Started = false;
@@ -156,7 +156,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
         Time.timeScale = 1;
-		AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
+        AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
         if (InDuel)
         {
@@ -167,8 +167,8 @@ public class GameController : MonoBehaviour
 
         Canvaser.Instance.PausePanel.SetActive(false);
         Canvaser.Instance.GamePanel.gameObject.SetActive(false);
-		Canvaser.Instance.Coins.text = "0";
-		Canvaser.Instance.Score.text = "0";
+        Canvaser.Instance.Coins.text = "0";
+        Canvaser.Instance.Score.text = "0";
 
         AchievementsManager.Instance.SubmitAllAchievements(true);
         TasksManager.Instance.SubmitAllTasks(true);
@@ -217,8 +217,8 @@ public class GameController : MonoBehaviour
         Continued = true;
         Started = true;
         StartCoroutine(GameStarted());
-        Canvaser.Instance.Countdown.SetActive(true);		
-		CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
+        Canvaser.Instance.Countdown.SetActive(true);
+        CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
     }
 
     public void LoadBonusesTime(List<BonusUpgrade> items)
@@ -257,19 +257,27 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-		if (Input.GetButtonDown(CancelBtn) && NetworkHelper.NoRequests())
+        if (Input.GetButtonDown(CancelBtn) && NetworkHelper.NoRequests())
         {
             Canvaser.PressBack();
         }
-		if (Input.GetKeyDown (KeyCode.D)) {
-			ApplyDeceleration ();
-		}
+#if UNITY_EDITOR
+        if (!Started)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            ApplyDeceleration();
+        }
+#endif
     }
 
-	bool setRun = false;
-	public Material Skybox;
-	public float RotationCoef;
-	private float SkyboxRotation = 0f;
+    bool setRun = false;
+    public Material Skybox;
+    public float RotationCoef;
+    private float SkyboxRotation = 0f;
 
     IEnumerator GameStarted()
     {
@@ -279,28 +287,36 @@ public class GameController : MonoBehaviour
 
             points = Mathf.Round(CurrentPoints);
             Canvaser.Instance.SetScore((int)points);
-			if (points % 10 == 0 && points != 0) {
-				if (setRun) {
-					AchievementsManager.Instance.CheckAchievements (TasksTypes.Run, 10);
-					TasksManager.Instance.CheckTasks (TasksTypes.Run, 10);
-					setRun = false;
-				}
-			} else {
-				setRun = true;
-			}
+            if (points % 10 == 0 && points != 0)
+            {
+                if (setRun)
+                {
+                    AchievementsManager.Instance.CheckAchievements(TasksTypes.Run, 10);
+                    TasksManager.Instance.CheckTasks(TasksTypes.Run, 10);
+                    setRun = false;
+                }
+            }
+            else
+            {
+                setRun = true;
+            }
+#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.R))
             {
                 ApplyRocket();
             }
-			if (Input.GetKeyDown (KeyCode.M)) {
-				Collector.Instance.UseMagnet ();
-			}
-			if (Input.GetKeyDown (KeyCode.S)) {
-				PlayerController.Instance.ApplyShield ();
-			}
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                Collector.Instance.UseMagnet();
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                PlayerController.Instance.ApplyShield();
+            }
+#endif
 
-			SkyboxRotation = (SkyboxRotation + CurvedWorld_Controller.get._V_CW_Bend_Y * RotationCoef * Time.deltaTime) % 360;
-			Skybox.SetFloat ("_Rotation", SkyboxRotation);
+            SkyboxRotation = (SkyboxRotation + CurvedWorld_Controller.get._V_CW_Bend_Y * RotationCoef * Time.deltaTime) % 360;
+            Skybox.SetFloat("_Rotation", SkyboxRotation);
 
             yield return null;
         }
@@ -310,8 +326,8 @@ public class GameController : MonoBehaviour
     {
         Canvaser.Instance.AddCoin();
         CurrentCoins++;
-		PlayerController.PickIceCream ();
-		AchievementsManager.Instance.CheckAchievements(TasksTypes.CollectIceCream);
+        PlayerController.PickIceCream();
+        AchievementsManager.Instance.CheckAchievements(TasksTypes.CollectIceCream);
     }
 
     public void AddBox()
@@ -377,10 +393,10 @@ public class GameController : MonoBehaviour
         }
 
         AudioManager.PlayRocketEffect();
-        PlayerController.Instance.transform.position = new Vector3 (PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
+        PlayerController.Instance.transform.position = new Vector3(PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
         PlayerController.Instance.col.enabled = true;
         PlayerController.Instance.rb.velocity = Vector3.zero;
-		PlayerController.Instance.rb.constraints = RigidbodyConstraints.FreezeAll;
+        PlayerController.Instance.rb.constraints = RigidbodyConstraints.FreezeAll;
         BlockMoving = false;
 
 
@@ -397,7 +413,7 @@ public class GameController : MonoBehaviour
         }
         TurnRocketOff();
         AudioManager.PlayEffectEnd();
-        
+
         Canvaser.Instance.GamePanel.RocketCD.OpenCooldownPanel();
     }
 
@@ -500,12 +516,12 @@ public class GameController : MonoBehaviour
     {
         while (Speed.z > MaxSpeed)
         {
-			yield return new WaitForSeconds(IncreaseTimeStep);
+            yield return new WaitForSeconds(IncreaseTimeStep);
             if (Started)
             {
-				if (!Deceleration && !Rocket)
+                if (!Deceleration && !Rocket)
                 {
-					CurrentSpeed.z -= IncreaseValue;
+                    CurrentSpeed.z -= IncreaseValue;
                     Speed = CurrentSpeed;
                     SpeedMultiplyer = Speed.z / StartSpeed;
                 }
@@ -523,7 +539,7 @@ public class GameController : MonoBehaviour
             ShieldTime = upgrades.Find(x => x.BonusName == "Shield").BonusTime;
         }
     }
-		
+
     IEnumerator ChangeDirection()
     {
         while (true)
