@@ -6,9 +6,7 @@
 	CollectIceCream, 
 	Buy, 
 	Loose, 
-	ShareVK, 
-	ShareFB, 
-	ShareOK
+	Share
 }
 
 public enum BonusType{

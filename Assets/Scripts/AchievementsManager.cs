@@ -12,9 +12,7 @@ public class AchievementsManager : MonoBehaviour
     public List<PlayerTasks> CollectIceCreamAchievements = new List<PlayerTasks>();
     public List<PlayerTasks> BuyAchievements = new List<PlayerTasks>();
     public List<PlayerTasks> LooseAchievements = new List<PlayerTasks>();
-    public List<PlayerTasks> ShareVKAchievements = new List<PlayerTasks>();
-    public List<PlayerTasks> ShareFBAchievements = new List<PlayerTasks>();
-    public List<PlayerTasks> ShareOKAchievements = new List<PlayerTasks>();
+    public List<PlayerTasks> ShareAchievements = new List<PlayerTasks>();
 
     public string GetAchievementsUrl = "/api/account/achievementsinfo";
     public string SubmitAchievementUrl = "/api/achievements/submitachievement";
@@ -58,14 +56,8 @@ public class AchievementsManager : MonoBehaviour
                 case "Loose":
                     LooseAchievements.Add(achievements[i]);
                     break;
-                case "ShareVK":
-                    ShareVKAchievements.Add(achievements[i]);
-                    break;
-                case "ShareFB":
-                    ShareFBAchievements.Add(achievements[i]);
-                    break;
-                case "ShareOK":
-                    ShareOKAchievements.Add(achievements[i]);
+                case "Share":
+                    ShareAchievements.Add(achievements[i]);
                     break;
             }
         }
@@ -94,16 +86,8 @@ public class AchievementsManager : MonoBehaviour
 		case TasksTypes.Loose:
                 achievements = LooseAchievements;
                 break;
-		case TasksTypes.ShareVK:
-                achievements = ShareVKAchievements;
-                send = true;
-                break;
-		case TasksTypes.ShareFB:
-                achievements = ShareFBAchievements;
-                send = true;
-                break;
-		case TasksTypes.ShareOK:
-                achievements = ShareOKAchievements;
+		case TasksTypes.Share:
+                achievements = ShareAchievements;
                 send = true;
                 break;
         }
@@ -142,9 +126,7 @@ public class AchievementsManager : MonoBehaviour
         achievements.AddRange(CollectIceCreamAchievements);
         achievements.AddRange(BuyAchievements);
         achievements.AddRange(LooseAchievements);
-        achievements.AddRange(ShareVKAchievements);
-        achievements.AddRange(ShareFBAchievements);
-        achievements.AddRange(ShareOKAchievements);
+        achievements.AddRange(ShareAchievements);
 
         for (int i = 0; i < achievements.Count; i++)
         {

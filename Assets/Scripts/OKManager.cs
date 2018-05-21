@@ -66,7 +66,7 @@ public class OKManager : MonoBehaviour
                 }
                 else if (response != null)
                 {
-                    AchievementsManager.Instance.CheckAchievements(TasksTypes.ShareOK);
+                    AchievementsManager.Instance.CheckAchievements(TasksTypes.Share);
                 }
             },
             new List<OKMedia>()
