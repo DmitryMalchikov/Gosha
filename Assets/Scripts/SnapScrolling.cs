@@ -126,9 +126,10 @@ public class SnapScrolling : MonoBehaviour
             }
         }
     }
-    public void PutOnSuit()
+    public void PutOnSuit(bool toSwitchOn = true)
     {
-        SuitIcons[selectedPanID].IsOn.isOn = true;
+        SuitIcons[selectedPanID].IsOn.isOn = toSwitchOn;
+        Canvaser.Instance.Suits.TakeOffSuitBtn.gameObject.SetActive(toSwitchOn);
     }
     void FixedUpdate()
     {

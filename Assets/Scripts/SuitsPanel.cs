@@ -23,6 +23,7 @@ public class SuitsPanel : MonoBehaviour {
     public Button BuyCards;
     public Button ShowSuitsCards;
     public Button Share;
+    public Button TakeOffSuitBtn;
 
     public Text PrizeText;
     public GameObject PrizePanel;
@@ -98,7 +99,13 @@ public class SuitsPanel : MonoBehaviour {
         bool HasSuit = suit.CostumeAmount > 0;
         Debug.Log(Name);
         PutOnSuitBtn.gameObject.SetActive(HasSuit);
-        if(Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit" || Name == "Unicorn Suit")
+
+
+
+        TakeOffSuitBtn.gameObject.SetActive(PlayerPrefs.GetString("CurrentSuit") == suit.Name);
+
+
+        if (Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit" || Name == "Unicorn Suit")
         {
             ShowSuitsCards.gameObject.SetActive(false);
             Share.gameObject.SetActive(!HasSuit);
@@ -127,6 +134,12 @@ public class SuitsPanel : MonoBehaviour {
     {
         SuitsScroll.PutOnSuit();
         PlayerPrefs.SetString("CurrentSuit", SuitName.text);
+    }
+
+    public void TakeOffSuit()
+    {
+        SuitsScroll.PutOnSuit(false);
+        PlayerPrefs.SetString("CurrentSuit", "");
     }
 
     public void SetCurrentCase(Image selected)
