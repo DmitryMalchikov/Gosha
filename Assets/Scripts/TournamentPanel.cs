@@ -59,7 +59,17 @@ public class TournamentPanel : MonoBehaviour {
             newParticipant.SetTournamentObject(models[i],i);
             Participants.Add(newParticipant);
         }
+        //gameObject.SetActive(true);
+        //StartCoroutine(CheckTime());
+    }
+
+    public void OpenTable()
+    {
         gameObject.SetActive(true);
+    }
+
+    private void OnEnable()
+    {
         StartCoroutine(CheckTime());
     }
 

@@ -37,6 +37,11 @@ public class StatisticsManager : MonoBehaviour
         }));
     }
 
+    public void OpenTournamentInfo()
+    {
+        Canvaser.Instance.Tournament.OpenTable();
+    }
+
     public void GetAllStatisticsAsync(int period, ResultCallback callback = null)
     {
         InputInt value = new InputInt() { Value = period };
@@ -68,6 +73,7 @@ public class StatisticsManager : MonoBehaviour
         {
             TournamentModel info = JsonConvert.DeserializeObject<TournamentModel>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentInfo(info);
+            Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
 
             Canvaser.ShowLoading(false);
             Canvaser.Instance.TasksPanel.SetActive(true);

@@ -287,6 +287,7 @@ public class TournamentModel
     public string Name { get; set; }
     public string Prizes { get; set; }
     public bool AvaliableWeeklyTasks { get; set; }
+    public List<FriendOfferStatisticsModel> TournamentLeaders { get; set; }
 }
 
 public class ItemBuyModel
