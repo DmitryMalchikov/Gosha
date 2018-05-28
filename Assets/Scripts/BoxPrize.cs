@@ -18,7 +18,6 @@ public class BoxPrize : MonoBehaviour {
 
     public void SetPrize(string name)
     {
-        Debug.Log(name);
         currentName = name;
         switch(name)
         {

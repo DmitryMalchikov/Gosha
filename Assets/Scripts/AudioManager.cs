@@ -14,6 +14,10 @@ public class AudioManager : MonoBehaviour
     public AudioClip ShieldHitEffect;
     public AudioClip CaseOpen;
     public AudioClip CardGet;
+    public AudioClip Jump;
+    public AudioClip SideMove;
+    public AudioClip SideHit;
+    public AudioClip Hit;
 
     [Header("Long Effects")]
     public AudioClip MagnetEffect;
@@ -33,7 +37,7 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayIceCreamPickup()
     {
-        Source.PlayOneShot(Instance.IceCreamPick, .7f);
+        Source.PlayOneShot(Instance.IceCreamPick, .1f);
     }
 
     public static void PlayBtnTapSound()
@@ -87,5 +91,25 @@ public class AudioManager : MonoBehaviour
     public static void PlayCardGet()
     {
         Source.PlayOneShot(Instance.CardGet);
+    }
+
+    public static void PlayJump()
+    {
+        Source.PlayOneShot(Instance.Jump);
+    }
+
+    public static void PlaySideMove()
+    {
+        Source.PlayOneShot(Instance.SideMove);
+    }
+
+    public static void PlaySideHit()
+    {
+        Source.PlayOneShot(Instance.SideHit);
+    }
+
+    public static void PlayHit()
+    {
+        Source.PlayOneShot(Instance.Hit);
     }
 }

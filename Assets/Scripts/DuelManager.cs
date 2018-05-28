@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class DuelManager : MonoBehaviour
 {
-
-
     public static DuelManager Instance { get; private set; }
 
     public string FullDuelsInfo = "/api/duels/getallduels";

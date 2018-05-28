@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -116,7 +117,7 @@ public class LocalizationManager : MonoBehaviour
     {
         if (localizedText.ContainsKey(key))
         {
-            return localizedText[key];
+            return localizedText[key].Replace("\\n", Environment.NewLine);
         }
 
         return Instance.NotFoundKey;

@@ -24,8 +24,8 @@ public class FriendObject : MonoBehaviour
 
     public Image Avatar;
 
-	public GameObject YouPanel;
-
+    public GameObject YouPanel;
+    public Color YourColor = Color.green;
 
     public void AcceptFriend(bool isAccepted)
     {
@@ -99,7 +99,7 @@ public class FriendObject : MonoBehaviour
             if (isFriend)
                 Canvaser.Instance.FriendsPanel.FriendInfo.SetInfo(this);
             else
-                Canvaser.Instance.FriendsPanel.RequesterInfo.SetInfo(this,false);
+                Canvaser.Instance.FriendsPanel.RequesterInfo.SetInfo(this, false);
         }
     }
 
@@ -126,7 +126,7 @@ public class FriendObject : MonoBehaviour
             Warning.SetActive(false);
         //if (friendOffer.FriendshipStatus == 0)
         //{
-            OfferInfo = friendOffer;
+        OfferInfo = friendOffer;
         //}
         if (Position)
             Position.text = friendOffer.Place.ToString();
@@ -139,11 +139,23 @@ public class FriendObject : MonoBehaviour
         OpenText.SetActive(false);
         InfoButton.SetActive(false);
         Name.text = LocalizationManager.GetLocalizedValue("you");
-		Name.color = Color.white;
         Position.text = position.ToString();
-		Position.color = Color.white;
-		Avatar.sprite = Canvaser.Instance.Avatar;
-		YouPanel.SetActive(true);
+        Position.color = Color.white;
+        YouPanel.SetActive(true);
+        Name.color = Color.white;
+        Avatar.sprite = Canvaser.Instance.Avatar;
+        Destroy(gameObject.GetComponent<Button>());
+    }
+
+    public void YourPanelTournament(FriendOfferModel friend, int place)
+    {
+        OfferInfo = friend;
+        Name.text = string.Format("{0}. {1}", place + 1, LocalizationManager.GetLocalizedValue("you"));
+        Record.text = (friend as FriendOfferStatisticsModel).Points + LocalizationManager.GetLocalizedValue("meter");
+        GetComponent<Image>().color = YourColor;
+        Name.color = Color.white;
+        Record.color = Color.white;
+        Destroy(gameObject.GetComponent<Button>());
     }
 
     public void Trade()

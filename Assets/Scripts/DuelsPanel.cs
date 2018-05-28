@@ -13,6 +13,7 @@ public class DuelsPanel : MonoBehaviour {
 
     public List<DuelInfo> Requests = new List<DuelInfo>();
     public List<DuelInfo> Duels = new List<DuelInfo>();
+    public List<DuelModel> CurrentDuels = new List<DuelModel>();
 
     public DuelResult ResultPanel;
 
@@ -46,6 +47,7 @@ public class DuelsPanel : MonoBehaviour {
     public void SetDuels(List<DuelModel> duels)
     {
         NoDuelsMsg.SetActive(duels.Count == 0);
+        CurrentDuels.AddRange(duels);
         SetContent(DuelsContent, DuelObject, duels, Duels);        
     }
 
@@ -74,6 +76,7 @@ public class DuelsPanel : MonoBehaviour {
 
     public void ClearContent(Transform content, List<DuelInfo> infos)
     {
+        CurrentDuels.Clear();
         infos.Clear();
         foreach (Transform item in content)
         {
@@ -82,6 +85,12 @@ public class DuelsPanel : MonoBehaviour {
                 Destroy(item.gameObject);
             }
         }
+    }
+
+    public void UpdatePanel(DuelModel duel)
+    {
+        CurrentDuels.Remove(duel);
+        NoDuelsMsg.SetActive(CurrentDuels.Count == 0);
     }
 
     public void SetResult(DuelResultModel model)

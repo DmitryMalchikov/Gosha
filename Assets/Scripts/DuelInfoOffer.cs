@@ -57,5 +57,7 @@ public class DuelInfoOffer : DuelInfo
     public void GetResults()
     {
         DuelManager.Instance.GetDuelResultAsync(info.Id);
+        Canvaser.Instance.Duels.UpdatePanel(info);
+        gameObject.SetActive(false);
     }
 }

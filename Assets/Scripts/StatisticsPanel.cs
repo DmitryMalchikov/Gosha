@@ -54,7 +54,14 @@ public class StatisticsPanel : MonoBehaviour {
         for (int i = 0; i < leaders.Count; i++)
         {
             FriendObject newLeader = Instantiate(Leader, AllTimeLeadersContent).GetComponent<FriendObject>();
-            newLeader.SetTournamentObject(leaders[i], i);
+            if (leaders[i].Id == LoginManager.Instance.User.Id)
+            {
+                newLeader.YourPanelTournament(leaders[i], i);
+            }
+            else
+            {
+                newLeader.SetTournamentObject(leaders[i], i);
+            }
             AllTimeLeaders.Add(newLeader);
         }
         
@@ -66,7 +73,14 @@ public class StatisticsPanel : MonoBehaviour {
         for (int i = 0; i < leaders.Count; i++)
         {
             FriendObject newLeader = Instantiate(Leader, LeadersContent).GetComponent<FriendObject>();
-            newLeader.SetTournamentObject(leaders[i], i);
+            if (leaders[i].Id == LoginManager.Instance.User.Id)
+            {
+                newLeader.YourPanelTournament(leaders[i], i);
+            }
+            else
+            {
+                newLeader.SetTournamentObject(leaders[i], i);
+            }
             Leaders.Add(newLeader);
         }
     }

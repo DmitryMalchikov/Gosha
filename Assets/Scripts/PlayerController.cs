@@ -228,8 +228,13 @@ public class PlayerController : MonoBehaviour
             }
             
             if (OnGround)
-            {
+            {                
                 rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
+
+            if (!GameController.Instance.Rocket)
+            {
+                AudioManager.PlaySideMove();
             }
 
             CurrentX += dir * Step;
@@ -262,6 +267,7 @@ public class PlayerController : MonoBehaviour
             isJumping = true;
             tempOnGround = false;
 
+            AudioManager.PlayJump();
             AchievementsManager.Instance.CheckAchievements(TasksTypes.Jump);
             TasksManager.Instance.CheckTasks(TasksTypes.Jump);
         }
@@ -312,6 +318,7 @@ public class PlayerController : MonoBehaviour
 
         hitsCount++;
         CameraFollow.Instance.ShakeCamera();
+        AudioManager.PlaySideHit();
     }
 
     private void OnHit(Collision collision)
@@ -333,6 +340,7 @@ public class PlayerController : MonoBehaviour
         CameraFollow.Instance.offset.z = -2.5f;
         Canvaser.Instance.GamePanel.TurdOffBonuses();
         GameController.TurnOffAllBonuses();
+        AudioManager.PlayHit();
     }
 
     private void OnGrounded(Collision collision)

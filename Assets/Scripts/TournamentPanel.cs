@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
 
-public class TournamentPanel : MonoBehaviour {
+public class TournamentPanel : MonoBehaviour
+{
 
     public Text TournamentText;
     public Text TournamentName;
@@ -19,6 +20,7 @@ public class TournamentPanel : MonoBehaviour {
 
     public Transform StatisticsContent;
     public GameObject TournamentPlayer;
+    public ScrollRect ContentScroll;
 
     public List<FriendObject> Participants;
 
@@ -46,7 +48,7 @@ public class TournamentPanel : MonoBehaviour {
             Canvaser.Instance.TournamentBtn.interactable = false;
         }
 
-		Canvaser.Instance.WeeklyTasksBtn.interactable = model.AvaliableWeeklyTasks;
+        Canvaser.Instance.WeeklyTasksBtn.interactable = model.AvaliableWeeklyTasks;
     }
 
     public void SetTournamentTable(List<FriendOfferStatisticsModel> models)
@@ -56,16 +58,23 @@ public class TournamentPanel : MonoBehaviour {
         for (int i = 0; i < models.Count; i++)
         {
             FriendObject newParticipant = Instantiate(TournamentPlayer, StatisticsContent).GetComponent<FriendObject>();
-            newParticipant.SetTournamentObject(models[i],i);
+            if (models[i].Id == LoginManager.Instance.User.Id)
+            {
+                newParticipant.YourPanelTournament(models[i], i);
+            }
+            else
+            {
+                newParticipant.SetTournamentObject(models[i], i);
+            }
+
             Participants.Add(newParticipant);
         }
-        //gameObject.SetActive(true);
-        //StartCoroutine(CheckTime());
     }
 
     public void OpenTable()
     {
         gameObject.SetActive(true);
+        ContentScroll.Rebuild(CanvasUpdate.PostLayout);
     }
 
     private void OnEnable()
@@ -88,18 +97,20 @@ public class TournamentPanel : MonoBehaviour {
         {
             var time = (info.ExpireDate - DateTime.Now.ToUniversalTime());
 
-			StringBuilder timeLeft = new StringBuilder ();
+            StringBuilder timeLeft = new StringBuilder();
 
-			if (time.Days > 0) {
-				timeLeft.AppendFormat("{0:00} {1} ", time.Days, LocalizationManager.GetLocalizedValue("days"));
-			}
-			if (time.Hours > 0) {
-				timeLeft.AppendFormat("{0:00} {1} ", time.Hours, LocalizationManager.GetLocalizedValue("hours"));
-			}
+            if (time.Days > 0)
+            {
+                timeLeft.AppendFormat("{0:00} {1} ", time.Days, LocalizationManager.GetLocalizedValue("days"));
+            }
+            if (time.Hours > 0)
+            {
+                timeLeft.AppendFormat("{0:00} {1} ", time.Hours, LocalizationManager.GetLocalizedValue("hours"));
+            }
 
-			timeLeft.AppendFormat("{0:00} {1}", time.Minutes, LocalizationManager.GetLocalizedValue("minutes"));
+            timeLeft.AppendFormat("{0:00} {1}", time.Minutes, LocalizationManager.GetLocalizedValue("minutes"));
 
-			TimeToEnd.text = timeLeft.ToString();
+            TimeToEnd.text = timeLeft.ToString();
 
             yield return minute;
         }

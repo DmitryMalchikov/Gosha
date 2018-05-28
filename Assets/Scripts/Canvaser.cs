@@ -140,7 +140,10 @@ public class Canvaser : MonoBehaviour
 		var musicVolume = PlayerPrefs.GetFloat("music_volume_gosha");
 		var effectsVolume = PlayerPrefs.GetFloat("effects_volume_gosha");
 
-		MusicVolumeSlider.value = musicVolume;
+        MusicMixer.SetFloat("MainVolume", musicVolume);
+        EffectsMixer.SetFloat("MainVolume", effectsVolume);
+
+        MusicVolumeSlider.value = musicVolume;
 		EffectsVolumeSlider.value = effectsVolume;
 
         Application.runInBackground = true;
