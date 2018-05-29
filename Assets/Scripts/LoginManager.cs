@@ -204,7 +204,7 @@ public class LoginManager : MonoBehaviour
             {
                 callback();
             }
-        }));
+        }, blockButtons: false));
     }
 
     //NOT DONE!!!

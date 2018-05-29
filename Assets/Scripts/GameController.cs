@@ -110,9 +110,6 @@ public class GameController : MonoBehaviour
         Rocket = false;
         Deceleration = false;
         Shield = false;
-        //+ LocalizationManager.GetLocalizedValue("meter");
-        //Canvaser.Instance.Coins.text = "0";
-        //Canvaser.Instance.HighScore.text = LoginManager.Instance.User.HighScore + LocalizationManager.GetLocalizedValue("meter");
         Time.timeScale = 1;
         Started = true;
         Continued = false;
@@ -125,6 +122,7 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
         PlayerController.Instance.animator.ResetTrigger("Reset");
         TasksManager.Instance.CheckTasks(TasksTypes.Play);
+        StopAllCoroutines();
         StartCoroutine(IncreaseSpeed());
         StartCoroutine(ChangeDirection());
         StartCoroutine(GameStarted());
@@ -514,10 +512,10 @@ public class GameController : MonoBehaviour
 
     IEnumerator IncreaseSpeed()
     {
-        while (Speed.z > MaxSpeed)
+        while (Speed.z > MaxSpeed && Started)
         {
             yield return new WaitForSeconds(IncreaseTimeStep);
-            if (Started)
+            if (Started && !Paused)
             {
                 if (!Deceleration && !Rocket)
                 {

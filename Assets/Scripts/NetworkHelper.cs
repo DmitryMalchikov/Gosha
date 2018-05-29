@@ -103,10 +103,13 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, bool blockButtons = true)
     {
         AnswerModel response = null;
-        StartRequest();
+        if (blockButtons)
+        {
+            StartRequest();
+        }
 
         ThreadHelper.RunNewThread(() =>
         {
@@ -148,7 +151,10 @@ public static class NetworkHelper
             }
         }
 
-        StopRequest();
+        if (blockButtons)
+        {
+            StopRequest();
+        }
     }
 
     public static IEnumerator SendImage(string fileName, string URL)

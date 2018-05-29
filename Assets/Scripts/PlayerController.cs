@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour
             bool back = false;
             back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
 
-            if (Mathf.Abs(transform.position.x - CurrentX) < FallDistance && !GameController.Instance.Rocket)
+            if (!rb.useGravity && Mathf.Abs(transform.position.x - CurrentX) < FallDistance && !GameController.Instance.Rocket)
             {
                 rb.useGravity = true;
                 rb.constraints = FreezeExceptJump;
@@ -295,6 +295,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnSideHit(Vector3 normal, Collision collision)
     {
+        Debug.Break();
         dir = Mathf.Sign(normal.x);
         if (OnGround)
         {
@@ -332,15 +333,22 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitDeath());
         rb.useGravity = true;
         rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
+        ResetTriggers();
+        CameraFollow.Instance.offset.z = -2.5f;
+        Canvaser.Instance.GamePanel.TurdOffBonuses();
+        GameController.TurnOffAllBonuses();
+        AudioManager.PlayHit();
+    }
+
+    private void ResetTriggers()
+    {
         animator.ResetTrigger(HitLeft);
         animator.ResetTrigger(HitRight);
         animator.ResetTrigger(Left);
         animator.ResetTrigger(Right);
         animator.ResetTrigger(CrouchHash);
-        CameraFollow.Instance.offset.z = -2.5f;
-        Canvaser.Instance.GamePanel.TurdOffBonuses();
-        GameController.TurnOffAllBonuses();
-        AudioManager.PlayHit();
+        animator.ResetTrigger("Reset");
+        animator.ResetTrigger(JumpHash);
     }
 
     private void OnGrounded(Collision collision)
@@ -442,12 +450,15 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        var toRemove = Collisions.Find(col => col.Object == collision.gameObject);
-        if (toRemove != null)
+        
+        var toRemove = Collisions.FindAll(col => col.Object == collision.gameObject);
+        if (toRemove != null && toRemove.Count > 0)
         {
             tempOnGround = false;
-            Collisions.Remove(toRemove);
+            for (int i = 0; i < toRemove.Count; i++)
+            {
+                Collisions.Remove(toRemove[i]);
+            }
             StartCoroutine(SetOnGround());
         }
     }
@@ -463,10 +474,10 @@ public class PlayerController : MonoBehaviour
         {
             if (Collisions.Count == 0)
             {
-                if (waitCount > 0)
-                {
-                    transform.position += Vector3.down * .1f;
-                }
+                //if (waitCount > 0)
+                //{
+                //    transform.position += Vector3.down * .1f;
+                //}
                 OnGround = false;
                 tempOnGround = true;
 

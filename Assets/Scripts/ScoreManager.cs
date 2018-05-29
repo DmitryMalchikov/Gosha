@@ -48,7 +48,7 @@ public class ScoreManager : MonoBehaviour
                 (response) =>
                 {
                     key = response.Text.Replace("\"", string.Empty);
-                }
+                }, blockButtons: false
                 ));
 
         Debug.Log(key);
@@ -65,7 +65,7 @@ public class ScoreManager : MonoBehaviour
         (response) =>
         {
             LoginManager.Instance.GetUserInfoAsync();
-        }
+        }, blockButtons: false
         ));
     }
 

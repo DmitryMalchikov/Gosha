@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayBtnTapSound()
     {
-       Source.PlayOneShot(Instance.BtnTap);
+       Source.PlayOneShot(Instance.BtnTap, .7f);
     }
     
 
@@ -95,12 +95,12 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayJump()
     {
-        Source.PlayOneShot(Instance.Jump);
+        Source.PlayOneShot(Instance.Jump, .7f);
     }
 
     public static void PlaySideMove()
     {
-        Source.PlayOneShot(Instance.SideMove);
+        Source.PlayOneShot(Instance.SideMove, .7f);
     }
 
     public static void PlaySideHit()
