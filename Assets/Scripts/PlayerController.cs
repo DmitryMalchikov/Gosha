@@ -163,8 +163,11 @@ public class PlayerController : MonoBehaviour
 
             if (!rb.useGravity && Mathf.Abs(transform.position.x - CurrentX) < FallDistance && !GameController.Instance.Rocket)
             {
-                rb.useGravity = true;
-                rb.constraints = FreezeExceptJump;
+                if (Collisions.Count == 0)
+                {
+                    rb.useGravity = true;
+                    rb.constraints = FreezeExceptJump;
+                }
             }
 
             if (Mathf.Abs(transform.position.x - CurrentX) < 0.01f || back)
@@ -295,6 +298,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnSideHit(Vector3 normal, Collision collision)
     {
+        Debug.Break();
         dir = Mathf.Sign(normal.x);
         if (OnGround)
         {
@@ -484,6 +488,10 @@ public class PlayerController : MonoBehaviour
                 {
                     rb.useGravity = true;
                 }
+            }
+            else
+            {
+                rb.useGravity = false;
             }
         }
 
