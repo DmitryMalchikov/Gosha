@@ -298,7 +298,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnSideHit(Vector3 normal, Collision collision)
     {
-        Debug.Break();
         dir = Mathf.Sign(normal.x);
         if (OnGround)
         {
