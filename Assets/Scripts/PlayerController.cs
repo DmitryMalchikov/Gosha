@@ -481,7 +481,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (!isJumping)
         {
-            transform.position -= Vector3.up * 0.2f;
+            transform.position -= Vector3.up * 0.15f;
         }
     }
 
