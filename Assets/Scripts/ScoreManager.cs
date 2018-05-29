@@ -85,7 +85,7 @@ public class ScoreManager : MonoBehaviour
             (response) =>
             {
                 SetUses(bonusInvId);
-            }
+            }, blockButtons: false
             ));
         }
     }
