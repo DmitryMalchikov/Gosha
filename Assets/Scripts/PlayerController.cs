@@ -26,8 +26,9 @@ public class PlayerController : MonoBehaviour
 
     public bool UseHardTouch = true;
     public float Step = 2;
-    [Range(0,1)]
+    [Range(0, 1)]
     public float GravityOnPercent = .75f;
+    public float LowDelta = 1.5f;
     public float CurrentX = 0;
     public float nextStep;
     public float dir;
@@ -63,9 +64,6 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
 
     public bool OnRamp = false;
-    public Vector3 crouch;
-    public Vector3 zeroX = Vector3.zero;
-    public Vector3 velBeforeCrouch;
     public Vector3 StartPos = new Vector3(0f, 0.5f, -4f);
 
     public Vector3 ColliderStand = new Vector3();
@@ -177,6 +175,7 @@ public class PlayerController : MonoBehaviour
                 isMoving = false;
                 FixPos(CurrentX);
                 StartCoroutine(SetOnGround());
+                SetPositionAfterMove();
             }
             else
             {
@@ -229,9 +228,9 @@ public class PlayerController : MonoBehaviour
                     animator.SetTrigger(Left);
                 }
             }
-            
+
             if (OnGround)
-            {                
+            {
                 rb.constraints = RigidbodyConstraints.FreezeAll;
             }
 
@@ -267,6 +266,7 @@ public class PlayerController : MonoBehaviour
             Vector3 jumpDir = Vector3.up * JumpSpeed;
             rb.AddForce(jumpDir, ForceMode.VelocityChange);
             rb.useGravity = true;
+            rb.constraints = FreezeExceptJump;
             isJumping = true;
             tempOnGround = false;
 
@@ -279,7 +279,7 @@ public class PlayerController : MonoBehaviour
     public void Crouch()
     {
 
-        if (GameController.Instance.Rocket || !GameController.Instance.Started)
+        if (GameController.Instance.Rocket || !GameController.Instance.Started || isCrouching)
             return;
 
         if (!OnGround)
@@ -336,7 +336,7 @@ public class PlayerController : MonoBehaviour
         rb.useGravity = true;
         rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
         ResetTriggers();
-        CameraFollow.Instance.offset.z = -2.5f;
+        CameraFollow.Instance.offset.z = -3.2f;
         Canvaser.Instance.GamePanel.TurdOffBonuses();
         GameController.TurnOffAllBonuses();
         AudioManager.PlayHit();
@@ -404,9 +404,13 @@ public class PlayerController : MonoBehaviour
             {
                 ShieldHit();
             }
-            else
+            else if ((transform.position.y - collision.contacts[0].point.y) <= LowDelta)
             {
                 OnSideHit(normal, collision);
+            }
+            else
+            {
+                OnGrounded(collision);
             }
             //side hit
         }
@@ -452,7 +456,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        
+
         var toRemove = Collisions.FindAll(col => col.Object == collision.gameObject);
         if (toRemove != null && toRemove.Count > 0)
         {
@@ -465,32 +469,44 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void SetPositionAfterMove()
+    {
+        if (GameController.Instance.Rocket)
+            return;
+
+        RaycastHit hit;
+        if (Physics.Raycast(new Ray(transform.position - Vector3.up * .3f, Vector3.down), out hit, 0.2f, environmentMask))
+        {
+            transform.position = hit.point + Vector3.up * .4f;
+        }
+        else if (!isJumping)
+        {
+            transform.position -= Vector3.up * 0.2f;
+        }
+    }
+
     IEnumerator SetOnGround()
     {
-        int waitCount = -1;
-
-        yield return new WaitUntil(() => { waitCount++; return !isMoving; });
+        yield return new WaitUntil(() => !isMoving);
         yield return new WaitForFixedUpdate();
 
         if (!tempOnGround)
         {
             if (Collisions.Count == 0)
             {
-                //if (waitCount > 0)
-                //{
-                //    transform.position += Vector3.down * .1f;
-                //}
                 OnGround = false;
                 tempOnGround = true;
 
                 if (!GameController.Instance.Rocket)
                 {
                     rb.useGravity = true;
+                    rb.constraints = FreezeExceptJump;
                 }
             }
             else
             {
                 rb.useGravity = false;
+                rb.constraints = RigidbodyConstraints.FreezeAll;
             }
         }
 
