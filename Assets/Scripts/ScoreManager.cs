@@ -35,6 +35,8 @@ public class ScoreManager : MonoBehaviour
         ContinueForMoneyUrl = ServerInfo.GetUrl(ContinueForMoneyUrl);
     }
 
+    bool SubmittingScore = false;
+
     public void SubmitScoreAsync(int distance, int iceCream, int boxes)
     { 
         StartCoroutine(SubmitScore(distance, iceCream, boxes));
@@ -42,6 +44,10 @@ public class ScoreManager : MonoBehaviour
 
     System.Collections.IEnumerator SubmitScore(int distance, int iceCream, int boxes)
     {
+        yield return new WaitUntil(() => !SubmittingScore);
+
+        SubmittingScore = true;
+
         Debug.Log(iceCream);
         string key = "";
         yield return StartCoroutine(NetworkHelper.SendRequest(GetKeyUrl, null, "application/json",
@@ -65,6 +71,7 @@ public class ScoreManager : MonoBehaviour
         (response) =>
         {
             LoginManager.Instance.GetUserInfoAsync();
+            SubmittingScore = false;
         }, blockButtons: false
         ));
     }
