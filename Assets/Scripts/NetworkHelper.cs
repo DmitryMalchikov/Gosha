@@ -134,26 +134,31 @@ public static class NetworkHelper
             yield return null;
         }
 
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        try
         {
-            successMethod(response);
-        }
-        else
-        {
-            Debug.Log("Error");
-            if (response.Errors != null)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Debug.Log(response.Errors);
+                successMethod(response);
             }
-            if (errorMethod != null)
+            else
             {
-                errorMethod(response);
+                Debug.Log("Error");
+                if (response.Errors != null)
+                {
+                    Debug.Log(response.Errors);
+                }
+                if (errorMethod != null)
+                {
+                    errorMethod(response);
+                }
             }
         }
-
-        if (blockButtons)
+        finally
         {
-            StopRequest();
+            if (blockButtons)
+            {
+                StopRequest();
+            }
         }
     }
 

@@ -73,7 +73,10 @@ public class StatisticsManager : MonoBehaviour
         {
             TournamentModel info = JsonConvert.DeserializeObject<TournamentModel>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentInfo(info);
-            Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
+            if (info.TournamentLeaders != null)
+            {
+                Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
+            }
 
             Canvaser.ShowLoading(false);
             Canvaser.Instance.TasksPanel.SetActive(true);

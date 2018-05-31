@@ -67,6 +67,7 @@ public class ScoreManager : MonoBehaviour
 			CasesCount = boxes ,
 			NotContinued = !GameController.Instance.Continued
 		};
+
         StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, model, "application/json",
         (response) =>
         {

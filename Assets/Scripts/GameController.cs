@@ -345,6 +345,7 @@ public class GameController : MonoBehaviour
 
     public static void TurnRocketOn()
     {
+        PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
         PlayerController.TurnOnEffect(EffectType.Rocket);
         Instance.Rocket = true;
         Instance.BlockMoving = true;
