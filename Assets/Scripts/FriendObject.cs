@@ -71,7 +71,7 @@ public class FriendObject : MonoBehaviour
     {
         if (OfferInfo.FriendshipStatus != 1)
         {
-            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this);
+            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == 3);
         }
         else
         {
@@ -171,7 +171,7 @@ public class FriendObject : MonoBehaviour
         }
         else
         {
-            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this);
+            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == 3);
         }
     }
 

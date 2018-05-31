@@ -37,13 +37,10 @@ public class Coin : MonoBehaviour, IPickable
 
     IEnumerator MoveToPlayer()
     {
-        float startSpeed = 0;
-
         while (true)
         {
             yield return GameController.Frame;
             transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, GameController.Instance.CoinSpeed * GameController.SpeedMultiplyer * Time.deltaTime);
-            //startSpeed += GameController.Instance.CoinSpeed * GameController.Instance.Speed.z;
         }
     }
 }

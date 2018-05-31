@@ -175,7 +175,10 @@ public class PlayerController : MonoBehaviour
                 isMoving = false;
                 FixPos(CurrentX);
                 StartCoroutine(SetOnGround());
-                SetPositionAfterMove();
+                if (Collisions.Count == 0)
+                {
+                    SetPositionAfterMove();
+                }
             }
             else
             {
@@ -474,14 +477,9 @@ public class PlayerController : MonoBehaviour
         if (GameController.Instance.Rocket)
             return;
 
-        RaycastHit hit;
-        if (Physics.Raycast(new Ray(transform.position - Vector3.up * .3f, Vector3.down), out hit, 0.2f, environmentMask))
+        if (!isJumping)
         {
-            transform.position = hit.point + Vector3.up * .4f;
-        }
-        else if (!isJumping)
-        {
-            transform.position -= Vector3.up * 0.15f;
+            transform.position -= Vector3.up * 0.17f;
         }
     }
 

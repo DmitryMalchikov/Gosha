@@ -12,9 +12,10 @@ public class UserInfo : MonoBehaviour {
     public Text Record;
     public Text Duels;
     public Text IceCreamCount;
+    public Text AddToFriendsText;
+    public Button AddToFriendsBtn;
     public Image Avatar;
-    public Button TradeBtn;
-
+    public Button TradeBtn;   
 
 
     public void SetInfo(FriendObject user, bool isFriend = true)
@@ -34,7 +35,7 @@ public class UserInfo : MonoBehaviour {
         gameObject.SetActive(true);
     }
 
-    public void SetOfferInfo(FriendObject user)
+    public void SetOfferInfo(FriendObject user, bool requestSent = false)
     {
         info = user;
         Name.text = user.OfferInfo.Nickname;
@@ -44,6 +45,17 @@ public class UserInfo : MonoBehaviour {
         IceCreamCount.text = user.OfferInfo.IceCream.ToString();
         Avatar.sprite = user.Avatar.sprite;
         //Avatar.SetNativeSize();
+        if (requestSent)
+        {
+            AddToFriendsBtn.interactable = false;
+            AddToFriendsText.text = LocalizationManager.GetLocalizedValue("friendrequestalreadysend");
+        }
+        else if (AddToFriendsBtn)
+        {
+            AddToFriendsBtn.interactable = true;
+            AddToFriendsText.text = LocalizationManager.GetLocalizedValue("addtofriends");
+        }
+
         gameObject.SetActive(true);
     }
 
