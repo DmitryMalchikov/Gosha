@@ -37,6 +37,7 @@ public class Friends : MonoBehaviour
     public FriendModel TraderFriend;
 
     public List<FriendObject> FriendObjects;
+    public List<FriendObject> FriendRequestsObjects;
 
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
@@ -53,12 +54,10 @@ public class Friends : MonoBehaviour
 
     public void OpenDirectlyRequests()
     {
-        Canvaser.ShowLoading(true);
-
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
         
-        FriendsManager.Instance.GetFriendsAsync(() => OpenRequests());
+        FriendsManager.Instance.GetFriendsAsync(GetComponent<Panel>().LoadingPanels,() => OpenRequests());
     }
 
     void OpenRequests()
@@ -69,18 +68,18 @@ public class Friends : MonoBehaviour
 
     public void OpenFriendsPanel()
     {
-        Canvaser.ShowLoading(true);
-
+        gameObject.SetActive(true);
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
         
-        FriendsManager.Instance.GetFriendsAsync(() => gameObject.SetActive(true));
+        FriendsManager.Instance.GetFriendsAsync(this.LoadingPanels());
     }
 
     public void SetFriendRequests(List<FriendModel> requests)
     {
         NoRequestsMsg.SetActive(requests.Count == 0);
         SetContentWith(requests, RequestsContent, RequestObject);
+        FriendRequestsObjects = new List<FriendObject>(FriendsContent.GetComponentsInChildren<FriendObject>());
     }
 
     public void SetFriends(List<FriendModel> friends)
@@ -113,6 +112,17 @@ public class Friends : MonoBehaviour
         }
     }
 
+    public void RemoveFromFriends(int id)
+    {
+        var toDelete = FriendObjects.Find(fo => fo.OfferInfo.Id == id);
+        Destroy(toDelete.gameObject);
+    }
+
+    public void RemoveFromFriendRequests(int id)
+    {
+        var toDelete = FriendRequestsObjects.Find(fo => fo.OfferInfo.Id == id);
+        Destroy(toDelete.gameObject);
+    }
 
     public void SetContentWith(List<FriendModel> friends, Transform content, GameObject item)
     {
@@ -148,7 +158,7 @@ public class Friends : MonoBehaviour
     public void OpenFriendOffersPanel()
     {
         CleanContent(FriendOffersContent);
-        FriendsManager.Instance.GetFriendsOffersAsync();
+        FriendsManager.Instance.GetFriendsOffersAsync(SearchPlayer.LoadingPanels());
         SearchPlayer.SetActive(true);
     }
 

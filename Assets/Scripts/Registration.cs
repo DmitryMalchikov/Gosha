@@ -150,7 +150,6 @@ public class Registration : MonoBehaviour
 
     void ComparePasswords(string pass1, string pass2)
     {
-        Debug.Log(pass1 + "\n" + pass2);
         Regex reg = new Regex(@"^(?=.*?[a-z])(?=.*?[0-9]).{6,20}$");
         if (reg.IsMatch(pass1))
         {
@@ -339,10 +338,10 @@ public class Registration : MonoBehaviour
         InputString parameters = new InputString() { Value = nick };
         StartCoroutine(NetworkHelper.SendRequest(CheckNickUrl, parameters, "application/json", (response) =>
         {
-
+            Debug.Log(response.Text);
             exist = bool.Parse(response.Text);
             if (exist)
-                CantContinue(LocalizationManager.GetLocalizedValue("nickalreadyexists"));
+                CantContinue(NickAlreadyExists);
             else
             {
                 NewUser.Nickname = nick;
@@ -363,6 +362,7 @@ public class Registration : MonoBehaviour
     {
         Debug.Log(message);
         canContinue = false;
+        message = LocalizationManager.GetLocalizedValue(message);
         WarningPanel.ShowMessage(message);
     }
 

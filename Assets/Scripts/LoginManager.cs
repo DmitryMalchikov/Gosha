@@ -121,7 +121,7 @@ public class LoginManager : MonoBehaviour
 
                 Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
                 GetUserInfoAsync();
-                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+                //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
                 AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
                 AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
             },
@@ -157,7 +157,7 @@ public class LoginManager : MonoBehaviour
 
             Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
             GetUserInfoAsync();
-            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+            //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
             AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
             AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
         },

@@ -28,12 +28,10 @@ public class StatisticsManager : MonoBehaviour
     }
     public void GetTournamentLeadersAsync()
     {
-        Canvaser.ShowLoading(true);
         StartCoroutine(NetworkHelper.SendRequest(GetTournamentLeadersUrl, null, "application/json", (response) =>
         {
             List<FriendOfferStatisticsModel> info = JsonConvert.DeserializeObject<List<FriendOfferStatisticsModel>>(response.Text);
             Canvaser.Instance.Tournament.SetTournamentTable(info);
-            Canvaser.ShowLoading(false);
         }));
     }
 
@@ -42,9 +40,12 @@ public class StatisticsManager : MonoBehaviour
         Canvaser.Instance.Tournament.OpenTable();
     }
 
-    public void GetAllStatisticsAsync(int period, ResultCallback callback = null)
+    public void GetAllStatisticsAsync(int period, List<GameObject> panels, ResultCallback callback = null)
     {
         InputInt value = new InputInt() { Value = period };
+
+        Canvaser.AddLoadingPanel(panels, GetAllStatisticsUrl);
+        Canvaser.ShowLoading(true, GetAllStatisticsUrl);
 
         StartCoroutine(NetworkHelper.SendRequest(GetAllStatisticsUrl, value, "application/json", (response) =>
         {
@@ -63,12 +64,14 @@ public class StatisticsManager : MonoBehaviour
             {
                 callback();
             }
-        }));
+        }, loadingPanels: panels));
     }
 
     public void GetTournamentInfoAsync()
     {
-        Canvaser.ShowLoading(true);
+        Canvaser.Instance.TasksPanel.SetActive(true);
+        Canvaser.AddLoadingPanel(Canvaser.Instance.TasksPanel.LoadingPanels(), GetTournamentInfoUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, "application/json", (response) =>
         {
             TournamentModel info = JsonConvert.DeserializeObject<TournamentModel>(response.Text);
@@ -77,9 +80,6 @@ public class StatisticsManager : MonoBehaviour
             {
                 Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
             }
-
-            Canvaser.ShowLoading(false);
-            Canvaser.Instance.TasksPanel.SetActive(true);
         }));
     }
 }

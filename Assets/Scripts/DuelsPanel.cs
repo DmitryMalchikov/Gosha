@@ -26,18 +26,16 @@ public class DuelsPanel : MonoBehaviour {
 
     public void Open()
     {
-        Canvaser.ShowLoading(true);
-
         ClearDuelPanel();
-        DuelManager.Instance.GetDuelsAsync(() => gameObject.SetActive(true));
+        gameObject.SetActive(true);
+        DuelManager.Instance.GetDuelsAsync(this.LoadingPanels());
     }
 
     public void OpenDirectlyRequests()
     {
-        Canvaser.ShowLoading(true);
-
         ClearDuelPanel();
-        DuelManager.Instance.GetDuelsAsync(() => OpenRequests());
+        gameObject.SetActive(true);
+        DuelManager.Instance.GetDuelsAsync(this.LoadingPanels(),() => OpenRequests());
     }
     void OpenRequests()
     {
@@ -54,7 +52,6 @@ public class DuelsPanel : MonoBehaviour {
     public void SetRequests(List<DuelModel> requests)
     {
         NoRequestsMsg.SetActive(requests.Count == 0);
-        gameObject.SetActive(true);
         SetContent(RequestsContent, RequestObject, requests, Requests);
     }
 

@@ -30,7 +30,6 @@ public class LootManager : MonoBehaviour {
         {
             Bonus bonus = JsonConvert.DeserializeObject<Bonus>(response.Text);
             Canvaser.Instance.CasesPanel.SetPrize(bonus);
-            
         }));
     }
 

@@ -162,8 +162,11 @@ public class AchievementsManager : MonoBehaviour
         }, blockButtons: false));
     }
 
-    public void GetAllAchievementsAsync(ResultCallback callback=null)
+    public void GetAllAchievementsAsync(List<GameObject> panels, ResultCallback callback=null)
     {
+        Canvaser.AddLoadingPanel(panels, GetAchievementsUrl);
+        Canvaser.ShowLoading(true, GetAchievementsUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetAchievementsUrl, new { Value = (int)LocalizationManager.CurrentLanguage}, "application/json", (response) => 
         {
             List<PlayerAchievementModel> tasks = JsonConvert.DeserializeObject<List<PlayerAchievementModel>>(response.Text);

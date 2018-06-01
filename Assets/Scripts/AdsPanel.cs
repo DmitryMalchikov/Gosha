@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class AdsPanel : MonoBehaviour {
 
     public Image img;
     public Text txt;
+
+    public List<GameObject> LoadingPanels = new List<GameObject>();
 
     public void OpenAds()
     {
@@ -20,8 +23,8 @@ public class AdsPanel : MonoBehaviour {
 	public void DoubleScore()
 	{
 		//Canvaser.Instance.LoadingPanel.SetActive(true);
-		AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-		//AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-		AdsManager.Instance.DoubleScoreAds(txt, img);
+		//AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+		AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+		AdsManager.Instance.GetAds(txt, img);
 	}
 }

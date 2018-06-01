@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ public class AdsManager : MonoBehaviour {
     public string AdsUrl = "/api/ads/Advertisement";
     public string AdsImageUrl = "/api/ads/adsimage?adsId=";
 	public string DoubleScoreUrl = "/api/gameplay/doublescore";
+
+    private List<GameObject> _loadingPanels;
 
 	private void Awake()
     {
@@ -41,8 +44,32 @@ public class AdsManager : MonoBehaviour {
 		}));
 	}
 
-	public void GetAds(Text text, Image image)
+    private void TurnOnLoading()
     {
+        if (_loadingPanels == null)
+        {
+            _loadingPanels = Canvaser.Instance.ADSPanel.GetComponent<AdsPanel>().LoadingPanels;
+        }
+
+        for (int i = 0; i < _loadingPanels.Count; i++)
+        {
+            _loadingPanels[i].SetActive(true);
+        }
+    }
+
+    private void TurnOffLoading()
+    {
+        for (int i = 0; i < _loadingPanels.Count; i++)
+        {
+            _loadingPanels[i].SetActive(false);
+        }
+    }
+
+    public void GetAds(Text text, Image image)
+    {
+        Canvaser.Instance.ADSPanel.OpenAds();
+        image.sprite = null;
+        TurnOnLoading();
         StartCoroutine(NetworkHelper.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage}, "application/json", (response) => 
         {
             AdsModel ads = JsonConvert.DeserializeObject<AdsModel>(response.Text);
@@ -73,6 +100,7 @@ public class AdsManager : MonoBehaviour {
         }
         OnAdsDownloaded = null;
         NetworkHelper.StopRequest();
+        TurnOffLoading();
     }
 
 }

@@ -30,8 +30,11 @@ public class InventoryManager : MonoBehaviour {
         GetBonusUpgradesUrl = ServerInfo.GetUrl(GetBonusUpgradesUrl);
     }
 
-    public void GetSuitsAsync()
+    public void GetSuitsAsync(List<GameObject> panels)
     {
+        Canvaser.AddLoadingPanel(panels, GetSuitsUrl);
+        Canvaser.ShowLoading(true, GetSuitsUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetSuitsUrl, null, "application/json", (response) =>
         {
             Debug.Log("OK");
@@ -64,13 +67,14 @@ public class InventoryManager : MonoBehaviour {
 
     public void GetMyCasesAsync()
     {
+        Canvaser.Instance.CasesPanel.SetCases(new List<InventoryItem> { new InventoryItem { Amount = LoginManager.Instance.User.Cases, Id = LoginManager.Instance.User.CaseId} });
         //Canvaser.ShowLoading(true);
-        StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, null, "application/json", (response) =>
-        {
-            Debug.Log("OK");
-            //show tasks
-            List<InventoryItem> upgrades = JsonConvert.DeserializeObject<List<InventoryItem>>(response.Text);
-            Canvaser.Instance.CasesPanel.SetCases(upgrades);
-        }));
+        //StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, null, "application/json", (response) =>
+        //{
+        //    Debug.Log("OK");
+        //    //show tasks
+        //    List<InventoryItem> upgrades = JsonConvert.DeserializeObject<List<InventoryItem>>(response.Text);
+        //    Canvaser.Instance.CasesPanel.SetCases(upgrades);
+        //}));
     }
 }

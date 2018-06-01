@@ -35,8 +35,11 @@ public class FriendsManager : MonoBehaviour
         SearchPlayersUrl = ServerInfo.GetUrl(SearchPlayersUrl);
     }
 
-    public void GetFriendsAsync(ResultCallback callback = null)
+    public void GetFriendsAsync(List<GameObject> panels,ResultCallback callback = null)
     {
+        Canvaser.AddLoadingPanel(panels, GetFriendsUrl);
+        Canvaser.ShowLoading(true, GetFriendsUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetFriendsUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");
@@ -52,8 +55,11 @@ public class FriendsManager : MonoBehaviour
         }));
     }
 
-    public void GetFriendsOffersAsync()
+    public void GetFriendsOffersAsync(List<GameObject> panels)
     {
+        Canvaser.AddLoadingPanel(panels, GetFriendsOffersUrl);
+        Canvaser.ShowLoading(true, GetFriendsOffersUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetFriendsOffersUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
             Debug.Log("OK");

@@ -30,14 +30,11 @@ public class TradeManager : MonoBehaviour {
     }
     public void GetTradeItemsAsync(int userID)
     {
-        Canvaser.ShowLoading(true);
         InputInt input = new InputInt() { Value = userID };
         StartCoroutine(NetworkHelper.SendRequest(TradeItemsUrl, input, "application/json", (response) =>
         {
-            Debug.Log("OK");
             TradeItemsModel info = JsonConvert.DeserializeObject<TradeItemsModel>(response.Text);
             Canvaser.Instance.SetTradeItems(info);
-            Canvaser.ShowLoading(false);
         }));
     }
 
@@ -45,7 +42,6 @@ public class TradeManager : MonoBehaviour {
     {
         StartCoroutine(NetworkHelper.SendRequest(OfferTradeUrl, offer, "application/json", (response) =>
         {
-            Debug.Log("OK");
             Canvaser.Instance.TradeOffered();
             LoginManager.Instance.GetUserInfoAsync();
         }));
@@ -54,10 +50,8 @@ public class TradeManager : MonoBehaviour {
     {
         StartCoroutine(NetworkHelper.SendRequest(TradeOffersUrl, null, "application/json", (response) =>
         {
-            Debug.Log("OK");
             List<TradeOfferModel> info = JsonConvert.DeserializeObject<List<TradeOfferModel>>(response.Text);
             Canvaser.Instance.TradePanel.SetTrades(info);
-            Canvaser.ShowLoading(false);
         }));
     }
 
@@ -66,7 +60,6 @@ public class TradeManager : MonoBehaviour {
         InputInt input = new InputInt() { Value = userID };
         StartCoroutine(NetworkHelper.SendRequest(AcceptTradeUrl, input, "application/json", (response) =>
         {
-            Debug.Log("OK");
             Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
             GetTradeOffersAsync();
         }));
@@ -76,7 +69,6 @@ public class TradeManager : MonoBehaviour {
         InputInt input = new InputInt() { Value = userID };
         StartCoroutine(NetworkHelper.SendRequest(DeclineTradeUrl, input, "application/json", (response) =>
         {
-            Debug.Log("OK");
             Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
             GetTradeOffersAsync();
             LoginManager.Instance.GetUserInfoAsync();

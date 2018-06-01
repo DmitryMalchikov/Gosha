@@ -49,8 +49,11 @@ public class DuelManager : MonoBehaviour
             Canvaser.Instance.FriendsPanel.SetDuelWarning(response.Errors.Message);
         }));
     }
-    public void GetDuelsAsync(ResultCallback callback = null)
+    public void GetDuelsAsync(List<GameObject> panels, ResultCallback callback = null)
     {
+        Canvaser.AddLoadingPanel(panels, FullDuelsInfo);
+        Canvaser.ShowLoading(true, FullDuelsInfo);
+
         StartCoroutine(NetworkHelper.SendRequest(FullDuelsInfo, null, "application/json", (response) =>
         {
             Debug.Log("OK");

@@ -126,7 +126,6 @@ public class TasksManager : MonoBehaviour
         SubmitTaskModel value = new SubmitTaskModel() { Id = model.Id, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, TaskId = model.TaskId };
         StartCoroutine(NetworkHelper.SendRequest(SubmitTaskUrl, value, "application/json", (response) =>
         {
-            Debug.Log("OK");
             PlayerTasksAnswer newModel = JsonConvert.DeserializeObject<PlayerTasksAnswer>(response.Text);
 
             model.Id = newModel.Id;
@@ -141,13 +140,13 @@ public class TasksManager : MonoBehaviour
 
     public void GetAllTasksAsync()
     {
-        Canvaser.ShowLoading(true);
+        Canvaser.Instance.WeeklyTasks.gameObject.SetActive(true);
+        Canvaser.AddLoadingPanel(Canvaser.Instance.WeeklyTasks.LoadingPanels(), GetTasksUrl);
+
         StartCoroutine(NetworkHelper.SendRequest(GetTasksUrl, null, "application/x-www-form-urlencoded", (response) =>
         {
-            Debug.Log("OK");
             List<PlayerTaskModel> tasks = JsonConvert.DeserializeObject<List<PlayerTaskModel>>(response.Text);
             Canvaser.Instance.WeeklyTasks.SetTasks(tasks);
-            Canvaser.ShowLoading(false);
         }));
     }
 

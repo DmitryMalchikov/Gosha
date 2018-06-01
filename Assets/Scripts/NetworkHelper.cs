@@ -27,7 +27,8 @@ public static class NetworkHelper
 
     public static bool NoRequests()
     {
-        return RequestsCount < 1;
+        return true;
+        //return RequestsCount < 1;
     }
 
     public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
@@ -103,7 +104,7 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, bool blockButtons = true)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, bool blockButtons = true, List<GameObject> loadingPanels = null)
     {
         AnswerModel response = null;
         if (blockButtons)
@@ -138,6 +139,14 @@ public static class NetworkHelper
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                if (loadingPanels == null)
+                {
+                    Canvaser.ShowLoading(false, url);
+                }
+                else
+                {
+                    Canvaser.ShowLoading(false, url, loadingPanels);
+                }
                 successMethod(response);
             }
             else
@@ -369,6 +378,7 @@ public class UserInfoModel
     public bool CanOfferTrade { get; set; }
     public DateTime? BunnedUntil { get; set; }
     public int Cases { get; set; }
+    public int CaseId { get; set; }
     public List<PlayerTasks> Achievements { get; set; }
     public List<PlayerTasks> WeeklyTasks { get; set; }
     public List<BonusUpgrade> BonusUpgrades { get; set; }

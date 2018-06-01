@@ -79,17 +79,20 @@ public class FriendObject : MonoBehaviour
         }
     }
 
-    public void OfferOrAddfriend()
+    public int OfferOrAddfriend()
     {
-        Debug.Log(OfferInfo.FriendshipStatus);
         if (OfferInfo.FriendshipStatus == 2)
         {
             FriendsManager.Instance.OfferFriendshipAsync(OfferInfo.Id);
+            OfferInfo.FriendshipStatus = 3; // status - request sent
         }
         else
         {
             FriendsManager.Instance.AcceptFriendshipAsync(OfferInfo.Id);
+            OfferInfo.FriendshipStatus = 1;
         }
+
+        return OfferInfo.FriendshipStatus;
     }
 
     public void ShowFriendInfo()

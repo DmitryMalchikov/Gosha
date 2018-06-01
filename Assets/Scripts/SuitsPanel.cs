@@ -86,11 +86,15 @@ public class SuitsPanel : MonoBehaviour {
         BoxPrizeObj.TurnOffPrizes();
         GetPrizePnl.SetActive(false);
         GetPrizeBtn.SetActive(false);
-        if (!toClose)
-        {
-            InventoryManager.Instance.GetMyCasesAsync();
-        }
-        LoginManager.Instance.GetUserInfo();
+        LoginManager.Instance.User.Cases--;
+        Canvaser.Instance.CasesCount.text = ": " + LoginManager.Instance.User.Cases;
+
+        LoginManager.Instance.GetUserInfoAsync(() => {
+            if (!toClose)
+            {
+                InventoryManager.Instance.GetMyCasesAsync();
+            }
+        });        
     }
 
     public void SetCurrentCostume(Costume suit)
@@ -149,10 +153,12 @@ public class SuitsPanel : MonoBehaviour {
 
     public void Open()
     {
-        Canvaser.ShowLoading(true);
+        gameObject.SetActive(true);
+        Canvaser.Instance.Suits.ResetPanel();
         CardsPanel.SetActive(false);
         SuitPanel.SetActive(true);
-        InventoryManager.Instance.GetSuitsAsync();
+        
+        InventoryManager.Instance.GetSuitsAsync(this.LoadingPanels());
     }
     
 
@@ -171,10 +177,16 @@ public class SuitsPanel : MonoBehaviour {
             SuitImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
-        gameObject.SetActive(true);
-        Canvaser.ShowLoading(false);
+        SuitsScroll.gameObject.SetActive(true);
         SuitsScroll.SetCostumes(costumes);
-        //UpdateCards();
+    }
+
+    public void ResetPanel()
+    {
+        SuitsScroll.gameObject.SetActive(false);
+        SuitCamera.SetActive(false);
+        SuitImage.gameObject.SetActive(false);
+        Warning.gameObject.SetActive(false);
     }
 
     public void ShowCards()
@@ -267,7 +279,6 @@ public class SuitsPanel : MonoBehaviour {
             Warning.gameObject.SetActive(false);
         }
         SuitsScroll.SetCases(cases);
-        Canvaser.ShowLoading(false);
         gameObject.SetActive(true);
     }
     public void OpenCase()
@@ -276,7 +287,7 @@ public class SuitsPanel : MonoBehaviour {
         //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
         PreopenCase.SetActive(true);
         Idle.SetActive(false);
-        LootManager.Instance.OpenCaseAsync(SuitsScroll.CasesIds[SuitsScroll.selectedPanID]);
+        LootManager.Instance.OpenCaseAsync(LoginManager.Instance.User.CaseId);
         AudioManager.PlayCaseOpen();
     }
 }

@@ -58,7 +58,7 @@ public class ShopManager : MonoBehaviour
             //show tasks
             if (upgrade)
             {
-				GetShopItemsAsync();
+				GetShopItemsAsync(this.LoadingPanels());
             }
 
             LoginManager.Instance.User.IceCream -= price;
@@ -141,8 +141,11 @@ public class ShopManager : MonoBehaviour
         }));
     }
 
-	public void GetShopItemsAsync(ResultCallback callback = null)
+	public void GetShopItemsAsync(List<GameObject> panels, ResultCallback callback = null)
 	{
+        Canvaser.AddLoadingPanel(panels, GetShopItemsUrl);
+        Canvaser.ShowLoading(true, GetShopItemsUrl);
+
 		StartCoroutine(NetworkHelper.SendRequest(GetShopItemsUrl, null, "application/json", (response) =>
 		{
 			Debug.Log("OK");

@@ -11,8 +11,8 @@ public class AchievementPanel : MonoBehaviour {
 
     public void Open()
     {
-        Canvaser.ShowLoading(true);
-        AchievementsManager.Instance.GetAllAchievementsAsync(() => Canvaser.ShowLoading(false));
+        Canvaser.Instance.AchievementsPanel.gameObject.SetActive(true);
+        AchievementsManager.Instance.GetAllAchievementsAsync(GetComponent<Panel>().LoadingPanels);
     }
 
     public void SetAchievementsPanel(List<PlayerAchievementModel> models)

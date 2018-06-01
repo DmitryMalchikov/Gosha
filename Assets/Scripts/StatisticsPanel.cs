@@ -18,14 +18,10 @@ public class StatisticsPanel : MonoBehaviour {
 
     public void Open()
     {
-        Canvaser.ShowLoading(true);
+        gameObject.SetActive(true);
 
-        Synchroniser.NewSync(2);
-        Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
-        Synchroniser.OnActionsReady += () => Canvaser.ShowLoading(false);
-
-        StatisticsManager.Instance.GetAllStatisticsAsync(dropdown.value, () => Synchroniser.SetReady(0));
-        StatisticsManager.Instance.GetAllStatisticsAsync(2, () => Synchroniser.SetReady(1));
+        StatisticsManager.Instance.GetAllStatisticsAsync(dropdown.value, this.LoadingPanels(1));
+        StatisticsManager.Instance.GetAllStatisticsAsync(2, this.LoadingPanels(0));
 
         for (int i = 0; i < dropdown.options.Count; i++)
         {
@@ -45,7 +41,7 @@ public class StatisticsPanel : MonoBehaviour {
         //        break;
         //}
         ClearContent(LeadersContent, Leaders);
-        StatisticsManager.Instance.GetAllStatisticsAsync(val);
+        StatisticsManager.Instance.GetAllStatisticsAsync(val, this.LoadingPanels(0));
     }
 
     public void SetAllTimeLeaders(List<FriendOfferStatisticsModel> leaders)
@@ -87,9 +83,17 @@ public class StatisticsPanel : MonoBehaviour {
 
     public void ClearContent(Transform content,List<FriendObject> list)
     {
+        bool loading = false;
         foreach (Transform item in content)
         {
-            Destroy(item.gameObject);
+            if (loading)
+            {
+                Destroy(item.gameObject);
+            }
+            else
+            {
+                loading = true;
+            }
         }
         list.Clear();
     }

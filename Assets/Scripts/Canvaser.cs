@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Canvaser : MonoBehaviour
 {
+    public static Dictionary<string, List<GameObject>> LoadingPanels = new Dictionary<string, List<GameObject>>();
+
     public static Canvaser Instance { get; private set; }
     public static bool ErrorChecked = false;
     public static bool Error = false;
@@ -89,8 +91,6 @@ public class Canvaser : MonoBehaviour
     public WeeklyTasksPanel WeeklyTasks;
 
     public ForgotPasswordPanel ForgotPassword;
-
-    public GameObject Loading;
     public GameObject Countdown;
 
     public AchievementPopUp PopUpPanel;
@@ -181,9 +181,54 @@ public class Canvaser : MonoBehaviour
 		Cases.text = cases.ToString();
     }
 
-    public static void ShowLoading(bool toShow)
+    public static void AddLoadingPanel(List<GameObject> panel, string url)
     {
-        //Instance.Loading.SetActive(toShow);
+        if (LoadingPanels.ContainsKey(url))
+        {
+            LoadingPanels[url].AddRange(panel);
+        }
+        else
+        {
+            LoadingPanels[url] = panel;
+        }
+    }
+
+    public static void ShowLoading(bool toShow, string url)
+    {
+        if (!LoadingPanels.ContainsKey(url)) return;
+
+        for (int i = 0; i < LoadingPanels[url].Count; i++)
+        {
+            LoadingPanels[url][i].SetActive(toShow);
+        }
+
+        if (!toShow)
+        {
+            LoadingPanels.Remove(url);
+        }
+    }
+
+    public static void ShowLoading(bool toShow, string url, List<GameObject> panels)
+    {
+        if (!LoadingPanels.ContainsKey(url)) return;
+
+        for (int i = 0; i < LoadingPanels[url].Count; i++)
+        {
+            if (panels.Contains(LoadingPanels[url][i]))
+            {
+                LoadingPanels[url][i].SetActive(toShow);
+                LoadingPanels[url].RemoveAt(i);
+                i--;
+            }
+        }
+
+        if (!toShow)
+        {
+            if (LoadingPanels[url].Count == 0)
+            {
+                LoadingPanels.Remove(url);
+            }
+        }
     }
 
     public void SetGameOverPanel()
@@ -290,7 +335,6 @@ public class Canvaser : MonoBehaviour
 
     public void GetTrades()
     {
-        ShowLoading(true);
         TradeManager.Instance.GetTradeOffersAsync();
     }
 

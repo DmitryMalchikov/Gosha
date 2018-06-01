@@ -17,9 +17,7 @@ public class WeeklyTasksPanel : MonoBehaviour {
         {
             WeeklyTask newTask = Instantiate(TaskObject, Content).GetComponent<WeeklyTask>();
             newTask.SetTask(i + 1, models[i]);
-        }
-
-        gameObject.SetActive(true);       
+        }  
     }
     public void ClearContent()
     {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UserInfo : MonoBehaviour {
-
+public class UserInfo : MonoBehaviour
+{
     public FriendObject info;
 
     public Text Name;
@@ -15,7 +15,7 @@ public class UserInfo : MonoBehaviour {
     public Text AddToFriendsText;
     public Button AddToFriendsBtn;
     public Image Avatar;
-    public Button TradeBtn;   
+    public Button TradeBtn;
 
 
     public void SetInfo(FriendObject user, bool isFriend = true)
@@ -44,8 +44,14 @@ public class UserInfo : MonoBehaviour {
         Duels.text = LocalizationManager.GetLocalizedValue("duelwins") + user.OfferInfo.DuelWins.ToString();
         IceCreamCount.text = user.OfferInfo.IceCream.ToString();
         Avatar.sprite = user.Avatar.sprite;
-        //Avatar.SetNativeSize();
-        if (requestSent)
+        SetAddToFriendsButton(requestSent);
+
+        gameObject.SetActive(true);
+    }
+
+    private void SetAddToFriendsButton(bool alreadySent)
+    {
+        if (alreadySent)
         {
             AddToFriendsBtn.interactable = false;
             AddToFriendsText.text = LocalizationManager.GetLocalizedValue("friendrequestalreadysend");
@@ -55,14 +61,19 @@ public class UserInfo : MonoBehaviour {
             AddToFriendsBtn.interactable = true;
             AddToFriendsText.text = LocalizationManager.GetLocalizedValue("addtofriends");
         }
-
-        gameObject.SetActive(true);
     }
 
     public void OfferOrAddFriend()
     {
-        info.OfferOrAddfriend();
-        gameObject.SetActive(false);
+        int newStatus = info.OfferOrAddfriend();
+        if (newStatus == 3)
+        {
+            SetAddToFriendsButton(true);
+        }
+        else
+        {            
+            gameObject.SetActive(false);
+        }
     }
 
     public void AddFriend(bool toAdd)
@@ -96,7 +107,7 @@ public class UserInfo : MonoBehaviour {
 
     public void Duel()
     {
-        if(info.Info == null)
+        if (info.Info == null)
         {
             Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.OfferInfo.Id);
         }
