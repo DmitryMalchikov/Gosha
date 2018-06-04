@@ -9,27 +9,6 @@ using UnityEngine;
 
 public static class NetworkHelper
 {
-    public static int RequestsCount = 0;
-
-    public static void StartRequest()
-    {
-        RequestsCount++;
-    }
-
-    public static void StopRequest()
-    {
-        RequestsCount--;
-        if (RequestsCount < 0)
-        {
-            RequestsCount = 0;
-        }
-    }
-
-    public static bool NoRequests()
-    {
-        return true;
-        //return RequestsCount < 1;
-    }
 
     public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
@@ -104,13 +83,9 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, bool blockButtons = true, List<GameObject> loadingPanels = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, List<GameObject> loadingPanels = null)
     {
         AnswerModel response = null;
-        if (blockButtons)
-        {
-            StartRequest();
-        }
 
         ThreadHelper.RunNewThread(() =>
         {
@@ -164,10 +139,6 @@ public static class NetworkHelper
         }
         finally
         {
-            if (blockButtons)
-            {
-                StopRequest();
-            }
         }
     }
 

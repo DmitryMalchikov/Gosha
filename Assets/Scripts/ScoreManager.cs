@@ -54,8 +54,7 @@ public class ScoreManager : MonoBehaviour
                 (response) =>
                 {
                     key = response.Text.Replace("\"", string.Empty);
-                }, blockButtons: false
-                ));
+                }));
 
         Debug.Log(key);
         key = Utils.CalculateMD5Hash(key);
@@ -73,8 +72,7 @@ public class ScoreManager : MonoBehaviour
         {
             LoginManager.Instance.GetUserInfoAsync();
             SubmittingScore = false;
-        }, blockButtons: false
-        ));
+        }));
     }
 
     public void UseBonusAsync(int bonusInvId)
@@ -93,8 +91,7 @@ public class ScoreManager : MonoBehaviour
             (response) =>
             {
                 SetUses(bonusInvId);
-            }, blockButtons: false
-            ));
+            }));
         }
     }
 

@@ -23,14 +23,12 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     public static PlayerController Instance;
-
-    public bool UseHardTouch = true;
+    
     public float Step = 2;
     [Range(0, 1)]
     public float GravityOnPercent = .75f;
     public float LowDelta = 1.5f;
     public float CurrentX = 0;
-    public float nextStep;
     public float dir;
     public float moveSpeed = 1;
     public float JumpSpeed = 1;
@@ -39,6 +37,7 @@ public class PlayerController : MonoBehaviour
     public bool isCrouching = false;
     public bool isMoving;
     public List<CollisionInfo> Collisions = new List<CollisionInfo>();
+    public float GroundNearDistance = 0.5f;
 
     public Transform AnimatorRoot;
     public Animator animator;
@@ -149,7 +148,7 @@ public class PlayerController : MonoBehaviour
         if (!GameController.Instance.Started)
             return;
 
-        if (((!OnGround || !tempOnGround) && rb.velocity.y > 0 && !isMoving) && !OnRamp)
+        if ((!OnGround && rb.velocity.y > 0 && !isMoving) && !OnRamp)
         {
             StickToGround();
         }
@@ -175,10 +174,6 @@ public class PlayerController : MonoBehaviour
                 isMoving = false;
                 FixPos(CurrentX);
                 StartCoroutine(SetOnGround());
-                if (Collisions.Count == 0)
-                {
-                    SetPositionAfterMove();
-                }
             }
             else
             {
@@ -242,9 +237,13 @@ public class PlayerController : MonoBehaviour
                 AudioManager.PlaySideMove();
             }
 
+            SetPositionBeforeMove();
+
             CurrentX += dir * Step;
             moveDir = Vector3.right * dir;
+            StandUp();
             isMoving = true;
+            isCrouching = false;
         }
     }
 
@@ -252,7 +251,7 @@ public class PlayerController : MonoBehaviour
     {
         if (GameController.Instance.Rocket)
             return;
-
+        
         StartCoroutine(StartJump());
     }
 
@@ -260,7 +259,7 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitUntil(() => isMoving == false && tempOnGround == true);
 
-        if (col.height == 0.35f)
+        if (isCrouching)
             StandUp();
 
         if (OnGround)
@@ -279,6 +278,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void GroundNear()
+    {
+        if (Physics.Raycast(new Ray(transform.position, Vector3.down), GroundNearDistance, environmentMask))
+        {
+            animator.SetBool("GroundNear", true);
+        }
+        else
+        {
+            animator.SetBool("GroundNear", false);
+        }
+    }
+
     public void Crouch()
     {
 
@@ -288,6 +299,11 @@ public class PlayerController : MonoBehaviour
         if (!OnGround)
         {
             rb.AddForce(Vector3.down * CrouchPower, ForceMode.Acceleration);
+            GroundNear();
+        }
+        else
+        {
+            rb.velocity = Vector3.zero;
         }
 
         isCrouching = true;
@@ -338,6 +354,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitDeath());
         rb.useGravity = true;
         rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
+        rb.constraints = FreezeExceptJump;
         ResetTriggers();
         CameraFollow.Instance.offset.z = -3.2f;
         Canvaser.Instance.GamePanel.TurdOffBonuses();
@@ -472,9 +489,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void SetPositionAfterMove()
+    private void SetPositionBeforeMove()
     {
-        if (GameController.Instance.Rocket)
+        if (GameController.Instance.Rocket || Collisions.Count > 0)
             return;
 
         if (!isJumping)

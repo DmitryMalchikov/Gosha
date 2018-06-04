@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SuitsPanel : MonoBehaviour {
+public class SuitsPanel : MonoBehaviour
+{
 
     public SnapScrolling SuitsScroll;
 
@@ -52,7 +53,7 @@ public class SuitsPanel : MonoBehaviour {
         PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + ((LocalizationManager.CurrentLanguage == Language.EN) ? bonus.Name.Name : bonus.Name.NameRu);
         if (bonus.Amount > 1)
         {
-            PrizeAmountTxt.text +=  "(" + bonus.Amount.ToString() + ")";
+            PrizeAmountTxt.text += "(" + bonus.Amount.ToString() + ")";
         }
         BoxPrizeObj.SetPrize(bonus.Name.Name);
         StartCoroutine(WaitForOpen());
@@ -63,7 +64,7 @@ public class SuitsPanel : MonoBehaviour {
         yield return new WaitForSeconds(3f);
         Case.SetBool("Open", true);
         PreopenCase.SetActive(false);
-		OpenCaseParticle.SetActive(true);
+        OpenCaseParticle.SetActive(true);
         GetPrizeBtn.SetActive(true);
         if (!string.IsNullOrEmpty(PrizeAmountTxt.text))
         {
@@ -72,7 +73,7 @@ public class SuitsPanel : MonoBehaviour {
         BoxPrizeObj.PrizeOut(true);
     }
 
-	public void TakePrize(bool toClose)
+    public void TakePrize(bool toClose)
     {
         Case.SetBool("Open", false);
         OpenCaseParticle.SetActive(false);
@@ -89,12 +90,13 @@ public class SuitsPanel : MonoBehaviour {
         LoginManager.Instance.User.Cases--;
         Canvaser.Instance.CasesCount.text = ": " + LoginManager.Instance.User.Cases;
 
-        LoginManager.Instance.GetUserInfoAsync(() => {
+        LoginManager.Instance.GetUserInfoAsync(() =>
+        {
             if (!toClose)
             {
                 InventoryManager.Instance.GetMyCasesAsync();
             }
-        });        
+        });
     }
 
     public void SetCurrentCostume(Costume suit)
@@ -118,7 +120,7 @@ public class SuitsPanel : MonoBehaviour {
         else
         {
             Share.gameObject.SetActive(false);
-            if(HasSuit)
+            if (HasSuit)
             {
                 NewCards.Open(suit);
             }
@@ -157,10 +159,10 @@ public class SuitsPanel : MonoBehaviour {
         Canvaser.Instance.Suits.ResetPanel();
         CardsPanel.SetActive(false);
         SuitPanel.SetActive(true);
-        
+
         InventoryManager.Instance.GetSuitsAsync(this.LoadingPanels());
     }
-    
+
 
     public void SetCostumes(List<Costume> costumes)
     {
@@ -177,6 +179,8 @@ public class SuitsPanel : MonoBehaviour {
             SuitImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
+
+        //SuitsScroll.SetCostumes(costumes);
         SuitsScroll.gameObject.SetActive(true);
         SuitsScroll.SetCostumes(costumes);
     }
@@ -211,7 +215,7 @@ public class SuitsPanel : MonoBehaviour {
         Cards[card.Position - 1].gameObject.SetActive(card.Amount > 0);
         Cards[card.Position - 1].GetComponent<Image>().sprite = Resources.Load<Sprite>(SuitName + " (" + card.Position + ")");
     }
-    
+
     public void UpdateCards()
     {
         Debug.Log("Update cards");
@@ -224,7 +228,7 @@ public class SuitsPanel : MonoBehaviour {
             }
         }
 
-        if(Cards.FindAll(x => x.gameObject.activeInHierarchy).Count == 4)
+        if (Cards.FindAll(x => x.gameObject.activeInHierarchy).Count == 4)
         {
             BuyCards.gameObject.SetActive(false);
             GetSuitBtn.gameObject.SetActive(true);
@@ -278,7 +282,7 @@ public class SuitsPanel : MonoBehaviour {
             CaseImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
-        SuitsScroll.SetCases(cases);
+        //SuitsScroll.SetCases(cases);
         gameObject.SetActive(true);
     }
     public void OpenCase()

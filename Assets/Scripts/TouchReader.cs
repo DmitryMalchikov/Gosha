@@ -17,7 +17,8 @@ public class TouchReader : MonoBehaviour
 
     public Collider col;
 
-    private Queue<bool> _moveInputs = new Queue<bool>();
+    private static Queue<bool> _moveInputs = new Queue<bool>();
+    private bool _lastInput = false;
 
     void Start()
     {
@@ -108,17 +109,24 @@ public class TouchReader : MonoBehaviour
         }
     }
 
+    public static void ClearInputs()
+    {
+        _moveInputs.Clear();
+    }
 
     void Update()
     {
-        if (_moveInputs.Count > 0 && !PC.isMoving)
+        if (!GameController.Instance.Started)
+            return;
+
+        if (_moveInputs.Count > 0 && (!PC.isMoving || _lastInput != _moveInputs.Peek()))
         {
-            PC.Move(_moveInputs.Dequeue());
+            bool move = _moveInputs.Dequeue();
+            PC.Move(move);
+            _lastInput = move;
         }
 
 #if UNITY_EDITOR
-        if (!GameController.Instance.Started)
-            return;
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {

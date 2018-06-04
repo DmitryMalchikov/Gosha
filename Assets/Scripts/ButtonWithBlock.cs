@@ -1,29 +1,37 @@
-﻿using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ButtonWithBlock : Button
 {
-    public override void OnPointerClick(PointerEventData eventData)
+    protected override void Start()
     {
-        if (NetworkHelper.NoRequests())
-        {
-            base.OnPointerClick(eventData);
-        }
+        base.Start();
+        ColorBlock colBlock = colors;
+        colBlock.disabledColor = colBlock.normalColor;
+
+        colors = colBlock;
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if (NetworkHelper.NoRequests())
+        if (Input.touchCount > 1)
         {
+            interactable = false;
+        }
+        else
+        { 
             base.OnPointerDown(eventData);
         }
     }
 
-    public override void OnPointerUp(PointerEventData eventData)
+    public override void OnPointerClick(PointerEventData eventData)
     {
-        if (NetworkHelper.NoRequests())
+        if (interactable)
         {
-            base.OnPointerUp(eventData);
+            base.OnPointerClick(eventData);
         }
+
+        interactable = true;
     }
 }

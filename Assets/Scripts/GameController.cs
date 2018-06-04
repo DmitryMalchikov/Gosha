@@ -3,26 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using VacuumShaders.CurvedWorld;
 
-public struct BonusesOn
-{
-    public string name;
-    public bool isOn;
-
-
-    public BonusesOn(string s)
-    {
-        name = s;
-        isOn = false;
-    }
-}
-
 public class GameController : MonoBehaviour
 {
 
     public static GameController Instance { get; private set; }
-
     public static WaitForEndOfFrame Frame { get; private set; }
-    //public int ScoresSpeed = 10;
+
     public int StartSpeed = -6;
     public int MaxSpeed = -35;
     public float IncreaseTimeStep;
@@ -69,15 +55,11 @@ public class GameController : MonoBehaviour
     public bool BlockMoving = false;
 
     Vector3 CurrentSpeed;
-
-    public Vector3 RocketSwitchSpeed;
-
+    
     public float returnTime = 1f;
 
     public int BonusChance;
     public int BoxChance = 1;
-
-    public List<BonusesOn> ActiveBonuses;
 
     public bool Started;
 
@@ -85,25 +67,13 @@ public class GameController : MonoBehaviour
 
     public bool InDuel;
     public int DuelID;
-
-    public float PauseSpeed;
+    
     public Bonus CurrentBonus;
 
     public bool Continued = false;
     public string CancelBtn = "Cancel";
 
     CurvedWorld_Controller curvController;
-
-    void SetActiveBonuses()
-    {
-        ActiveBonuses = new List<BonusesOn>
-        {
-            new BonusesOn("Magnet"),
-            new BonusesOn("Shield"),
-            new BonusesOn("Rocket"),
-            new BonusesOn("Freeze")
-        };
-    }
 
     public void ResetScores()
     {
@@ -156,10 +126,10 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
         AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
+        TouchReader.ClearInputs();
         if (InDuel)
         {
             DuelManager.Instance.SubmitDuelResultAsync(DuelID, (int)CurrentPoints);
-            //Canvaser.Instance.Duels.Open();
             InDuel = false;
         }
 
@@ -249,13 +219,12 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        SetActiveBonuses();
         curvController = FindObjectOfType<CurvedWorld_Controller>();
     }
 
     private void Update()
     {
-        if (Input.GetButtonDown(CancelBtn) && NetworkHelper.NoRequests())
+        if (Input.GetButtonDown(CancelBtn))
         {
             Canvaser.PressBack();
         }

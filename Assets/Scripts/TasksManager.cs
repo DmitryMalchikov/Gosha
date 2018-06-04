@@ -135,7 +135,7 @@ public class TasksManager : MonoBehaviour
 				{
             		Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
 				}
-        }, blockButtons: false));
+        }));
     }
 
     public void GetAllTasksAsync()

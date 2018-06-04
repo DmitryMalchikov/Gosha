@@ -204,7 +204,7 @@ public class LoginManager : MonoBehaviour
             {
                 callback();
             }
-        }, blockButtons: false));
+        }));
     }
 
     //NOT DONE!!!
@@ -363,7 +363,6 @@ public class LoginManager : MonoBehaviour
 
     IEnumerator DownloadImage()
     {
-        NetworkHelper.StartRequest();
         string url = ProfileImageUrl + User.Id;
 
         var headers = new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
@@ -379,7 +378,6 @@ public class LoginManager : MonoBehaviour
         {
             Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("iTunesArtwork"));
         }
-        NetworkHelper.StopRequest();
     }
 
     public void GetRegions()

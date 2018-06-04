@@ -159,7 +159,7 @@ public class AchievementsManager : MonoBehaviour
                 Canvaser.Instance.PopUpPanel.ShowAchievement(newModel);
             }
             //add window
-        }, blockButtons: false));
+        }));
     }
 
     public void GetAllAchievementsAsync(List<GameObject> panels, ResultCallback callback=null)
