@@ -35,11 +35,11 @@ using System;
 public class OneSignalIOS : OneSignalPlatform {
 
    [System.Runtime.InteropServices.DllImport("__Internal")]
-   extern static public void _init(string listenerName, string appId, bool autoPrompt, bool inAppLaunchURLs, int displayOption, int logLevel, int visualLogLevel);
+   extern static public void _init(string listenerName, string appId, bool autoPrompt, bool inAppLaunchURLs, int displayOption, int logLevel, int visualLogLevel, bool requiresUserPrivacyConsent);
 
    [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public void _registerForPushNotifications();
-   
+
    [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public void _sendTag(string tagName, string tagValue);
 
@@ -82,7 +82,6 @@ public class OneSignalIOS : OneSignalPlatform {
    [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public void _removePermissionObserver();
 
-
    [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public void _addSubscriptionObserver();
 
@@ -90,16 +89,45 @@ public class OneSignalIOS : OneSignalPlatform {
    extern static public void _removeSubscriptionObserver();
 
    [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _addEmailSubscriptionObserver();
+   
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _removeEmailSubscriptionObserver();
+
+   [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public string _getPermissionSubscriptionState();
 
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _setEmail (string email, string emailAuthCode);
 
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _setUnauthenticatedEmail (string email);
+
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _logoutEmail();
 
    [System.Runtime.InteropServices.DllImport("__Internal")]
    extern static public void _setOneSignalLogLevel(int logLevel, int visualLogLevel);
 
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _userDidProvideConsent(bool consent);
 
-   public OneSignalIOS(string gameObjectName, string appId, bool autoPrompt, bool inAppLaunchURLs, OneSignal.OSInFocusDisplayOption displayOption, OneSignal.LOG_LEVEL logLevel, OneSignal.LOG_LEVEL visualLevel) {
-       _init(gameObjectName, appId, autoPrompt, inAppLaunchURLs, (int)displayOption, (int)logLevel, (int)visualLevel);
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public bool _userProvidedConsent();
+
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _setRequiresUserPrivacyConsent(bool required);   
+
+   [System.Runtime.InteropServices.DllImport("__Internal")]
+   extern static public void _setLocationShared(bool enable);
+
+
+   public OneSignalIOS(string gameObjectName, string appId, bool autoPrompt, bool inAppLaunchURLs, OneSignal.OSInFocusDisplayOption displayOption, OneSignal.LOG_LEVEL logLevel, OneSignal.LOG_LEVEL visualLevel, bool requiresUserPrivacyConsent) {
+       _init(gameObjectName, appId, autoPrompt, inAppLaunchURLs, (int)displayOption, (int)logLevel, (int)visualLevel, requiresUserPrivacyConsent);
+   }
+
+   public void SetLocationShared(bool shared) {
+      _setLocationShared(shared);
    }
 
    public void RegisterForPushNotifications() {
@@ -175,6 +203,38 @@ public class OneSignalIOS : OneSignalPlatform {
       _removeSubscriptionObserver();
    }
 
+   public void addEmailSubscriptionObserver() {
+      _addEmailSubscriptionObserver();
+   }
+
+   public void removeEmailSubscriptionObserver() {
+      _removeEmailSubscriptionObserver();
+   }
+
+   public void SetEmail(string email, string emailAuthCode) {
+      _setEmail (email, emailAuthCode);
+   }
+
+   public void SetEmail(string email) {
+      _setUnauthenticatedEmail (email);
+   }
+
+   public void LogoutEmail() {
+      _logoutEmail();
+   }
+
+   public void UserDidProvideConsent(bool consent) {
+      _userDidProvideConsent(consent);
+   }
+
+   public bool UserProvidedConsent() {
+      return _userProvidedConsent();
+   }
+
+   public void SetRequiresUserPrivacyConsent(bool required) {
+      _setRequiresUserPrivacyConsent(required);
+   }
+
    public OSPermissionSubscriptionState getPermissionSubscriptionState() {
       return OneSignalPlatformHelper.parsePermissionSubscriptionState(this, _getPermissionSubscriptionState());
    }
@@ -182,6 +242,10 @@ public class OneSignalIOS : OneSignalPlatform {
    public OSPermissionStateChanges parseOSPermissionStateChanges(string jsonStat) {
       return OneSignalPlatformHelper.parseOSPermissionStateChanges(this, jsonStat);
    }
+
+	public OSEmailSubscriptionStateChanges parseOSEmailSubscriptionStateChanges(string jsonState) {
+		return OneSignalPlatformHelper.parseOSEmailSubscriptionStateChanges (this, jsonState);
+	}
 
    public OSSubscriptionStateChanges parseOSSubscriptionStateChanges(string jsonStat) {
       return OneSignalPlatformHelper.parseOSSubscriptionStateChanges(this, jsonStat);
@@ -208,6 +272,28 @@ public class OneSignalIOS : OneSignalPlatform {
 
       return state;
    }
+	
+   public OSEmailSubscriptionState parseOSEmailSubscriptionState(object stateDict) {
+      var stateDictCasted = stateDict as Dictionary<string, object>;
 
+      var state = new OSEmailSubscriptionState ();
+
+      if (stateDictCasted.ContainsKey ("emailUserId")) {
+         state.emailUserId = stateDictCasted ["emailUserId"] as string;
+      } else {
+         state.emailUserId = "";
+      }
+
+      if (stateDictCasted.ContainsKey ("emailAddress")) {
+         state.emailAddress = stateDictCasted ["emailAddress"] as string;
+      } else {
+         state.emailAddress = "";
+      }
+         
+      
+      state.subscribed = stateDictCasted.ContainsKey("emailUserId") && stateDictCasted["emailUserId"] != null;
+
+      return state;
+   }
 }
 #endif

@@ -89,6 +89,7 @@ char* dictionaryToJsonNonConstChar(NSDictionary* dictionaryToConvert) {
 @interface OSUnityPermissionAndSubscriptionObserver : NSObject<OSPermissionObserver, OSSubscriptionObserver>
 - (void)onOSPermissionChanged:(OSPermissionStateChanges*)stateChanges;
 - (void)onOSSubscriptionChanged:(OSSubscriptionStateChanges*)stateChanges;
+- (void)onOSEmailSubscriptionChanged:(OSEmailSubscriptionStateChanges *)stateChanges;
 @end
 
 @implementation OSUnityPermissionAndSubscriptionObserver
@@ -98,6 +99,10 @@ char* dictionaryToJsonNonConstChar(NSDictionary* dictionaryToConvert) {
 
 - (void)onOSSubscriptionChanged:(OSSubscriptionStateChanges*)stateChanges {
   UnitySendMessage(unityListener, "onOSSubscriptionChanged", dictionaryToJsonChar([stateChanges toDictionary]));
+}
+
+- (void)onOSEmailSubscriptionStateChanged:(OSEmailSubscriptionStateChanges *)stateChanges {
+    UnitySendMessage(unityListener, "onOSEmailSubscriptionStateChanged", dictionaryToJsonChar([stateChanges toDictionary]));
 }
 @end
 
@@ -112,8 +117,10 @@ static OSUnityPermissionAndSubscriptionObserver* osUnityObserver;
 static Class delegateClass = nil;
 
 - (void) setOneSignalUnityDelegate:(id<UIApplicationDelegate>)delegate {
-    if(delegateClass != nil)
+    if(delegateClass) {
+        [self setOneSignalUnityDelegate:delegate];
         return;
+    }
     
     delegateClass = getClassWithProtocolInHierarchy([delegate class], @protocol(UIApplicationDelegate));
     
@@ -160,7 +167,9 @@ void initOneSignalObject(NSDictionary* launchOptions, const char* appId, int dis
     
 }
 
-void _init(const char* listenerName, const char* appId, BOOL autoPrompt, BOOL inAppLaunchURL, int displayOption, int logLevel, int visualLogLevel) {
+void _init(const char* listenerName, const char* appId, BOOL autoPrompt, BOOL inAppLaunchURL, int displayOption, int logLevel, int visualLogLevel, bool requiresUserPrivacyConsent) {
+    [OneSignal setRequiresUserPrivacyConsent:requiresUserPrivacyConsent];
+    
     [OneSignal setLogLevel:logLevel visualLevel: visualLogLevel];
     
     unsigned long len = strlen(listenerName);
@@ -275,6 +284,17 @@ void _removeSubscriptionObserver() {
   [OneSignal removeSubscriptionObserver:osUnityObserver];
 }
 
+void _addEmailSubscriptionObserver() {
+    if (!osUnityObserver)
+        osUnityObserver = [OSUnityPermissionAndSubscriptionObserver alloc];
+    
+    [OneSignal addEmailSubscriptionObserver:osUnityObserver];
+}
+
+void _removeEmailSubscriptionObserver() {
+    [OneSignal removeEmailSubscriptionObserver:osUnityObserver];
+}
+
 char* _getPermissionSubscriptionState() {
   return dictionaryToJsonNonConstChar([[OneSignal getPermissionSubscriptionState] toDictionary]);
 }
@@ -287,6 +307,48 @@ void _promptForPushNotificationsWithUserResponse() {
 
 void _setOneSignalLogLevel(int logLevel, int visualLogLevel) {
     [OneSignal setLogLevel:logLevel visualLevel: visualLogLevel];
+}
+
+// email
+
+void _setUnauthenticatedEmail(const char*email) {
+    [OneSignal setEmail:CreateNSString(email) withSuccess:^{
+        UnitySendMessage(unityListener, "onSetEmailSuccess", dictionaryToJsonChar(@{@"status" : @"success"}));
+    } withFailure:^(NSError *error) {
+        UnitySendMessage(unityListener, "onSetEmailFailure", [[OneSignal parseNSErrorAsJsonString:error] UTF8String]);
+    }];
+}
+
+void _setEmail(const char *email, const char *emailAuthCode) {
+    [OneSignal setEmail:CreateNSString(email) withEmailAuthHashToken:CreateNSString(emailAuthCode) withSuccess:^{
+        UnitySendMessage(unityListener, "onSetEmailSuccess", dictionaryToJsonChar(@{@"status" : @"success"}));
+    } withFailure:^(NSError *error) {
+        UnitySendMessage(unityListener, "onSetEmailFailure", [[OneSignal parseNSErrorAsJsonString:error] UTF8String]);
+    }];
+}
+
+void _logoutEmail() {
+    [OneSignal logoutEmailWithSuccess:^{
+        UnitySendMessage(unityListener, "onLogoutEmailSuccess", dictionaryToJsonChar(@{@"status" : @"success"}));
+    } withFailure:^(NSError *error) {
+        UnitySendMessage(unityListener, "onLogoutEmailFailure", [[OneSignal parseNSErrorAsJsonString:error] UTF8String]);
+    }];
+}
+
+void _userDidProvideConsent(bool consent) {
+    [OneSignal consentGranted:consent];
+}
+
+bool _userProvidedConsent() {
+    return ![OneSignal requiresUserPrivacyConsent];
+}
+
+void _setRequiresUserPrivacyConsent(bool required) {
+    [OneSignal setRequiresUserPrivacyConsent:required];
+}
+
+void _setLocationShared(bool shared) {
+    [OneSignal setLocationShared:shared];
 }
 
 @end
