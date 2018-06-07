@@ -66,6 +66,7 @@ public class Registration : MonoBehaviour
 
     public GameObject LangPanel;
 
+    public string NickCantBeEmpty;
     public void Start()
     {
         SetUrls();
@@ -83,7 +84,7 @@ public class Registration : MonoBehaviour
     public void Next()
     {
         PageCheck();
-        
+
     }
 
     public void NextPage()
@@ -138,7 +139,7 @@ public class Registration : MonoBehaviour
 
     void CheckRegion()
     {
-        if(Group.AnyTogglesOn())
+        if (Group.AnyTogglesOn())
         {
             NextPage();
         }
@@ -171,32 +172,34 @@ public class Registration : MonoBehaviour
         }
     }
 
-	private int _previousLength = 0;
-	private string _previousInput;
-	private string _result = string.Empty;
+    private int _previousLength = 0;
+    private string _previousInput;
+    private string _result = string.Empty;
 
     public void ChangePhoneCharacters(string input)
     {
-		if (input == _result) {
-			return;
-		}
-		bool isDeleting = _previousLength > input.Length;
-		char deletedCharacter = ' ';
-		_previousLength = input.Length;
-		if (isDeleting && !string.IsNullOrEmpty(_previousInput)) {
-			deletedCharacter = _previousInput [_previousInput.Length - 1];
-		}
-		_previousInput = input;
+        if (input == _result)
+        {
+            return;
+        }
+        bool isDeleting = _previousLength > input.Length;
+        char deletedCharacter = ' ';
+        _previousLength = input.Length;
+        if (isDeleting && !string.IsNullOrEmpty(_previousInput))
+        {
+            deletedCharacter = _previousInput[_previousInput.Length - 1];
+        }
+        _previousInput = input;
 
-		char defaultCharacter = '_';
-		string charactersType = @"\d";
-		char placeholder = '#';
-		string template = Region.PhonePlaceholder.Replace (defaultCharacter, placeholder);
+        char defaultCharacter = '_';
+        string charactersType = @"\d";
+        char placeholder = '#';
+        string template = Region.PhonePlaceholder.Replace(defaultCharacter, placeholder);
 
         StringBuilder builder = new StringBuilder(template);
         Regex reg = new Regex(charactersType);
         var matches = reg.Matches(input);
-		int matchesCount = matches.Count;
+        int matchesCount = matches.Count;
 
         int index = -1;
 
@@ -217,46 +220,67 @@ public class Registration : MonoBehaviour
                 builder.Replace(placeholder, matches[i].Value[0], index, 1);
             }
         }
-			
 
-		for (int i = builder.Length - 1; builder.Length > 0 && i >= 0 ; i--) {
-			if (builder [i]== placeholder) {
-				builder.Remove (i, 1);
-			} else if(!Regex.IsMatch(builder[i].ToString(), charactersType))
-			{
-				if (i > 0) {
-					if (isDeleting) {
-						if (!Regex.IsMatch (builder [i].ToString (), charactersType)) {
-							if (Regex.IsMatch (builder [i - 1].ToString (), charactersType)) {
-								if (!Regex.IsMatch (deletedCharacter.ToString (), charactersType)) {
-									builder.Remove (i - 1, 2);
-									i--;
-								} else {
-									break;
-								}
-							} else {
-								builder.Remove (i, 1);
-							}
-						} else {
-							builder.Remove (i, 1);
-						}
-					} else if (Regex.IsMatch (builder [i - 1].ToString (), charactersType)) {
-						break;
-					} else {
-						builder.Remove (i, 1);
-					}
-				} else {
-					builder.Remove (i, 1);
-				}
-			}
-				else {
-				break;
-			}
-		}
+
+        for (int i = builder.Length - 1; builder.Length > 0 && i >= 0; i--)
+        {
+            if (builder[i] == placeholder)
+            {
+                builder.Remove(i, 1);
+            }
+            else if (!Regex.IsMatch(builder[i].ToString(), charactersType))
+            {
+                if (i > 0)
+                {
+                    if (isDeleting)
+                    {
+                        if (!Regex.IsMatch(builder[i].ToString(), charactersType))
+                        {
+                            if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
+                            {
+                                if (!Regex.IsMatch(deletedCharacter.ToString(), charactersType))
+                                {
+                                    builder.Remove(i - 1, 2);
+                                    i--;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                builder.Remove(i, 1);
+                            }
+                        }
+                        else
+                        {
+                            builder.Remove(i, 1);
+                        }
+                    }
+                    else if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        builder.Remove(i, 1);
+                    }
+                }
+                else
+                {
+                    builder.Remove(i, 1);
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
 
         Phone.text = builder.ToString();
-		Phone.MoveTextEnd (false);
-		_result = builder.ToString ();
+        Phone.MoveTextEnd(false);
+        _result = builder.ToString();
     }
 
     public string GetPhoneNumbers(string phone)
@@ -265,7 +289,7 @@ public class Registration : MonoBehaviour
         string pattern = "+()-";
         for (int i = 0; i < pattern.Length; i++)
         {
-            res = res.Replace(pattern[i].ToString(),"");
+            res = res.Replace(pattern[i].ToString(), "");
         }
         return res;
     }
@@ -273,20 +297,20 @@ public class Registration : MonoBehaviour
     void CheckEmail(string email)
     {
         phone = Phone.text;
-        if(string.IsNullOrEmpty(phone))
+        if (string.IsNullOrEmpty(phone))
         {
             CantContinue(InvalidFormatPhone);
             return;
         }
-        else if(string.IsNullOrEmpty(email))
+        else if (string.IsNullOrEmpty(email))
         {
             CantContinue(InvalidFormatEmail);
             return;
         }
         Regex reg = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
-        if(reg.IsMatch(email))
-        { 
+        if (reg.IsMatch(email))
+        {
             bool exist;
 
             InputString parameters = new InputString() { Value = email };
@@ -305,7 +329,7 @@ public class Registration : MonoBehaviour
                 }
             }));
         }
-    else
+        else
             CantContinue(InvalidFormatEmail);
     }
 
@@ -314,48 +338,61 @@ public class Registration : MonoBehaviour
         bool exist;
         InputString parameters = new InputString() { Value = phone };
 
-		if (Regex.IsMatch (phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern)) {
-			StartCoroutine (NetworkHelper.SendRequest (CheckPhoneUrl, parameters, "application/json", (response) => {
-				exist = bool.Parse (response.Text);
-				Debug.Log (exist);
-				if (exist)
-					CantContinue (PhoneAlreadyExists);
-				else {
-					NewUser.Email = Email.text;
-					NewUser.PhoneNumber = phone;
-					NextPage ();
-				}
-			}));
-		} else {
-			CantContinue(InvalidFormatPhone);
-		}
-     }
+        if (Regex.IsMatch(phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern))
+        {
+            StartCoroutine(NetworkHelper.SendRequest(CheckPhoneUrl, parameters, "application/json", (response) =>
+            {
+                exist = bool.Parse(response.Text);
+                Debug.Log(exist);
+                if (exist)
+                    CantContinue(PhoneAlreadyExists);
+                else
+                {
+                    NewUser.Email = Email.text;
+                    NewUser.PhoneNumber = phone;
+                    NextPage();
+                }
+            }));
+        }
+        else
+        {
+            CantContinue(InvalidFormatPhone);
+        }
+    }
 
     void CheckNick(string nick)
     {
-        bool exist;
-
-        InputString parameters = new InputString() { Value = nick };
-        StartCoroutine(NetworkHelper.SendRequest(CheckNickUrl, parameters, "application/json", (response) =>
+        if (!string.IsNullOrEmpty(nick))
         {
-            Debug.Log(response.Text);
-            exist = bool.Parse(response.Text);
-            if (exist)
-                CantContinue(NickAlreadyExists);
-            else
+            bool exist;
+
+            InputString parameters = new InputString() { Value = nick };
+            StartCoroutine(NetworkHelper.SendRequest(CheckNickUrl, parameters, "application/json", (response) =>
             {
-                NewUser.Nickname = nick;
-                if (External)
-                {
-                    NewUser.RegionId = Region.Id;
-                    LoginManager.Instance.RegisterExternal(new RegisterExternalBindingModel(NewUser));
-                }
+                Debug.Log(response.Text);
+                exist = bool.Parse(response.Text);
+                if (exist)
+                    CantContinue(NickAlreadyExists);
                 else
                 {
-                    NextPage();
+                    NewUser.Nickname = nick;
+                    if (External)
+                    {
+                        NewUser.RegionId = Region.Id;
+                        LoginManager.Instance.RegisterExternal(new RegisterExternalBindingModel(NewUser));
+                    }
+                    else
+                    {
+                        NextPage();
+                    }
                 }
-            }
-        }));
+            }));
+        }
+        else
+        {
+            CantContinue(NickCantBeEmpty);
+        }
+
     }
 
     void CantContinue(string message)
@@ -383,7 +420,7 @@ public class Registration : MonoBehaviour
 
     public void ClearContent()
     {
-        foreach ( Transform item in RegionsContent)
+        foreach (Transform item in RegionsContent)
         {
             Destroy(item.gameObject);
         }
