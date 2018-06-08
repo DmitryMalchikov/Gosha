@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DuelManager : MonoBehaviour
@@ -46,7 +47,7 @@ public class DuelManager : MonoBehaviour
             Canvaser.Instance.FriendsPanel.DuelOfferAnswer();
         },(response) =>
         {
-            Canvaser.Instance.FriendsPanel.SetDuelWarning(response.Errors.Message);
+            Canvaser.Instance.FriendsPanel.SetDuelWarning(response.Errors.First().Value[0]);
         }));
     }
     public void GetDuelsAsync(List<GameObject> panels, ResultCallback callback = null)

@@ -7,6 +7,7 @@ using System;
 using Facebook.Unity;
 using Odnoklassniki;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public delegate void ResultCallback();
 
@@ -254,14 +255,15 @@ public class LoginManager : MonoBehaviour
     {
         ResetPasswordViewModel data = new ResetPasswordViewModel() { Email = email, Code = code, Password = password, ConfirmPassword = confirmPassword };
 
-        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, data, "application/json", (response) =>
+        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, data, "application/json", 
+         (response) =>
         {
             Debug.Log(response.Text);
             Canvaser.Instance.ForgotPassword.ResetFinished();
         },
-        (response) =>
+        (response) => 
         {
-            Canvaser.Instance.ForgotPassword.SetWarning(response.Text);
+            Canvaser.Instance.ForgotPassword.SetWarning(LocalizationManager.GetLocalizedValue(response.Errors.First().Value[0]));
         }));
     }
 

@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using UnityEngine;
@@ -67,17 +69,27 @@ public static class NetworkHelper
                     string text = new StreamReader(data1).ReadToEnd();
                     Debug.Log(text);
                     var errors = new ErrorAnswer();
+                    Dictionary<string, IList<string>> errorCodes = null;
                     try
                     {
                         errors = JsonConvert.DeserializeObject<ErrorAnswer>(text);
+                        if (errors.ModelState != null && errors.ModelState.Any())
+                        {
+                            errorCodes = errors.ModelState;
+                        }
+                        else
+                        {
+                            errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { errors.Message } } };
+                        }
                     }
                     catch
                     {
-                        errors = new ErrorAnswer() { Message = "FatalError" };
+                        errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { "FatalError" } } };
+                        //errors = new ErrorAnswer() { Message = "FatalError" };
                     }
 
                     //Console.WriteLine(errors.ModelState.Errors[0]);
-                    return new AnswerModel() { StatusCode = httpResponse.StatusCode, Errors = errors };
+                    return new AnswerModel() { StatusCode = httpResponse.StatusCode, Errors = errorCodes };
                 }
             }
         }
@@ -181,6 +193,7 @@ public static class NetworkHelper
 public class ErrorAnswer
 {
     public string Message { get; set; }
+    public Dictionary<string, IList<string>> ModelState { get; set; }
 }
 
 
@@ -188,7 +201,7 @@ public class AnswerModel
 {
     public string Text { get; set; }
     public HttpStatusCode StatusCode { get; set; }
-    public ErrorAnswer Errors { get; set; }
+    public Dictionary<string, IList<string>> Errors { get; set; }
 
     public AnswerModel() { }
 
