@@ -4,7 +4,7 @@ using RestSharp.Contrib;
 
 public class GoshaAuthManager : MonoBehaviour
 {
-#if UNITY_IOS
+	#if UNITY_IOS && !UNITY_EDITOR
 	[DllImport("__Internal")]
 	private static extern void GoshaInit(string gameObject);
 

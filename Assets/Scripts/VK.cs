@@ -25,7 +25,7 @@ public class VK : MonoBehaviour
     //    mapFunction[_apiCall(method, JsonConvert.SerializeObject(data))] = onResponse;
     //}
 
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
 	[DllImport("__Internal")]
 	private static extern void VKLogin();
 
@@ -49,31 +49,39 @@ public class VK : MonoBehaviour
 
     public void Init()
     {
+		#if !UNITY_EDITOR
 #if UNITY_ANDROID
         ajo = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         ajo.Call("VKinit", AppId, name);
-#elif UNITY_IOS
+		#elif UNITY_IOS
 		VKInit("6227224", name);
 #endif
+		#endif
     }
 
     public static bool IsLoggedIn()
     {
+		#if !UNITY_EDITOR
 #if UNITY_ANDROID
         return ajo.Call<string>("VKcall", "isLoggedIn", "") == "1";
 #elif UNITY_IOS
 		return VKLoggedIn();
 #endif
+		#else
+		return false;
+		#endif
     }
 
     public static void Login(ActionResult callback)
     {
         OnLogin += callback;
+		#if !UNITY_EDITOR
 		#if UNITY_ANDROID
         ajo.Call<string>("VKcall", "login", JsonConvert.SerializeObject(scopes));
 #elif UNITY_IOS
 		VKLogin();
 #endif
+		#endif
     }
 
     public void OnLoginError()
@@ -111,18 +119,22 @@ public class VK : MonoBehaviour
     public static void WallPost(string message, string link, string linkTitle, string imageUrl, ActionResult callback)
     {
         OnShare += callback;
+		#if !UNITY_EDITOR
 #if UNITY_ANDROID
         ajo.Call("openVKShareDialog", message, link, linkTitle, imageUrl);
-#elif UNITY_IOS
+		#elif UNITY_IOS
 		WallPost(link, linkTitle, message, imageUrl);
 #endif
+		#endif
     }
 
     public static void LogOut()
     {
+		#if !UNITY_EDITOR
 #if UNITY_IOS
         VKLogout ();
 #elif UNITY_ANDROID
 #endif
+		#endif
     }
 }
