@@ -93,7 +93,7 @@ public class Friends : MonoBehaviour
 
     public void SetFriendOffers(List<FriendOfferModel> friends)
     {
-        if(!gameObject.activeInHierarchy)
+        if (!gameObject.activeInHierarchy)
         {
             gameObject.SetActive(true);
         }
@@ -159,6 +159,8 @@ public class Friends : MonoBehaviour
     {
         CleanContent(FriendOffersContent);
         FriendsManager.Instance.GetFriendsOffersAsync(SearchPlayer.LoadingPanels());
+        PlayerSearchInput.text = "";
+        PlayerSearchResult.gameObject.SetActive(false);
         SearchPlayer.SetActive(true);
     }
 

@@ -415,6 +415,7 @@ public class Registration : MonoBehaviour
             panel.SetRegionPanel(item);
             panel.ToggleBox.group = Group;
         }
+        Email.interactable = !External;
         gameObject.SetActive(true);
     }
 

@@ -99,7 +99,10 @@ public class AchievementsManager : MonoBehaviour
             if (achievements[i].PlayerProgress >= achievements[i].ActionsCount || send)
             {
                 SubmitAchievementAsync(achievements[i]);
-
+                if(type == TasksTypes.Share)
+                {
+                    InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels());
+                }
                 if (achievements[i].PlayerProgress >= achievements[i].ActionsCount)
                 {
                     achievements.RemoveAt(i);
