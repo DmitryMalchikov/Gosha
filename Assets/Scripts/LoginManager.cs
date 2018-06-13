@@ -255,13 +255,13 @@ public class LoginManager : MonoBehaviour
     {
         ResetPasswordViewModel data = new ResetPasswordViewModel() { Email = email, Code = code, Password = password, ConfirmPassword = confirmPassword };
 
-        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, data, "application/json", 
+        StartCoroutine(NetworkHelper.SendRequest(ResetPasswordUrl, data, "application/json",
          (response) =>
         {
             Debug.Log(response.Text);
             Canvaser.Instance.ForgotPassword.ResetFinished();
         },
-        (response) => 
+        (response) =>
         {
             Canvaser.Instance.ForgotPassword.SetWarning(LocalizationManager.GetLocalizedValue(response.Errors.First().Value[0]));
         }));
@@ -275,13 +275,14 @@ public class LoginManager : MonoBehaviour
 
     public void CheckExternalRegister(string refresh, string expires, string email)
     {
+        Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
+
         if (string.IsNullOrEmpty(refresh))
         {
             Canvaser.Instance.RegistrationPanel.ExternalRegistration(email);
         }
         else
         {
-            Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
             var seconds = int.Parse(Regex.Replace(expires, "\\D", string.Empty));
             PlayerPrefs.SetString("provider_gosha", LoginProvider);
             PlayerPrefs.SetString("refresh_token_gosha", refresh);
@@ -300,7 +301,7 @@ public class LoginManager : MonoBehaviour
         {
 
             //PlayerPrefs.SetString("provider", LoginProvider);
-            GetUserInfoAsync();
+            //GetUserInfoAsync();
             OpenExternalLogin(LoginProvider);
             Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
