@@ -1,16 +1,15 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsPanel : MonoBehaviour {
+    
+    public Button LogOutBtn;
+    public Button ResetPassBtn;
 
-    [SerializeField]
-    GameObject logOutBtn;
-
-    public void Open(bool withLogOut)
+    public void Open(bool inMainMenu)
     {
-        logOutBtn.SetActive(withLogOut);
+        LogOutBtn.interactable = inMainMenu;
+        ResetPassBtn.interactable = inMainMenu;
         gameObject.SetActive(true);
     }
 }

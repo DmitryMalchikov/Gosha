@@ -28,7 +28,7 @@ public class Countdown : MonoBehaviour
         if (!GameController.Paused)
         {
             PlayerController.Instance.RemoveObstcles();
-            PlayerController.ResetPositionForContinue();
+            //PlayerController.ResetPositionForContinue();
         }
         GameController.Paused = false;
         gameObject.SetActive(false);

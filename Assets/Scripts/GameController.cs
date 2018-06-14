@@ -158,7 +158,7 @@ public class GameController : MonoBehaviour
 
     private void OnApplicationPause(bool pause)
     {
-        if (pause && Started)
+        if (pause && Started && Time.timeScale > 0)
         {
             PauseGame();
         }

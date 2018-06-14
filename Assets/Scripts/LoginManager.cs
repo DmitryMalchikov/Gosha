@@ -128,7 +128,8 @@ public class LoginManager : MonoBehaviour
             },
             (response) =>
             {
-                LoginCanvas.Instance.EnableWarning(true);
+                //LoginCanvas.Instance.EnableWarning(true);
+                Canvaser.Instance.CloseLoading();
             }));
     }
 
@@ -303,6 +304,7 @@ public class LoginManager : MonoBehaviour
             //PlayerPrefs.SetString("provider", LoginProvider);
             //GetUserInfoAsync();
             OpenExternalLogin(LoginProvider);
+            Canvaser.Instance.RegistrationPanel.PageNum = 1;
             Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
             Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
             Canvaser.Instance.LoginPanel.gameObject.SetActive(false);

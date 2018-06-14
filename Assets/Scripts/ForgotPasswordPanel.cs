@@ -44,9 +44,16 @@ public class ForgotPasswordPanel : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(Email.text))
         {
-            EmailPanel.SetActive(false);
-            PasswordPanel.SetActive(true);
-            ResetFinishPanel.SetActive(false);
+            if (Regex.IsMatch(Email.text, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+            {
+                EmailPanel.SetActive(false);
+                PasswordPanel.SetActive(true);
+                ResetFinishPanel.SetActive(false);
+            }
+            else
+            {
+                SetWarning(LocalizationManager.GetLocalizedValue("invalidformatemail"));
+            }
         }
         else
         {

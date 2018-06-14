@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     public static PlayerController Instance;
-    
+
     public float Step = 2;
     [Range(0, 1)]
     public float GravityOnPercent = .75f;
@@ -107,6 +107,7 @@ public class PlayerController : MonoBehaviour
     {
         StopAllCoroutines();
         StandUp();
+        col.enabled = true;
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeAll;
         Collisions.RemoveAll(col => col.Object.name != "Ground");
@@ -251,7 +252,7 @@ public class PlayerController : MonoBehaviour
     {
         if (GameController.Instance.Rocket)
             return;
-        
+
         StartCoroutine(StartJump());
     }
 
@@ -453,6 +454,8 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(1.8f);
 
         lastHit.enabled = true;
+        col.enabled = false;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
         GameController.Instance.FinishGame();
     }
 
@@ -602,6 +605,9 @@ public class PlayerController : MonoBehaviour
     {
         ObstaclesEffect.Play();
 
+        //var speed = GameController.Instance.Speed;
+        //GameController.Instance.Speed = Vector3.zero;
+
         StartCoroutine(WaitEffect());
     }
 
@@ -615,12 +621,17 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator WaitEffect()
     {
-        yield return null;
+
+        yield return GameController.Frame;
+
         var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 8.5f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
         for (int i = 0; i < obstacles.Length; i++)
         {
             obstacles[i].transform.parent.gameObject.SetActive(false);
         }
+        ResetPositionForContinue();
+        rb.constraints = FreezeExceptJump;
+        col.enabled = true;
     }
 
     public void PutOnSuit(string suitName)
