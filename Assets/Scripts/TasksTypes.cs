@@ -6,7 +6,8 @@
 	CollectIceCream, 
 	Buy, 
 	Loose, 
-	Share
+	Share,
+    All
 }
 
 public enum BonusType{

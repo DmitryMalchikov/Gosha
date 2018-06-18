@@ -98,11 +98,8 @@ public class AchievementsManager : MonoBehaviour
 
             if (achievements[i].PlayerProgress >= achievements[i].ActionsCount || send)
             {
-                SubmitAchievementAsync(achievements[i]);
-                if(type == TasksTypes.Share)
-                {
-                    InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels());
-                }
+                SubmitAchievementAsync(achievements[i], type);
+
                 if (achievements[i].PlayerProgress >= achievements[i].ActionsCount)
                 {
                     achievements.RemoveAt(i);
@@ -137,7 +134,7 @@ public class AchievementsManager : MonoBehaviour
             {
                 //complete achievement
                 //send to server then show pop up
-                SubmitAchievementAsync(achievements[i]);
+                SubmitAchievementAsync(achievements[i], TasksTypes.All);
             }
             else if (reset)
             {
@@ -147,7 +144,7 @@ public class AchievementsManager : MonoBehaviour
     }
     
 
-    void SubmitAchievementAsync(PlayerTasks model)
+    void SubmitAchievementAsync(PlayerTasks model, TasksTypes type)
     {
         SubmitAchievementModel value = new SubmitAchievementModel() { Id = model.Id, AchievementId = model.TaskId, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, Language = (int)LocalizationManager.CurrentLanguage };
         StartCoroutine(NetworkHelper.SendRequest(SubmitAchievementUrl, value, "application/json", (response) =>
@@ -160,6 +157,11 @@ public class AchievementsManager : MonoBehaviour
             if (model.PlayerProgress >= model.ActionsCount)
             {
                 Canvaser.Instance.PopUpPanel.ShowAchievement(newModel);
+            }
+
+            if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
+            {
+                InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels());
             }
             //add window
         }));
