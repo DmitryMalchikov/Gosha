@@ -11,12 +11,9 @@ using UnityEngine;
 
 public static class NetworkHelper
 {
-
     public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
-        // Create a request for the URL. 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        //SampleWebView.Instance.status.text = "Sending request";
 
         var postData = postParameters;
         var data = Encoding.UTF8.GetBytes(postData);
@@ -95,7 +92,7 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, List<GameObject> loadingPanels = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, List<GameObject> loadingPanels = null, DataType type = DataType.Network)
     {
         AnswerModel response = null;
 
@@ -114,7 +111,24 @@ public static class NetworkHelper
                 }
             }
 
-            response = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
+            //load local data
+            if (type != DataType.Network)
+            {
+                bool forceUpdate = GetForceUpdate(type);
+                if (!forceUpdate)
+                {
+                    string data = Extensions.LoadJsonData(type);
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        response = new AnswerModel(data);
+                    }
+                }
+            }
+
+            if (response == null)
+            {
+                response = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
+            }
         });
 
         while (response == null)
@@ -152,6 +166,29 @@ public static class NetworkHelper
         finally
         {
         }
+    }
+
+    private static bool GetForceUpdate(DataType type)
+    {
+        string savedHash;
+
+        switch (type)
+        {
+            case DataType.Duels:
+                savedHash = GameController.DuelsHash;
+                return LoginManager.Instance.User.DuelsHash != savedHash;
+            case DataType.Friends:
+                savedHash = GameController.FriendsHash;
+                return LoginManager.Instance.User.FriendsHash != savedHash;
+            case DataType.Shop:
+                savedHash = GameController.ShopHash;
+                return LoginManager.Instance.User.ShopHash != savedHash;
+            case DataType.Suits:
+                savedHash = GameController.SuitsHash;
+                return LoginManager.Instance.User.SuitsHash != savedHash;
+        }
+
+        return true;
     }
 
     public static IEnumerator SendImage(string fileName, string URL)
@@ -367,6 +404,10 @@ public class UserInfoModel
     public List<PlayerTasks> WeeklyTasks { get; set; }
     public List<BonusUpgrade> BonusUpgrades { get; set; }
     public List<Bonus> Bonuses { get; set; }
+    public string ShopHash { get; set; }
+    public string DuelsHash { get; set; }
+    public string FriendsHash { get; set; }
+    public string SuitsHash { get; set; }
 
     public UserInfoModel()
     {
@@ -526,6 +567,7 @@ public class FullFriendInfoModel
 {
     public List<FriendModel> Friends { get; set; }
     public List<FriendModel> FriendRequests { get; set; }
+    public string FriendsHash { get; set; }
 }
 
 public class PlayerSearchModel
@@ -567,6 +609,7 @@ public class DuelsFullInfoModel
 {
     public List<DuelModel> DuelOffers { get; set; }
     public List<DuelModel> DuelRequests { get; set; }
+    public string DuelsHash { get; set; }
 }
 
 public class TradeItemsModel
@@ -621,6 +664,17 @@ public class Costume
     }
 }
 
+public class SuitsModel
+{
+    public List<Costume> Costumes { get; set; }
+    public string SuitsHash { get; set; }
+
+    public SuitsModel()
+    {
+        Costumes = new List<Costume>();
+    }
+}
+
 public class InventoryCard : InventoryItem
 {
     public int SuitId { get; set; }
@@ -640,6 +694,7 @@ public class ShopModel
     public List<ShopItem> Bonuses { get; set; }
     public List<ShopItem> Cases { get; set; }
     public List<ShopItem> BonusUpgrades { get; set; }
+    public string ShopHash { get; set; }
 }
 
 public class DuelResultModel

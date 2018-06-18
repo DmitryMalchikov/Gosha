@@ -8,6 +8,11 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance { get; private set; }
     public static WaitForEndOfFrame Frame { get; private set; }
+    public static string FriendsHash { get; set; }
+    public static string DuelsHash { get; set; }
+    public static string ShopHash { get; set; }
+    public static string SuitsHash { get; set; }
+    public static string PersistentDataPath { get; private set; }
 
     public int StartSpeed = -6;
     public int MaxSpeed = -35;
@@ -220,6 +225,23 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         curvController = FindObjectOfType<CurvedWorld_Controller>();
+
+        LoadHashes();
+        PersistentDataPath = Application.persistentDataPath;
+    }
+
+    public static void SetHash(string name, string value)
+    {
+        PlayerPrefs.SetString(name, value);
+        LoadHashes();
+    }
+
+    private static void LoadHashes()
+    {
+        FriendsHash = PlayerPrefs.GetString("FriendsHash");
+        DuelsHash = PlayerPrefs.GetString("DuelsHash");
+        SuitsHash = PlayerPrefs.GetString("SuitsHash");
+        ShopHash = PlayerPrefs.GetString("ShopHash");
     }
 
     private void Update()

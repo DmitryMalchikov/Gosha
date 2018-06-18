@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FriendsManager : MonoBehaviour
@@ -45,6 +46,9 @@ public class FriendsManager : MonoBehaviour
             Debug.Log("OK");
             FullFriendInfoModel model = JsonConvert.DeserializeObject<FullFriendInfoModel>(response.Text);
 
+            GameController.SetHash("FriendsHash", model.FriendsHash);
+            Extensions.SaveJsonData(DataType.Friends, response.Text);
+
             Canvaser.Instance.FriendsPanel.SetFriends(model.Friends);
             Canvaser.Instance.FriendsPanel.SetFriendRequests(model.FriendRequests);
 
@@ -52,7 +56,7 @@ public class FriendsManager : MonoBehaviour
             {
                 callback();
             }
-        }));
+        }, type: DataType.Friends));
     }
 
     public void GetFriendsOffersAsync(List<GameObject> panels)

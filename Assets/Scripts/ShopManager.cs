@@ -58,7 +58,15 @@ public class ShopManager : MonoBehaviour
             //show tasks
             if (upgrade)
             {
-				GetShopItemsAsync(this.LoadingPanels());
+                string data = Extensions.LoadJsonData(DataType.Shop);
+                ShopModel model = JsonConvert.DeserializeObject<ShopModel>(data);
+
+                model.BonusUpgrades.Find(bu => bu.Id == itemId).Amount++;
+                SetShopItems(model);
+                ThreadHelper.RunNewThread(() =>
+                {
+                    Extensions.SaveJsonData(DataType.Shop, JsonConvert.SerializeObject(model));
+                });
             }
 
             LoginManager.Instance.User.IceCream -= price;
@@ -151,16 +159,25 @@ public class ShopManager : MonoBehaviour
 			Debug.Log("OK");
 			//show tasks
 			ShopModel model = JsonConvert.DeserializeObject<ShopModel>(response.Text);
-			Canvaser.Instance.Shop.SetBonuses(model.Bonuses);
-			Canvaser.Instance.Shop.SetCases(model.Cases);
-			Canvaser.Instance.Shop.SetCards(model.Cards);
-			Canvaser.Instance.Shop.SetUpgrades(model.BonusUpgrades);
+            GameController.SetHash("ShopHash", model.ShopHash);
+            Extensions.SaveJsonData(DataType.Shop, response.Text);
 
-			Canvaser.Instance.Shop.gameObject.SetActive(true);
+            SetShopItems(model);
+
 			if (callback != null)
 			{
 				callback();
 			}
-		}));
+		}, type: DataType.Shop));
 	}
+
+    private void SetShopItems(ShopModel model)
+    {
+        Canvaser.Instance.Shop.SetBonuses(model.Bonuses);
+        Canvaser.Instance.Shop.SetCases(model.Cases);
+        Canvaser.Instance.Shop.SetCards(model.Cards);
+        Canvaser.Instance.Shop.SetUpgrades(model.BonusUpgrades);
+
+        Canvaser.Instance.Shop.gameObject.SetActive(true);
+    }
 }

@@ -39,9 +39,13 @@ public class InventoryManager : MonoBehaviour {
         {
             Debug.Log("OK");
             //show tasks
-            List<Costume> upgrades = JsonConvert.DeserializeObject<List<Costume>>(response.Text);
-            Canvaser.Instance.Suits.SetCostumes(upgrades);
-        }));
+            SuitsModel upgrades = JsonConvert.DeserializeObject<SuitsModel>(response.Text);
+
+            GameController.SetHash("SuitsHash", upgrades.SuitsHash);
+            Extensions.SaveJsonData(DataType.Suits, response.Text);
+
+            Canvaser.Instance.Suits.SetCostumes(upgrades.Costumes);
+        }, type: DataType.Suits));
     }
 
     public void GetBonusesUpgradesAsync()
