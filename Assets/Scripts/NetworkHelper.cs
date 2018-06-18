@@ -92,7 +92,7 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, List<GameObject> loadingPanels = null, DataType type = DataType.Network)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action<AnswerModel> successMethod, Action<AnswerModel> errorMethod = null, List<System.Net.Cookie> cookies = null, List<GameObject> loadingPanels = null, DataType type = DataType.Network, bool forceUpdate = false)
     {
         AnswerModel response = null;
 
@@ -112,9 +112,9 @@ public static class NetworkHelper
             }
 
             //load local data
-            if (type != DataType.Network)
+            if (type != DataType.Network && forceUpdate == false)
             {
-                bool forceUpdate = GetForceUpdate(type);
+                forceUpdate = GetForceUpdate(type);
                 if (!forceUpdate)
                 {
                     string data = Extensions.LoadJsonData(type);
