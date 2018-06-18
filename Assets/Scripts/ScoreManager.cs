@@ -70,6 +70,10 @@ public class ScoreManager : MonoBehaviour
         StartCoroutine(NetworkHelper.SendRequest(SubmitScoreUrl, model, "application/json",
         (response) =>
         {
+            if(GameController.Instance.Continued)
+            {
+                GameController.Instance.Continued = false;
+            }
             LoginManager.Instance.GetUserInfoAsync();
             SubmittingScore = false;
         }));
