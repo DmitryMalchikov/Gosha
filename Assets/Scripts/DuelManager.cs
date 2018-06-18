@@ -60,6 +60,9 @@ public class DuelManager : MonoBehaviour
             Debug.Log("OK");
             DuelsFullInfoModel model = JsonConvert.DeserializeObject<DuelsFullInfoModel>(response.Text);
 
+            GameController.SetHash("DuelsHash", model.DuelsHash);
+            Extensions.SaveJsonData(DataType.Duels, response.Text);
+
             Canvaser.Instance.Duels.SetDuels(model.DuelOffers);
             Canvaser.Instance.Duels.SetRequests(model.DuelRequests);
 
@@ -67,7 +70,7 @@ public class DuelManager : MonoBehaviour
             {
                 callback();
             }
-        }));
+        }, type: DataType.Duels));
     }
 
     public void AcceptDuelAsync(int duelID)

@@ -183,6 +183,11 @@ public class Canvaser : MonoBehaviour
 
     public static void AddLoadingPanel(List<GameObject> panel, string url)
     {
+        if (panel == null)
+        {
+            return;
+        }
+
         if (LoadingPanels.ContainsKey(url))
         {
             LoadingPanels[url].AddRange(panel);
