@@ -161,7 +161,7 @@ public class AchievementsManager : MonoBehaviour
 
             if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
             {
-                InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels());
+                InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels(), true);
             }
             //add window
         }));

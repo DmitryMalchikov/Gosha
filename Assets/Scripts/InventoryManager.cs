@@ -30,7 +30,7 @@ public class InventoryManager : MonoBehaviour {
         GetBonusUpgradesUrl = ServerInfo.GetUrl(GetBonusUpgradesUrl);
     }
 
-    public void GetSuitsAsync(List<GameObject> panels)
+    public void GetSuitsAsync(List<GameObject> panels, bool forceUpdate = false)
     {
         Canvaser.AddLoadingPanel(panels, GetSuitsUrl);
         Canvaser.ShowLoading(true, GetSuitsUrl);
@@ -45,7 +45,7 @@ public class InventoryManager : MonoBehaviour {
             Extensions.SaveJsonData(DataType.Suits, response.Text);
 
             Canvaser.Instance.Suits.SetCostumes(upgrades.Costumes);
-        }, type: DataType.Suits));
+        }, type: DataType.Suits, forceUpdate: forceUpdate));
     }
 
     public void GetBonusesUpgradesAsync()
