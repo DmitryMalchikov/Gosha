@@ -57,7 +57,7 @@ public class Friends : MonoBehaviour
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
         
-        FriendsManager.Instance.GetFriendsAsync(GetComponent<Panel>().LoadingPanels,() => OpenRequests());
+        FriendsManager.Instance.GetFriendsAsync(() => OpenRequests());
     }
 
     void OpenRequests()
@@ -72,7 +72,7 @@ public class Friends : MonoBehaviour
         CleanContent(FriendsContent);
         CleanContent(RequestsContent);
         
-        FriendsManager.Instance.GetFriendsAsync(this.LoadingPanels());
+        FriendsManager.Instance.GetFriendsAsync();
     }
 
     public void SetFriendRequests(List<FriendModel> requests)
@@ -158,7 +158,7 @@ public class Friends : MonoBehaviour
     public void OpenFriendOffersPanel()
     {
         CleanContent(FriendOffersContent);
-        FriendsManager.Instance.GetFriendsOffersAsync(SearchPlayer.LoadingPanels());
+        FriendsManager.Instance.GetFriendsOffersAsync();
         PlayerSearchInput.text = "";
         PlayerSearchResult.gameObject.SetActive(false);
         SearchPlayer.SetActive(true);

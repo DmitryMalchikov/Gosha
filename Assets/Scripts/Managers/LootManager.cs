@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class LootManager : MonoBehaviour {
-
-
+public class LootManager : MonoBehaviour
+{
     public static LootManager Instance { get; private set; }
-
 
     public string GetBonusUrl = "/api/loot/getbonus";
     public string OpenCaseUrl = "/api/loot/opencase";
@@ -26,17 +23,16 @@ public class LootManager : MonoBehaviour {
     }
     public void OpenCaseAsync(int caseID)
     {
-        CoroutineManager.SendRequest(OpenCaseUrl, new {CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage},  (Bonus bonus) =>
-        {
-            Canvaser.Instance.CasesPanel.SetPrize(bonus);
-        });
+        CoroutineManager.SendRequest(OpenCaseUrl, new { CaseId = caseID, Language = (int)LocalizationManager.CurrentLanguage }, (Bonus bonus) =>
+         {
+             Canvaser.Instance.CasesPanel.SetPrize(bonus);
+         });
     }
 
     public void GetDailyBonusAsync()
     {
         CoroutineManager.SendRequest(GetBonusUrl, null, () =>
         {
-            Debug.Log("OK");
             LoginManager.Instance.GetUserInfoAsync();
         });
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StatisticsManager : MonoBehaviour
+public class StatisticsManager : Manager
 {
 
     public static StatisticsManager Instance { get; private set; }
@@ -39,12 +39,10 @@ public class StatisticsManager : MonoBehaviour
         Canvaser.Instance.Tournament.OpenTable();
     }
 
-    public void GetAllStatisticsAsync(int period, List<GameObject> panels, ResultCallback callback = null)
+    public void GetAllStatisticsAsync(int period, ResultCallback callback = null)
     {
         InputInt value = new InputInt() { Value = period };
-
-        Canvaser.AddLoadingPanel(panels, GetAllStatisticsUrl);
-        Canvaser.ShowLoading(true, GetAllStatisticsUrl);
+        var loadingPanelsKey = period == 2 ? "alltimeleaders" : "leaders";
 
         CoroutineManager.SendRequest(GetAllStatisticsUrl, value,  (List<FriendOfferStatisticsModel> info) =>
         {
@@ -61,13 +59,12 @@ public class StatisticsManager : MonoBehaviour
             {
                 callback();
             }
-        }, loadingPanels: panels);
+        }, loadingPanelsKey: loadingPanelsKey);
     }
 
     public void GetTournamentInfoAsync()
     {
         Canvaser.Instance.TasksPanel.SetActive(true);
-        Canvaser.AddLoadingPanel(Canvaser.Instance.TasksPanel.LoadingPanels(), GetTournamentInfoUrl);
 
         CoroutineManager.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, 
         (TournamentModel info) =>
@@ -77,6 +74,6 @@ public class StatisticsManager : MonoBehaviour
             {
                 Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
             }
-        });
+        }, loadingPanelsKey: "tournament");
     }
 }

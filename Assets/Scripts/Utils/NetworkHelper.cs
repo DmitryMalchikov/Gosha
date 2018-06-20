@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,10 +58,10 @@ public static class NetworkHelper
         }
     }
 
-    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action successMethod = null, Action<AnswerModel> errorMethod = null, List<GameObject> loadingPanels = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null)
+    public static IEnumerator SendRequest(string url, object parameters, string contentType, Action successMethod = null, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
     {
         AnswerModel response = new AnswerModel();
-        for (IEnumerator e = StartRequest(url, parameters, contentType, forceUpdate, type, response); e.MoveNext();)
+        for (IEnumerator e = StartRequest(url, parameters, contentType, forceUpdate, type, response, loadingPanelsKey); e.MoveNext();)
         {
             yield return e.Current;
         }
@@ -71,14 +70,8 @@ public static class NetworkHelper
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                if (loadingPanels == null)
-                {
-                    Canvaser.ShowLoading(false, url);
-                }
-                else
-                {
-                    Canvaser.ShowLoading(false, url, loadingPanels);
-                }
+                Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey), false);
+
                 if (preSuccessMethod != null)
                 {
                     preSuccessMethod(response);
@@ -95,13 +88,18 @@ public static class NetworkHelper
         }
         finally
         {
+            if (finallyMethod != null)
+            {
+                finallyMethod();
+            }
+            Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey), false);
         }
     }
 
-    public static IEnumerator SendRequest<T>(string url, object parameters, string contentType, Action<T> successMethod, Action<AnswerModel> errorMethod = null, List<GameObject> loadingPanels = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null)
-    {
+    public static IEnumerator SendRequest<T>(string url, object parameters, string contentType, Action<T> successMethod, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
+    {       
         AnswerModel response = new AnswerModel();
-        for (IEnumerator e = StartRequest(url, parameters, contentType, forceUpdate, type, response); e.MoveNext();)
+        for (IEnumerator e = StartRequest(url, parameters, contentType, forceUpdate, type, response, loadingPanelsKey); e.MoveNext();)
         {
             yield return e.Current;
         }
@@ -109,16 +107,7 @@ public static class NetworkHelper
         try
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                if (loadingPanels == null)
-                {
-                    Canvaser.ShowLoading(false, url);
-                }
-                else
-                {
-                    Canvaser.ShowLoading(false, url, loadingPanels);
-                }
-
+            {          
                 if (preSuccessMethod != null)
                 {
                     preSuccessMethod(response);
@@ -143,11 +132,30 @@ public static class NetworkHelper
         }
         finally
         {
+            if (finallyMethod != null)
+            {
+                finallyMethod();
+            }
+            Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey), false);
         }
     }
 
-    public static IEnumerator StartRequest(string url, object parameters, string contentType, bool forceUpdate, DataType type, AnswerModel response)
+    public static IEnumerator StartRequest(string url, object parameters, string contentType, bool forceUpdate, DataType type, AnswerModel response, string loadingPanelsKey)
     {
+        if (type != DataType.Network && forceUpdate == false)
+        {
+            forceUpdate = GetForceUpdate(type);
+        }
+        if (forceUpdate)
+        {
+            Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey));
+        }
+
+        while (GameController.PersistentDataPath == null)
+        {
+            yield return null;
+        }
+
         ThreadHelper.RunNewThread(() =>
         {
             string parms = string.Empty;
@@ -164,24 +172,20 @@ public static class NetworkHelper
             }
 
             //load local data
-            if (type != DataType.Network && forceUpdate == false)
-
+            //forceUpdate = GetForceUpdate(type);
+            if (!forceUpdate)
             {
-                forceUpdate = GetForceUpdate(type);
-                if (!forceUpdate)
+                string data = Extensions.LoadJsonData(type);
+                if (!string.IsNullOrEmpty(data))
                 {
-                    string data = Extensions.LoadJsonData(type);
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        response.SetFields(new AnswerModel(data));
-                    }
+                    response.SetFields(new AnswerModel(data));
                 }
             }
-
             if (response.StatusCode == 0)
             {
+                LoadingManager.PanelKeyToEnable = loadingPanelsKey;
                 response.SetFields(GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers));
-            }            
+            }
         });
 
         while (response.StatusCode == 0)

@@ -9,20 +9,20 @@ using UnityEngine;
 public static class Extensions
 {
 
-    public static List<GameObject> LoadingPanels(this MonoBehaviour element)
-    {
-        return element.GetComponent<Panel>().LoadingPanels;
-    }
+    //public static List<GameObject> LoadingPanels(this MonoBehaviour element)
+    //{
+    //    return element.GetComponent<Panel>().LoadingPanels;
+    //}
 
-    public static List<GameObject> LoadingPanels(this MonoBehaviour element, int index)
-    {
-        return new List<GameObject> { element.GetComponent<Panel>().LoadingPanels[index] };
-    }
+    //public static List<GameObject> LoadingPanels(this MonoBehaviour element, int index)
+    //{
+    //    return new List<GameObject> { element.GetComponent<Panel>().LoadingPanels[index] };
+    //}
 
-    public static List<GameObject> LoadingPanels(this GameObject element)
-    {
-        return element.GetComponent<Panel>().LoadingPanels;
-    }
+    //public static List<GameObject> LoadingPanels(this GameObject element)
+    //{
+    //    return element.GetComponent<Panel>().LoadingPanels;
+    //}
 
     public static void SaveJsonData(DataType type, string dataToSave)
     {
@@ -109,6 +109,30 @@ public static class Extensions
             }
 
             return sb.ToString();
+        }
+    }
+
+    public static List<T> SubList<T>(this List<T> list, int startIndex, int amount)
+    {
+        List<T> res = new List<T>();
+
+        T[] temp = new T[amount];
+        list.CopyTo(startIndex, temp, 0, amount);
+
+        res.AddRange(temp);
+
+        return res;
+    }
+
+    public static void ShowGameObjects(List<GameObject> objects, bool show = true)
+    {
+        if (objects == null)
+        {
+            return;
+        }
+        for (int i = 0; i < objects.Count; i++)
+        {
+            objects[i].SetActive(show);
         }
     }
 }

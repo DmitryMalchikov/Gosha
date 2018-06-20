@@ -29,7 +29,7 @@ public class ShopPanel : MonoBehaviour
         //Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
         gameObject.SetActive(true);
         LoginManager.Instance.GetUserInfoAsync(() => Synchroniser.SetReady(0));
-        ShopManager.Instance.GetShopItemsAsync(this.LoadingPanels() ,() => Synchroniser.SetReady(1));
+        ShopManager.Instance.GetShopItemsAsync(() => Synchroniser.SetReady(1));
     }
 
     public void SetPromoBtn()

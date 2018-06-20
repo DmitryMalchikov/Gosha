@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Panel : MonoBehaviour
 {
-    public List<GameObject> LoadingPanels = new List<GameObject>();
-
     private RectTransform panelRectTransform;
 
     void OnEnable()

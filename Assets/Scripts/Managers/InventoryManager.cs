@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour {
+public class InventoryManager : Manager {
 
     public static InventoryManager Instance { get; private set; }
     
@@ -30,11 +29,8 @@ public class InventoryManager : MonoBehaviour {
         GetBonusUpgradesUrl = ServerInfo.GetUrl(GetBonusUpgradesUrl);
     }
 
-    public void GetSuitsAsync(List<GameObject> panels, bool forceUpdate = false)
+    public void GetSuitsAsync(bool forceUpdate = false)
     {
-        Canvaser.AddLoadingPanel(panels, GetSuitsUrl);
-        Canvaser.ShowLoading(true, GetSuitsUrl);
-
         CoroutineManager.SendRequest(GetSuitsUrl, null,  (SuitsModel upgrades) =>
         {
             Debug.Log("OK");
@@ -42,7 +38,8 @@ public class InventoryManager : MonoBehaviour {
             Canvaser.Instance.Suits.SetCostumes(upgrades.Costumes);
         }, 
         type: DataType.Suits, 
-        forceUpdate: forceUpdate
+        forceUpdate: forceUpdate,
+        loadingPanelsKey: "suits"
         ,preSuccessMethod:
         (response) => {
             Extensions.SaveJsonData(DataType.Suits, response.Text);

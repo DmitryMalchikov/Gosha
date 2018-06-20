@@ -156,7 +156,7 @@ public class SuitsPanel : MonoBehaviour
         CardsPanel.SetActive(false);
         SuitPanel.SetActive(true);
 
-        InventoryManager.Instance.GetSuitsAsync(this.LoadingPanels());
+        InventoryManager.Instance.GetSuitsAsync();
     }
 
 

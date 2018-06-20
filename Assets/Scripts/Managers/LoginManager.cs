@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +19,8 @@ public class LoginManager : MonoBehaviour
 
     public RawImage Image;
     public Text Error;
+    public Button LoginBtn;
+    public Button SendResetCodeBtn;
 
     public string LoginUrl = "/token";
     public string RegisterUrl = "/api/account/register";
@@ -140,6 +141,8 @@ public class LoginManager : MonoBehaviour
 
     public void GetTokenAsync(string email, string password)
     {
+        LoginBtn.interactable = false;
+
         CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
        {
            userToken = token;
@@ -165,6 +168,11 @@ public class LoginManager : MonoBehaviour
         (response) =>
         {
             LoginCanvas.Instance.EnableWarning(true);
+        },
+        finallyMethod:
+        ()=> 
+        {
+            LoginBtn.interactable = true;
         });
     }
 
@@ -221,9 +229,14 @@ public class LoginManager : MonoBehaviour
     public void ForgotPasswordAsync(string email)
     {
         InputString data = new InputString() { Value = email };
+        SendResetCodeBtn.interactable = false;
         CoroutineManager.SendRequest(ForgotPasswordUrl, data, () =>
        {
            Canvaser.Instance.ForgotPassword.OpenPasswordInputs();
+       },
+       finallyMethod: () => 
+       {
+           SendResetCodeBtn.interactable = true;
        });
     }
 

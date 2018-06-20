@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FriendsManager : MonoBehaviour
+public class FriendsManager : Manager
 {
 
     public static FriendsManager Instance { get; private set; }
-    public string GetFriendsOffersUrl = "/api/friends/friendoffers";
 
+    public string GetFriendsOffersUrl = "/api/friends/friendoffers";
     public string GetFriendsUrl = "/api/friends/friendslist";
     public string OfferFriendshipUrl = "/api/friends/offerfriendship";
     public string AcceptFriendshipUrl = "/api/friends/acceptfrienship";
@@ -36,11 +36,8 @@ public class FriendsManager : MonoBehaviour
         SearchPlayersUrl = ServerInfo.GetUrl(SearchPlayersUrl);
     }
 
-    public void GetFriendsAsync(List<GameObject> panels, ResultCallback callback = null)
+    public void GetFriendsAsync(ResultCallback callback = null)
     {
-        Canvaser.AddLoadingPanel(panels, GetFriendsUrl);
-        Canvaser.ShowLoading(true, GetFriendsUrl);
-
         CoroutineManager.SendRequest(GetFriendsUrl, null, (FullFriendInfoModel model) =>
         {
             GameController.SetHash("FriendsHash", model.FriendsHash);         
@@ -52,22 +49,19 @@ public class FriendsManager : MonoBehaviour
             {
                 callback();
             }
-        }, type: DataType.Friends,
+        }, type: DataType.Friends, loadingPanelsKey: "friends",
         preSuccessMethod: (response) =>
         {
             Extensions.SaveJsonData(DataType.Friends, response.Text);
         });
     }
 
-    public void GetFriendsOffersAsync(List<GameObject> panels)
+    public void GetFriendsOffersAsync()
     {
-        Canvaser.AddLoadingPanel(panels, GetFriendsOffersUrl);
-        Canvaser.ShowLoading(true, GetFriendsOffersUrl);
-
         CoroutineManager.SendRequest(GetFriendsOffersUrl, null, (List<FriendOfferModel> friends) =>
         {
             Canvaser.Instance.FriendsPanel.SetFriendOffers(friends);
-        });
+        }, loadingPanelsKey: "friends");
     }
 
     public void OfferFriendshipAsync(int userId)

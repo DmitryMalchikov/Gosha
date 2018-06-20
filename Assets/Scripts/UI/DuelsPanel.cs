@@ -28,14 +28,14 @@ public class DuelsPanel : MonoBehaviour {
     {
         ClearDuelPanel();
         gameObject.SetActive(true);
-        DuelManager.Instance.GetDuelsAsync(this.LoadingPanels());
+        DuelManager.Instance.GetDuelsAsync();
     }
 
     public void OpenDirectlyRequests()
     {
         ClearDuelPanel();
         gameObject.SetActive(true);
-        DuelManager.Instance.GetDuelsAsync(this.LoadingPanels(),() => OpenRequests());
+        DuelManager.Instance.GetDuelsAsync(() => OpenRequests());
     }
     void OpenRequests()
     {

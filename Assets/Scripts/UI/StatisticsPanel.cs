@@ -20,8 +20,8 @@ public class StatisticsPanel : MonoBehaviour {
     {
         gameObject.SetActive(true);
 
-        StatisticsManager.Instance.GetAllStatisticsAsync(dropdown.value, this.LoadingPanels(1));
-        StatisticsManager.Instance.GetAllStatisticsAsync(2, this.LoadingPanels(0));
+        StatisticsManager.Instance.GetAllStatisticsAsync(dropdown.value);
+        StatisticsManager.Instance.GetAllStatisticsAsync(2);
 
         for (int i = 0; i < dropdown.options.Count; i++)
         {
@@ -41,7 +41,7 @@ public class StatisticsPanel : MonoBehaviour {
         //        break;
         //}
         ClearContent(LeadersContent, Leaders);
-        StatisticsManager.Instance.GetAllStatisticsAsync(val, this.LoadingPanels(0));
+        StatisticsManager.Instance.GetAllStatisticsAsync(val);
     }
 
     public void SetAllTimeLeaders(List<FriendOfferStatisticsModel> leaders)

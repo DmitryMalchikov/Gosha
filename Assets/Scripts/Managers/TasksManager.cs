@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TasksManager : MonoBehaviour
+public class TasksManager : Manager
 {
     public static TasksManager Instance { get; private set; }
 
@@ -138,13 +138,10 @@ public class TasksManager : MonoBehaviour
 
     public void GetAllTasksAsync()
     {
-        Canvaser.Instance.WeeklyTasks.gameObject.SetActive(true);
-        Canvaser.AddLoadingPanel(Canvaser.Instance.WeeklyTasks.LoadingPanels(), GetTasksUrl);
-
         CoroutineManager.SendRequest(GetTasksUrl, null, (List<PlayerTaskModel> tasks) =>
         {
             Canvaser.Instance.WeeklyTasks.SetTasks(tasks);
-        });
+        }, loadingPanelsKey: "weeklytasks");
     }
 
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AchievementsManager : MonoBehaviour
+public class AchievementsManager : Manager
 {
 
     public static AchievementsManager Instance { get; private set; }
@@ -159,17 +159,14 @@ public class AchievementsManager : MonoBehaviour
 
             if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
             {
-                InventoryManager.Instance.GetSuitsAsync(Canvaser.Instance.Suits.LoadingPanels(), true);
+                InventoryManager.Instance.GetSuitsAsync();
             }
             //add window
         });
     }
 
-    public void GetAllAchievementsAsync(List<GameObject> panels, ResultCallback callback=null)
+    public void GetAllAchievementsAsync(ResultCallback callback=null)
     {
-        Canvaser.AddLoadingPanel(panels, GetAchievementsUrl);
-        Canvaser.ShowLoading(true, GetAchievementsUrl);
-
         CoroutineManager.SendRequest(GetAchievementsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (List<PlayerAchievementModel>  tasks) =>
         {
             Canvaser.Instance.AchievementsPanel.SetAchievementsPanel(tasks);
@@ -178,6 +175,6 @@ public class AchievementsManager : MonoBehaviour
             {
                 callback();
             }
-        });
+        }, loadingPanelsKey: "achievements");
     }
 }

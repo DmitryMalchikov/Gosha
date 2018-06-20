@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
-public class DuelManager : MonoBehaviour
+public class DuelManager : Manager
 {
     public static DuelManager Instance { get; private set; }
 
@@ -50,11 +48,8 @@ public class DuelManager : MonoBehaviour
              Canvaser.Instance.FriendsPanel.SetDuelWarning(response.Errors.First().Value[0]);
          });
     }
-    public void GetDuelsAsync(List<GameObject> panels, ResultCallback callback = null)
+    public void GetDuelsAsync(ResultCallback callback = null)
     {
-        Canvaser.AddLoadingPanel(panels, FullDuelsInfo);
-        Canvaser.ShowLoading(true, FullDuelsInfo);
-
         CoroutineManager.SendRequest(FullDuelsInfo, null,  (DuelsFullInfoModel model) =>
         {
             GameController.SetHash("DuelsHash", model.DuelsHash);
@@ -65,7 +60,7 @@ public class DuelManager : MonoBehaviour
             {
                 callback();
             }
-        }, type: DataType.Duels,
+        }, type: DataType.Duels, loadingPanelsKey: "duels",
         preSuccessMethod: (response) =>
         {
             Extensions.SaveJsonData(DataType.Duels, response.Text);
