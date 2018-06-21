@@ -25,8 +25,8 @@ public class TasksManager : Manager
     }
     public void SetUrls()
     {
-        SubmitTaskUrl = ServerInfo.GetUrl(SubmitTaskUrl);
-        GetTasksUrl = ServerInfo.GetUrl(GetTasksUrl);
+        ServerInfo.SetUrl(ref SubmitTaskUrl);
+        ServerInfo.SetUrl(ref GetTasksUrl);
     }
     public void LoadTasks(List<PlayerTasks> tasks)
     {
@@ -52,24 +52,24 @@ public class TasksManager : Manager
         }
     }
 
-	public void CheckTasks(TasksTypes type, int completeAmount = 1)
+    public void CheckTasks(TasksTypes type, int completeAmount = 1)
     {
         List<PlayerTasks> tasks = new List<PlayerTasks>();
         bool send = false;
 
         switch (type)
         {
-		case TasksTypes.Run:
+            case TasksTypes.Run:
                 tasks = RunTasks;
                 break;
-		case TasksTypes.Jump:
+            case TasksTypes.Jump:
                 tasks = JumpTasks;
                 break;
-		case TasksTypes.Play:
+            case TasksTypes.Play:
                 tasks = PlayTasks;
                 send = true;
                 break;
-		case TasksTypes.CollectBonus:
+            case TasksTypes.CollectBonus:
                 tasks = CollectBonusTasks;
                 break;
         }
@@ -124,16 +124,16 @@ public class TasksManager : Manager
     void SubmitTaskAsync(PlayerTasks model)
     {
         SubmitTaskModel value = new SubmitTaskModel() { Id = model.Id, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, TaskId = model.TaskId };
-        CoroutineManager.SendRequest(SubmitTaskUrl, value,  (PlayerTasksAnswer newModel) =>
-        {
-            model.Id = newModel.Id;
-            model.PlayerStartProgress = model.PlayerProgress;
+        CoroutineManager.SendRequest(SubmitTaskUrl, value, (PlayerTasksAnswer newModel) =>
+       {
+           model.Id = newModel.Id;
+           model.PlayerStartProgress = model.PlayerProgress;
 
-				if (model.PlayerProgress >= model.ActionsCount)
-				{
-            		Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
-				}
-        });
+           if (model.PlayerProgress >= model.ActionsCount)
+           {
+               Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
+           }
+       });
     }
 
     public void GetAllTasksAsync()

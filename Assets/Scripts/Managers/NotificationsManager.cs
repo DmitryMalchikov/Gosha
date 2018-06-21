@@ -31,7 +31,9 @@ public class NotificationsManager : MonoBehaviour
 
     void Start()
     {
-        connection = new HubConnection(ServerInfo.GetUrl(""));
+        string url = string.Empty;
+        ServerInfo.SetUrl(ref url);
+        connection = new HubConnection(url);
         proxy = connection.CreateProxy("NotificationsHub");
 
         proxy.Subscribe("FriendNotification").Data += data =>

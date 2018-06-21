@@ -12,7 +12,6 @@ public delegate void ResultCallback();
 
 public class LoginManager : MonoBehaviour
 {
-
     public static LoginManager Instance { get; private set; }
     public static AccessToken userToken;
     public static string LoginProvider;
@@ -49,18 +48,18 @@ public class LoginManager : MonoBehaviour
 
     public void SetUrls()
     {
-        LoginUrl = ServerInfo.GetUrl(LoginUrl);
-        RegisterUrl = ServerInfo.GetUrl(RegisterUrl);
-        UserInfoUrl = ServerInfo.GetUrl(UserInfoUrl);
-        ProfileImageUrl = ServerInfo.GetUrl(ProfileImageUrl);
-        ForgotPasswordUrl = ServerInfo.GetUrl(ForgotPasswordUrl);
-        ValidateResetTokenUrl = ServerInfo.GetUrl(ValidateResetTokenUrl);
-        ResetPasswordUrl = ServerInfo.GetUrl(ResetPasswordUrl);
-        RegisterUserInfoUrl = ServerInfo.GetUrl(RegisterUserInfoUrl);
-        ExternalRegisterUrl = ServerInfo.GetUrl(ExternalRegisterUrl);
-        ImageUploadUrl = ServerInfo.GetUrl(ImageUploadUrl);
-        ExternalLoginUrl = ServerInfo.GetUrl(ExternalLoginUrl);
-        GetRegionsUrl = ServerInfo.GetUrl(GetRegionsUrl);
+        ServerInfo.SetUrl(ref LoginUrl);
+        ServerInfo.SetUrl(ref RegisterUrl);
+        ServerInfo.SetUrl(ref UserInfoUrl);
+        ServerInfo.SetUrl(ref ProfileImageUrl);
+        ServerInfo.SetUrl(ref ForgotPasswordUrl);
+        ServerInfo.SetUrl(ref ValidateResetTokenUrl);
+        ServerInfo.SetUrl(ref ResetPasswordUrl);
+        ServerInfo.SetUrl(ref RegisterUserInfoUrl);
+        ServerInfo.SetUrl(ref ExternalRegisterUrl);
+        ServerInfo.SetUrl(ref ImageUploadUrl);
+        ServerInfo.SetUrl(ref ExternalLoginUrl);
+        ServerInfo.SetUrl(ref GetRegionsUrl);
     }
 
     private void Awake()
@@ -123,8 +122,8 @@ public class LoginManager : MonoBehaviour
 
                Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
                GetUserInfoAsync();
-                //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+               //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+               AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
                AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
            },
             (response) =>
@@ -161,8 +160,8 @@ public class LoginManager : MonoBehaviour
 
            Headers = new List<Header>() { new Header("Authorization", " Bearer " + userToken.Token) };
            GetUserInfoAsync();
-            //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+           //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
+           AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
            AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
        },
         (response) =>
@@ -170,7 +169,7 @@ public class LoginManager : MonoBehaviour
             LoginCanvas.Instance.EnableWarning(true);
         },
         finallyMethod:
-        ()=> 
+        () =>
         {
             LoginBtn.interactable = true;
         });
@@ -234,7 +233,7 @@ public class LoginManager : MonoBehaviour
        {
            Canvaser.Instance.ForgotPassword.OpenPasswordInputs();
        },
-       finallyMethod: () => 
+       finallyMethod: () =>
        {
            SendResetCodeBtn.interactable = true;
        });

@@ -18,8 +18,8 @@ public class LootManager : MonoBehaviour
 
     public void SetUrls()
     {
-        GetBonusUrl = ServerInfo.GetUrl(GetBonusUrl);
-        OpenCaseUrl = ServerInfo.GetUrl(OpenCaseUrl);
+        ServerInfo.SetUrl(ref GetBonusUrl);
+        ServerInfo.SetUrl(ref OpenCaseUrl);
     }
     public void OpenCaseAsync(int caseID)
     {

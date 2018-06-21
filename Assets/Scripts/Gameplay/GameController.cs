@@ -58,6 +58,7 @@ public class GameController : MonoBehaviour
     public static string PersistentDataPath { get; private set; }
     public static string ShopHash { get; set; }
     public static string SuitsHash { get; set; }
+    public static string TradesHash { get; set; }
     public float RocketDistance
     {
         get
@@ -324,6 +325,7 @@ public class GameController : MonoBehaviour
         DuelsHash = PlayerPrefs.GetString("DuelsHash");
         SuitsHash = PlayerPrefs.GetString("SuitsHash");
         ShopHash = PlayerPrefs.GetString("ShopHash");
+        TradesHash = PlayerPrefs.GetString("TradesHash");
     }
 
     private void Awake()

@@ -70,7 +70,13 @@ public static class NetworkHelper
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey), false);
+                if (type != DataType.Network)
+                {
+                    ThreadHelper.RunNewThread(() =>
+                    {
+                        Extensions.SaveJsonData(type, response.Text);
+                    });
+                }
 
                 if (preSuccessMethod != null)
                 {
@@ -107,7 +113,14 @@ public static class NetworkHelper
         try
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {          
+            {
+                if (type != DataType.Network)
+                {
+                    ThreadHelper.RunNewThread(() =>
+                    {
+                        Extensions.SaveJsonData(type, response.Text);
+                    });
+                }
                 if (preSuccessMethod != null)
                 {
                     preSuccessMethod(response);
@@ -257,6 +270,9 @@ public static class NetworkHelper
             case DataType.Suits:
                 savedHash = GameController.SuitsHash;
                 return LoginManager.Instance.User.SuitsHash != savedHash;
+            case DataType.Trades:
+                savedHash = GameController.TradesHash;
+                return LoginManager.Instance.User.TradesHash != savedHash;
         }
 
         return true;
@@ -486,6 +502,7 @@ public class UserInfoModel
     public string DuelsHash { get; set; }
     public string FriendsHash { get; set; }
     public string SuitsHash { get; set; }
+    public string TradesHash { get; set; }
 
     public UserInfoModel()
     {
@@ -711,6 +728,12 @@ public class TradeOfferModel
     public int UserId { get; set; }
     public int Id { get; set; }
     public string Nickname { get; set; }
+}
+
+public class TradeModel
+{
+    public List<TradeOfferModel> Trades { get; set; }
+    public string TradesHash { get; set; }
 }
 
 public class DuelOfferModel

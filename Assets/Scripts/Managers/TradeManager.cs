@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TradeManager : MonoBehaviour {
-    
+public class TradeManager : MonoBehaviour
+{
+
     public static TradeManager Instance { get; private set; }
-    
+
     public string TradeItemsUrl = "/api/trade/tradeitems";
     public string OfferTradeUrl = "/api/trade/offertrade";
     public string AcceptTradeUrl = "/api/trade/accept";
@@ -22,56 +23,57 @@ public class TradeManager : MonoBehaviour {
     }
     public void SetUrls()
     {
-        TradeItemsUrl = ServerInfo.GetUrl(TradeItemsUrl);
-        OfferTradeUrl = ServerInfo.GetUrl(OfferTradeUrl);
-        AcceptTradeUrl = ServerInfo.GetUrl(AcceptTradeUrl);
-        DeclineTradeUrl = ServerInfo.GetUrl(DeclineTradeUrl);
-        TradeOffersUrl = ServerInfo.GetUrl(TradeOffersUrl);
+        ServerInfo.SetUrl(ref TradeItemsUrl);
+        ServerInfo.SetUrl(ref OfferTradeUrl);
+        ServerInfo.SetUrl(ref AcceptTradeUrl);
+        ServerInfo.SetUrl(ref DeclineTradeUrl);
+        ServerInfo.SetUrl(ref TradeOffersUrl);
     }
     public void GetTradeItemsAsync(int userID)
     {
         InputInt input = new InputInt() { Value = userID };
-        CoroutineManager.SendRequest(TradeItemsUrl, input,  (TradeItemsModel info) =>
-        {
-            Canvaser.Instance.SetTradeItems(info);
-        });
+        CoroutineManager.SendRequest(TradeItemsUrl, input, (TradeItemsModel info) =>
+       {
+           Canvaser.Instance.SetTradeItems(info);
+       });
     }
 
     public void OfferTradeAsync(TradeOfferModel offer)
     {
-        CoroutineManager.SendRequest(OfferTradeUrl, offer,  () =>
-        {
-            Canvaser.Instance.TradeOffered();
+        CoroutineManager.SendRequest(OfferTradeUrl, offer, () =>
+       {
+           Canvaser.Instance.TradeOffered();
             //LoginManager.Instance.GetUserInfoAsync();
         });
     }
     public void GetTradeOffersAsync()
     {
-        CoroutineManager.SendRequest(TradeOffersUrl, null,  (List<TradeOfferModel> info) =>
-        {
-            Canvaser.Instance.TradePanel.SetTrades(info);
-        });
+        CoroutineManager.SendRequest(TradeOffersUrl, null, (TradeModel info) =>
+       {
+           Canvaser.Instance.TradePanel.SetTrades(info.Trades);
+           GameController.SetHash("TradesHash", info.TradesHash);
+       }, loadingPanelsKey: "trades", type: DataType.Trades);
     }
 
     public void AcceptTradeAsync(int userID)
     {
         InputInt input = new InputInt() { Value = userID };
-        CoroutineManager.SendRequest(AcceptTradeUrl, input,  () =>
-        {
-            Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
-            GetTradeOffersAsync();
-        });
+        CoroutineManager.SendRequest(AcceptTradeUrl, input, () =>
+       {
+           Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
+           GetTradeOffersAsync();
+       });
     }
 
     public void DeclineTradeAsync(int userID)
     {
         InputInt input = new InputInt() { Value = userID };
-        CoroutineManager.SendRequest(DeclineTradeUrl, input,  () =>
-        {
-            Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
-            GetTradeOffersAsync();
-            LoginManager.Instance.GetUserInfoAsync();
-        });
+        CoroutineManager.SendRequest(DeclineTradeUrl, input, () =>
+       {
+           Canvaser.Instance.TradePanel.Details.gameObject.SetActive(false);
+           GetTradeOffersAsync();
+           LoginManager.Instance.GetUserInfoAsync();
+       });
     }
 }
 

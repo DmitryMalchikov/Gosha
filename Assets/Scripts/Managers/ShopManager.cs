@@ -18,9 +18,7 @@ public class ShopManager : Manager
         ItemBuyModel buy = new ItemBuyModel() { ItemId = itemId, Amount = 1 };
         CoroutineManager.SendRequest(BuyItemUrl, buy, () =>
        {
-           Debug.Log("OK");
-            //show tasks
-            if (upgrade)
+           if (upgrade)
            {
                string data = Extensions.LoadJsonData(DataType.Shop);
                ShopModel model = JsonConvert.DeserializeObject<ShopModel>(data);
@@ -65,8 +63,8 @@ public class ShopManager : Manager
         CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
        {
            Debug.Log("OK");
-            //show tasks
-            GameController.SetHash("ShopHash", model.ShopHash);
+           //show tasks
+           GameController.SetHash("ShopHash", model.ShopHash);
 
            SetShopItems(model);
 
@@ -74,12 +72,7 @@ public class ShopManager : Manager
            {
                callback();
            }
-       }, type: DataType.Shop, loadingPanelsKey: "shop"
-        , preSuccessMethod:
-        (response) =>
-        {
-            Extensions.SaveJsonData(DataType.Shop, response.Text);
-        });
+       }, type: DataType.Shop, loadingPanelsKey: "shop");
     }
 
     public void GetSuitAsync(int suitID)
@@ -90,18 +83,6 @@ public class ShopManager : Manager
            Debug.Log("OK");
            Canvaser.Instance.Suits.Open();
        });
-    }
-
-    public void SetUrls()
-    {
-        BuyItemUrl = ServerInfo.GetUrl(BuyItemUrl);
-        GetUpdgradesUrl = ServerInfo.GetUrl(GetUpdgradesUrl);
-        PromoCodeUrl = ServerInfo.GetUrl(PromoCodeUrl);
-        GetSuitUrl = ServerInfo.GetUrl(GetSuitUrl);
-        GetCardsUrl = ServerInfo.GetUrl(GetCardsUrl);
-        GetCasesUrl = ServerInfo.GetUrl(GetCasesUrl);
-        GetBonusesUrl = ServerInfo.GetUrl(GetBonusesUrl);
-        GetShopItemsUrl = ServerInfo.GetUrl(GetShopItemsUrl);
     }
 
     private void Awake()
@@ -147,6 +128,17 @@ public class ShopManager : Manager
         Canvaser.Instance.Shop.gameObject.SetActive(true);
     }
 
+    private void SetUrls()
+    {
+        ServerInfo.SetUrl(ref BuyItemUrl);
+        ServerInfo.SetUrl(ref GetUpdgradesUrl);
+        ServerInfo.SetUrl(ref PromoCodeUrl);
+        ServerInfo.SetUrl(ref GetSuitUrl);
+        ServerInfo.SetUrl(ref GetCardsUrl);
+        ServerInfo.SetUrl(ref GetCasesUrl);
+        ServerInfo.SetUrl(ref GetBonusesUrl);
+        ServerInfo.SetUrl(ref GetShopItemsUrl);
+    }
     private void Start()
     {
         SetUrls();

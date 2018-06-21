@@ -74,9 +74,9 @@ public class Registration : MonoBehaviour
 
     public void SetUrls()
     {
-        CheckEmailUrl = ServerInfo.GetUrl(CheckEmailUrl);
-        CheckNickUrl = ServerInfo.GetUrl(CheckNickUrl);
-        CheckPhoneUrl = ServerInfo.GetUrl(CheckPhoneUrl);
+        ServerInfo.SetUrl(ref CheckEmailUrl);
+        ServerInfo.SetUrl(ref CheckNickUrl);
+        ServerInfo.SetUrl(ref CheckPhoneUrl);
     }
 
     public bool External;
@@ -315,7 +315,7 @@ public class Registration : MonoBehaviour
 
             InputString parameters = new InputString() { Value = email };
 
-            CoroutineManager.SendRequest(CheckEmailUrl, parameters, 
+            CoroutineManager.SendRequest(CheckEmailUrl, parameters,
                 preSuccessMethod: (response) =>
                  {
                      exist = bool.Parse(response.Text);
@@ -341,7 +341,7 @@ public class Registration : MonoBehaviour
 
         if (Regex.IsMatch(phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern))
         {
-            CoroutineManager.SendRequest(CheckPhoneUrl, parameters,  
+            CoroutineManager.SendRequest(CheckPhoneUrl, parameters,
                preSuccessMethod: (response) =>
                 {
                     exist = bool.Parse(response.Text);
@@ -369,7 +369,7 @@ public class Registration : MonoBehaviour
             bool exist;
 
             InputString parameters = new InputString() { Value = nick };
-            CoroutineManager.SendRequest(CheckNickUrl, parameters,  
+            CoroutineManager.SendRequest(CheckNickUrl, parameters,
              preSuccessMethod: (response) =>
             {
                 Debug.Log(response.Text);

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,22 +9,6 @@ using UnityEngine;
 
 public static class Extensions
 {
-
-    //public static List<GameObject> LoadingPanels(this MonoBehaviour element)
-    //{
-    //    return element.GetComponent<Panel>().LoadingPanels;
-    //}
-
-    //public static List<GameObject> LoadingPanels(this MonoBehaviour element, int index)
-    //{
-    //    return new List<GameObject> { element.GetComponent<Panel>().LoadingPanels[index] };
-    //}
-
-    //public static List<GameObject> LoadingPanels(this GameObject element)
-    //{
-    //    return element.GetComponent<Panel>().LoadingPanels;
-    //}
-
     public static void SaveJsonData(DataType type, string dataToSave)
     {
         string fileName = string.Empty;
@@ -46,6 +31,9 @@ public static class Extensions
                 break;
             case DataType.Suits:
                 fileName = "4.dat";
+                break;
+            case DataType.Trades:
+                fileName = "5.dat";
                 break;
         }
 
@@ -76,6 +64,9 @@ public static class Extensions
                 break;
             case DataType.Suits:
                 fileName = "4.dat";
+                break;
+            case DataType.Trades:
+                fileName = "5.dat";
                 break;
         }
 
@@ -135,9 +126,17 @@ public static class Extensions
             objects[i].SetActive(show);
         }
     }
+
+    public static void Execute(this Action action)
+    {
+        if (action != null)
+        {
+            action();
+        }
+    }
 }
 
 public enum DataType
 {
-    Shop, Duels, Friends, Suits, Network
+    Shop, Duels, Friends, Suits, Network, Trades
 }

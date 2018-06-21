@@ -27,20 +27,20 @@ public class FriendsManager : Manager
 
     public void SetUrls()
     {
-        GetFriendsOffersUrl = ServerInfo.GetUrl(GetFriendsOffersUrl);
-        GetFriendsUrl = ServerInfo.GetUrl(GetFriendsUrl);
-        OfferFriendshipUrl = ServerInfo.GetUrl(OfferFriendshipUrl);
-        AcceptFriendshipUrl = ServerInfo.GetUrl(AcceptFriendshipUrl);
-        DeclineFriendshipUrl = ServerInfo.GetUrl(DeclineFriendshipUrl);
-        SearchFriendsUrl = ServerInfo.GetUrl(SearchFriendsUrl);
-        SearchPlayersUrl = ServerInfo.GetUrl(SearchPlayersUrl);
+        ServerInfo.SetUrl(ref GetFriendsOffersUrl);
+        ServerInfo.SetUrl(ref GetFriendsUrl);
+        ServerInfo.SetUrl(ref OfferFriendshipUrl);
+        ServerInfo.SetUrl(ref AcceptFriendshipUrl);
+        ServerInfo.SetUrl(ref DeclineFriendshipUrl);
+        ServerInfo.SetUrl(ref SearchFriendsUrl);
+        ServerInfo.SetUrl(ref SearchPlayersUrl);
     }
 
     public void GetFriendsAsync(ResultCallback callback = null)
     {
         CoroutineManager.SendRequest(GetFriendsUrl, null, (FullFriendInfoModel model) =>
         {
-            GameController.SetHash("FriendsHash", model.FriendsHash);         
+            GameController.SetHash("FriendsHash", model.FriendsHash);
 
             Canvaser.Instance.FriendsPanel.SetFriends(model.Friends);
             Canvaser.Instance.FriendsPanel.SetFriendRequests(model.FriendRequests);
@@ -49,11 +49,7 @@ public class FriendsManager : Manager
             {
                 callback();
             }
-        }, type: DataType.Friends, loadingPanelsKey: "friends",
-        preSuccessMethod: (response) =>
-        {
-            Extensions.SaveJsonData(DataType.Friends, response.Text);
-        });
+        }, type: DataType.Friends, loadingPanelsKey: "friends");
     }
 
     public void GetFriendsOffersAsync()
@@ -68,9 +64,9 @@ public class FriendsManager : Manager
     {
         InputInt input = new InputInt() { Value = userId };
 
-        CoroutineManager.SendRequest(OfferFriendshipUrl, input,  () =>
-        {
-            Debug.Log("OK");
+        CoroutineManager.SendRequest(OfferFriendshipUrl, input, () =>
+       {
+           Debug.Log("OK");
             //show info
         });
     }
@@ -79,9 +75,9 @@ public class FriendsManager : Manager
     {
         InputInt input = new InputInt() { Value = userId };
 
-        CoroutineManager.SendRequest(AcceptFriendshipUrl, input,  () =>
-        {
-            Debug.Log("OK");
+        CoroutineManager.SendRequest(AcceptFriendshipUrl, input, () =>
+       {
+           Debug.Log("OK");
             //show info
         });
     }
@@ -90,9 +86,9 @@ public class FriendsManager : Manager
     {
         InputInt input = new InputInt() { Value = userId };
 
-        CoroutineManager.SendRequest(DeclineFriendshipUrl, input,  () =>
-        {
-            Debug.Log("OK");
+        CoroutineManager.SendRequest(DeclineFriendshipUrl, input, () =>
+       {
+           Debug.Log("OK");
             //show info
         });
     }
@@ -119,18 +115,18 @@ public class FriendsManager : Manager
     {
         InputString search = new InputString() { Value = searchString };
 
-        CoroutineManager.SendRequest(SearchPlayersUrl, search,  (FriendOfferModel result) =>
-        {
-            if (result.Id != 0)
-            {
-                Canvaser.Instance.FriendsPanel.PlayerSearchResult.SetPlayerObject(result);
-                Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
-            }
-            else
-            {
-                Canvaser.Instance.FriendsPanel.PlayerSearchResult.Warning.SetActive(true);
-                Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
-            }
+        CoroutineManager.SendRequest(SearchPlayersUrl, search, (FriendOfferModel result) =>
+       {
+           if (result.Id != 0)
+           {
+               Canvaser.Instance.FriendsPanel.PlayerSearchResult.SetPlayerObject(result);
+               Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
+           }
+           else
+           {
+               Canvaser.Instance.FriendsPanel.PlayerSearchResult.Warning.SetActive(true);
+               Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
+           }
             //show info
         });
     }

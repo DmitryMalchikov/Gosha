@@ -8,45 +8,36 @@ public class StatisticsPanel : MonoBehaviour {
     public GameObject Leader;
     public Transform AllTimeLeadersContent;
     public Transform LeadersContent;
+    public ScrollRect Scroll;
 
     public List<FriendObject> AllTimeLeaders;
     public List<FriendObject> Leaders;
-
-    public Dropdown dropdown;
 
     public Text LeadersText;
 
     public void Open()
     {
         gameObject.SetActive(true);
+        ClearAllContent();
 
-        StatisticsManager.Instance.GetAllStatisticsAsync(dropdown.value);
-        StatisticsManager.Instance.GetAllStatisticsAsync(2);
-
-        for (int i = 0; i < dropdown.options.Count; i++)
-        {
-            dropdown.options[i].text = LocalizationManager.GetLocalizedValue("statdropdown" + i);
-        }
+        StatisticsManager.Instance.GetAllStatisticsAsync(0, () => Scroll.Rebuild(CanvasUpdate.PostLayout));
+        StatisticsManager.Instance.GetAllStatisticsAsync(2, () => Scroll.Rebuild(CanvasUpdate.PostLayout));
     }
 
     public void UpdateInfo(int val)
     {
-        //switch(val)
-        //{
-        //    case 0:
-        //        LeadersText.text = LocalizationManager.GetLocalizedValue("weekleaders");
-        //        break;
-        //    case 1:
-        //        LeadersText.text = LocalizationManager.GetLocalizedValue("monthleaders");
-        //        break;
-        //}
         ClearContent(LeadersContent, Leaders);
-        StatisticsManager.Instance.GetAllStatisticsAsync(val);
+        StatisticsManager.Instance.GetAllStatisticsAsync(val, () => Scroll.Rebuild(CanvasUpdate.PostLayout));
+    }
+
+    private void ClearAllContent()
+    {
+        ClearContent(LeadersContent, Leaders);
+        ClearContent(AllTimeLeadersContent, AllTimeLeaders);
     }
 
     public void SetAllTimeLeaders(List<FriendOfferStatisticsModel> leaders)
     {
-        ClearContent(AllTimeLeadersContent, AllTimeLeaders);
         for (int i = 0; i < leaders.Count; i++)
         {
             FriendObject newLeader = Instantiate(Leader, AllTimeLeadersContent).GetComponent<FriendObject>();
@@ -65,7 +56,6 @@ public class StatisticsPanel : MonoBehaviour {
 
     public void SetLeaders(List<FriendOfferStatisticsModel> leaders)
     {
-        ClearContent(LeadersContent, Leaders);
         for (int i = 0; i < leaders.Count; i++)
         {
             FriendObject newLeader = Instantiate(Leader, LeadersContent).GetComponent<FriendObject>();

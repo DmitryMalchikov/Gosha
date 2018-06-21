@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatisticsManager : Manager
 {
@@ -22,16 +23,16 @@ public class StatisticsManager : Manager
     }
     public void SetUrls()
     {
-        GetTournamentLeadersUrl = ServerInfo.GetUrl(GetTournamentLeadersUrl);
-        GetAllStatisticsUrl = ServerInfo.GetUrl(GetAllStatisticsUrl);
-        GetTournamentInfoUrl = ServerInfo.GetUrl(GetTournamentInfoUrl);
+        ServerInfo.SetUrl(ref GetTournamentLeadersUrl);
+        ServerInfo.SetUrl(ref GetAllStatisticsUrl);
+        ServerInfo.SetUrl(ref GetTournamentInfoUrl);
     }
     public void GetTournamentLeadersAsync()
     {
-        CoroutineManager.SendRequest(GetTournamentLeadersUrl, null,  (List<FriendOfferStatisticsModel> info) =>
-        {
-            Canvaser.Instance.Tournament.SetTournamentTable(info);
-        });
+        CoroutineManager.SendRequest(GetTournamentLeadersUrl, null, (List<FriendOfferStatisticsModel> info) =>
+       {
+           Canvaser.Instance.Tournament.SetTournamentTable(info);
+       });
     }
 
     public void OpenTournamentInfo()
@@ -44,29 +45,29 @@ public class StatisticsManager : Manager
         InputInt value = new InputInt() { Value = period };
         var loadingPanelsKey = period == 2 ? "alltimeleaders" : "leaders";
 
-        CoroutineManager.SendRequest(GetAllStatisticsUrl, value,  (List<FriendOfferStatisticsModel> info) =>
-        {
-            if (period == 2)
-            {
-                Canvaser.Instance.Stats.SetAllTimeLeaders(info);
-            }
-            else
-            {
-                Canvaser.Instance.Stats.SetLeaders(info);
-            }
+        CoroutineManager.SendRequest(GetAllStatisticsUrl, value, (List<FriendOfferStatisticsModel> info) =>
+       {
+           if (period == 2)
+           {
+               Canvaser.Instance.Stats.SetAllTimeLeaders(info);
+           }
+           else
+           {
+               Canvaser.Instance.Stats.SetLeaders(info);
+           }
 
-            if (callback != null)
-            {
-                callback();
-            }
-        }, loadingPanelsKey: loadingPanelsKey);
+           if (callback != null)
+           {
+               callback();
+           }
+       }, loadingPanelsKey: loadingPanelsKey);
     }
 
     public void GetTournamentInfoAsync()
     {
         Canvaser.Instance.TasksPanel.SetActive(true);
 
-        CoroutineManager.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, 
+        CoroutineManager.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage },
         (TournamentModel info) =>
         {
             Canvaser.Instance.Tournament.SetTournamentInfo(info);

@@ -21,8 +21,8 @@ public class ServerInfo : MonoBehaviour
         urlPart = res.ToString();
     }
 
-    public static string GetUrl(string path)
+    public static void SetUrl(ref string path)
     {
-        return urlPart + path;
+        path = urlPart + path;
     }
 }

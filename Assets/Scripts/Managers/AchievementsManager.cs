@@ -29,8 +29,8 @@ public class AchievementsManager : Manager
 
     public void SetUrls()
     {
-        GetAchievementsUrl = ServerInfo.GetUrl(GetAchievementsUrl);
-        SubmitAchievementUrl = ServerInfo.GetUrl(SubmitAchievementUrl);
+        ServerInfo.SetUrl(ref GetAchievementsUrl);
+        ServerInfo.SetUrl(ref SubmitAchievementUrl);
     }
 
     public void LoadAchievements(List<PlayerTasks> achievements)
@@ -38,7 +38,7 @@ public class AchievementsManager : Manager
         for (int i = 0; i < achievements.Count; i++)
         {
             achievements[i].PlayerStartProgress = achievements[i].PlayerProgress;
-            
+
             switch (achievements[i].Type)
             {
                 case "Run":
@@ -63,30 +63,30 @@ public class AchievementsManager : Manager
         }
     }
 
-	public void CheckAchievements(TasksTypes type, int completeAmount = 1)
+    public void CheckAchievements(TasksTypes type, int completeAmount = 1)
     {
         List<PlayerTasks> achievements = new List<PlayerTasks>();
         bool send = false;
 
         switch (type)
         {
-		case TasksTypes.Run:
+            case TasksTypes.Run:
                 achievements = RunAchievements;
                 break;
-		case TasksTypes.Jump:
+            case TasksTypes.Jump:
                 achievements = JumpAchievements;
                 break;
-		case TasksTypes.CollectIceCream:
+            case TasksTypes.CollectIceCream:
                 achievements = CollectIceCreamAchievements;
                 break;
-		case TasksTypes.Buy:
+            case TasksTypes.Buy:
                 achievements = BuyAchievements;
                 send = true;
                 break;
-		case TasksTypes.Loose:
+            case TasksTypes.Loose:
                 achievements = LooseAchievements;
                 break;
-		case TasksTypes.Share:
+            case TasksTypes.Share:
                 achievements = ShareAchievements;
                 send = true;
                 break;
@@ -142,32 +142,32 @@ public class AchievementsManager : Manager
             }
         }
     }
-    
+
 
     void SubmitAchievementAsync(PlayerTasks model, TasksTypes type)
     {
         SubmitAchievementModel value = new SubmitAchievementModel() { Id = model.Id, AchievementId = model.TaskId, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, Language = (int)LocalizationManager.CurrentLanguage };
-        CoroutineManager.SendRequest(SubmitAchievementUrl, value,  (PlayerTasksAnswer newModel) =>
-        {
-            model.Id = newModel.Id;
-            model.PlayerStartProgress = model.PlayerProgress;
+        CoroutineManager.SendRequest(SubmitAchievementUrl, value, (PlayerTasksAnswer newModel) =>
+       {
+           model.Id = newModel.Id;
+           model.PlayerStartProgress = model.PlayerProgress;
 
-            if (model.PlayerProgress >= model.ActionsCount)
-            {
-                Canvaser.Instance.PopUpPanel.ShowAchievement(newModel);
-            }
+           if (model.PlayerProgress >= model.ActionsCount)
+           {
+               Canvaser.Instance.PopUpPanel.ShowAchievement(newModel);
+           }
 
-            if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
-            {
-                InventoryManager.Instance.GetSuitsAsync();
-            }
+           if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
+           {
+               InventoryManager.Instance.GetSuitsAsync();
+           }
             //add window
         });
     }
 
-    public void GetAllAchievementsAsync(ResultCallback callback=null)
+    public void GetAllAchievementsAsync(ResultCallback callback = null)
     {
-        CoroutineManager.SendRequest(GetAchievementsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (List<PlayerAchievementModel>  tasks) =>
+        CoroutineManager.SendRequest(GetAchievementsUrl, new { Value = (int)LocalizationManager.CurrentLanguage }, (List<PlayerAchievementModel> tasks) =>
         {
             Canvaser.Instance.AchievementsPanel.SetAchievementsPanel(tasks);
 

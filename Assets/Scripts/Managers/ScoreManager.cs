@@ -29,10 +29,10 @@ public class ScoreManager : MonoBehaviour
 
     public void SetUrls()
     {
-        SubmitScoreUrl = ServerInfo.GetUrl(SubmitScoreUrl);
-        UseBonusUrl = ServerInfo.GetUrl(UseBonusUrl);
-        GetKeyUrl = ServerInfo.GetUrl(GetKeyUrl);
-        ContinueForMoneyUrl = ServerInfo.GetUrl(ContinueForMoneyUrl);
+        ServerInfo.SetUrl(ref SubmitScoreUrl);
+        ServerInfo.SetUrl(ref UseBonusUrl);
+        ServerInfo.SetUrl(ref GetKeyUrl);
+        ServerInfo.SetUrl(ref ContinueForMoneyUrl);
     }
 
     bool SubmittingScore = false;
@@ -50,7 +50,7 @@ public class ScoreManager : MonoBehaviour
 
         Debug.Log(iceCream);
         string key = "";
-        yield return CoroutineManager.SendRequest(GetKeyUrl, null, 
+        yield return CoroutineManager.SendRequest(GetKeyUrl, null,
                 (string response) =>
                 {
                     key = response.Replace("\"", string.Empty);
@@ -68,7 +68,7 @@ public class ScoreManager : MonoBehaviour
             NotContinued = !GameController.Instance.Continued
         };
 
-        CoroutineManager.SendRequest(SubmitScoreUrl, model, 
+        CoroutineManager.SendRequest(SubmitScoreUrl, model,
         () =>
         {
             if (GameController.Instance.Continued)
@@ -89,7 +89,7 @@ public class ScoreManager : MonoBehaviour
         else
         {
             InputInt value = new InputInt() { Value = bonusInvId };
-            CoroutineManager.SendRequest(UseBonusUrl, value, 
+            CoroutineManager.SendRequest(UseBonusUrl, value,
             errorMethod: (response) =>
             {
                 SetUses(bonusInvId);
@@ -116,7 +116,7 @@ public class ScoreManager : MonoBehaviour
 
     System.Collections.IEnumerator ContinueForMoneyAsync()
     {
-        yield return CoroutineManager.SendRequest(ContinueForMoneyUrl, null, 
+        yield return CoroutineManager.SendRequest(ContinueForMoneyUrl, null,
             () =>
             {
                 ContinuePanel.Instance.gameObject.SetActive(false);

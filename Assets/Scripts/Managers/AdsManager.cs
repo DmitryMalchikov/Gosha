@@ -28,9 +28,9 @@ public class AdsManager : MonoBehaviour {
     }
     public void SetUrls()
     {
-        AdsUrl = ServerInfo.GetUrl(AdsUrl);
-        AdsImageUrl = ServerInfo.GetUrl(AdsImageUrl);
-		DoubleScoreUrl = ServerInfo.GetUrl(DoubleScoreUrl);
+        ServerInfo.SetUrl(ref AdsUrl);
+        ServerInfo.SetUrl(ref AdsImageUrl);
+		ServerInfo.SetUrl(ref DoubleScoreUrl);
     }
 
 	public void DoubleScoreAds(Text text, Image image)
