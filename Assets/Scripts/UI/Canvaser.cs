@@ -42,6 +42,7 @@ public class Canvaser : MonoBehaviour
     public List<IceCreamChanger> IceCreamPanels;
     public Dropdown LanguageDropdown;
     public GameObject LoadingPanel;
+    public CanvasGroup LoadingPanelCanvasGroup;
     public LoginCanvas LoginC;
     public GameObject LoginPanel;
     public GameObject MainMenu;
@@ -128,7 +129,7 @@ public class Canvaser : MonoBehaviour
 
     public void CloseLoading()
     {
-        LoadingPanel.GetComponent<Animator>().SetBool("Loaded", true);
+        //LoadingPanel.GetComponent<Animator>().SetBool("Loaded", true);
         StartCoroutine(LoadingClosing());
     }
 
@@ -304,7 +305,15 @@ public class Canvaser : MonoBehaviour
 
     IEnumerator LoadingClosing()
     {
-        yield return new WaitForSeconds(1);
+        float opacity = 1;
+
+        while (opacity > 0)
+        {
+            yield return null;
+            opacity -= Time.deltaTime;
+            LoadingPanelCanvasGroup.alpha = opacity;
+        }
+        
         LoadingPanel.SetActive(false);
     }
 

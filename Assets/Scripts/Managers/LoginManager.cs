@@ -67,10 +67,33 @@ public class LoginManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         SetUrls();
-        //LoginProvider = PlayerPrefs.GetString("provider");
+        string tokenExpires = PlayerPrefs.GetString("token_expires_in_gosha");
+
+        yield return GameController.Frame;
+
+        if (!string.IsNullOrEmpty(tokenExpires))
+        {
+            DateTime tokenExpireDate = DateTime.Parse(tokenExpires);
+            if (tokenExpireDate > DateTime.Now.AddDays(-1))
+            {
+                string token = PlayerPrefs.GetString("token_gosha");
+                
+                Headers = new List<Header>() { new Header("Authorization", " Bearer " + token) };
+                GetUserInfoAsync();
+
+                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+                AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+
+                LoginCanvas.Instance.EnableWarning(false);
+                LoginCanvas.Instance.Enable(false);
+
+                yield break;
+            }
+        }
+
         string refreshExpires = PlayerPrefs.GetString("refresh_expires_in_gosha");
 
         if (string.IsNullOrEmpty(refreshExpires))
@@ -114,6 +137,9 @@ public class LoginManager : MonoBehaviour
                PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
                PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
 
+               PlayerPrefs.SetString("token_gosha", userToken.Token);
+               PlayerPrefs.SetString("token_expires_in_gosha", DateTime.Now.AddSeconds(userToken.TokenExpiresIn).ToString());
+
                LoginCanvas.Instance.EnableWarning(false);
 
                Debug.Log(userToken.Token);
@@ -148,6 +174,9 @@ public class LoginManager : MonoBehaviour
 
            PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
            PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(userToken.RefreshExpireIn).ToString());
+
+           PlayerPrefs.SetString("token_gosha", userToken.Token);
+           PlayerPrefs.SetString("token_expires_in_gosha", DateTime.Now.AddSeconds(userToken.TokenExpiresIn).ToString());
 
            OneSignal.SetSubscription(true);
            OneSignal.SyncHashedEmail(userToken.Email);
@@ -318,6 +347,8 @@ public class LoginManager : MonoBehaviour
         PlayerPrefs.DeleteKey("refresh_expires_in_gosha");
         PlayerPrefs.DeleteKey("provider_gosha");
         PlayerPrefs.DeleteKey("CurrentSuit");
+        PlayerPrefs.DeleteKey("token_gosha");
+        PlayerPrefs.DeleteKey("token_expires_in_gosha");
         PlayerController.Instance.TakeOffSuits();
         OneSignal.SetSubscription(false);
         FB.LogOut();

@@ -70,14 +70,6 @@ public static class NetworkHelper
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                if (type != DataType.Network)
-                {
-                    ThreadHelper.RunNewThread(() =>
-                    {
-                        Extensions.SaveJsonData(type, response.Text);
-                    });
-                }
-
                 if (preSuccessMethod != null)
                 {
                     preSuccessMethod(response);
@@ -114,13 +106,6 @@ public static class NetworkHelper
         {
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                if (type != DataType.Network)
-                {
-                    ThreadHelper.RunNewThread(() =>
-                    {
-                        Extensions.SaveJsonData(type, response.Text);
-                    });
-                }
                 if (preSuccessMethod != null)
                 {
                     preSuccessMethod(response);
@@ -205,7 +190,18 @@ public static class NetworkHelper
         {
             yield return null;
         }
-    }
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK && forceUpdate)
+        {
+            if (type != DataType.Network)
+            {
+                ThreadHelper.RunNewThread(() =>
+                {
+                    Extensions.SaveJsonData(type, response.Text);
+                });
+            }
+        }
+        }
 
     public static void HandleRequestError(AnswerModel response, Action<AnswerModel> errorMethod)
     {
@@ -362,6 +358,9 @@ public class AccessToken
 
     [JsonProperty(PropertyName = "refresh_expires_in")]
     public float RefreshExpireIn { get; set; }
+
+    [JsonProperty(PropertyName = "expires_in")]
+    public float TokenExpiresIn { get; set; }
 }
 
 public class Header
