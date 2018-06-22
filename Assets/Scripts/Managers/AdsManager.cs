@@ -33,7 +33,7 @@ public class AdsManager : MonoBehaviour {
 		ServerInfo.SetUrl(ref DoubleScoreUrl);
     }
 
-	public void DoubleScoreAds(Text text, Image image)
+	public void DoubleScoreAds(Text text, RawImage image)
 	{
         CoroutineManager.SendRequest(DoubleScoreUrl, new { Value = (int)LocalizationManager.CurrentLanguage },  (AdsModel ads) =>
 		{
@@ -64,10 +64,10 @@ public class AdsManager : MonoBehaviour {
         }
     }
 
-    public void GetAds(Text text, Image image)
+    public void GetAds(Text text, RawImage image)
     {
         Canvaser.Instance.ADSPanel.OpenAds();
-        image.sprite = null;
+        image.texture = null;
         TurnOnLoading();
         CoroutineManager.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (AdsModel ads) => 
         {
@@ -77,7 +77,7 @@ public class AdsManager : MonoBehaviour {
         });
     }
 
-    public void GetAdsImage(int adsId, Image image)
+    public void GetAdsImage(int adsId, RawImage image)
     {
         StartCoroutine(DownloadImage(adsId, image));
     }
@@ -91,6 +91,23 @@ public class AdsManager : MonoBehaviour {
         yield return www;
 
         image.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f);
+        if (OnAdsDownloaded != null)
+        {
+            OnAdsDownloaded();
+        }
+        OnAdsDownloaded = null;
+        TurnOffLoading();
+    }
+
+    IEnumerator DownloadImage(int adsId, RawImage image)
+    {
+        string url = AdsImageUrl + adsId;
+
+        WWW www = new WWW(url);
+
+        yield return www;
+
+        image.texture = www.texture;
         if (OnAdsDownloaded != null)
         {
             OnAdsDownloaded();

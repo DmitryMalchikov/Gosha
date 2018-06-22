@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class AdsPanel : MonoBehaviour {
 
-    public Image img;
+    public RawImage img;
     public Text txt;
 
     public List<GameObject> LoadingPanels = new List<GameObject>();

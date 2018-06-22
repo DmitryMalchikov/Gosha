@@ -57,7 +57,7 @@ public class FriendsManager : Manager
         CoroutineManager.SendRequest(GetFriendsOffersUrl, null, (List<FriendOfferModel> friends) =>
         {
             Canvaser.Instance.FriendsPanel.SetFriendOffers(friends);
-        }, loadingPanelsKey: "friends");
+        }, loadingPanelsKey: "addfriend");
     }
 
     public void OfferFriendshipAsync(int userId)

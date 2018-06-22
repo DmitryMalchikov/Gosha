@@ -11,7 +11,7 @@ public class AchievementInfo : MonoBehaviour {
     public Text Description;
     public GameObject SocialNetworkButtons;
 
-    public Image ADS;
+    public RawImage ADS;
     public Text ADSText;
 
     public void SetAchievementInfo(PlayerAchievementModel model)
