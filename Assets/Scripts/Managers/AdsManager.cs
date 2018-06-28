@@ -9,9 +9,6 @@ public class AdsManager : MonoBehaviour {
     public event ResultCallback OnAdsDownloaded;
     public static AdsManager Instance { get; private set; }
 
-    public Image AdsImage;
-    public Text AdsText;
-
     public string AdsUrl = "/api/ads/Advertisement";
     public string AdsImageUrl = "/api/ads/adsimage?adsId=";
 	public string DoubleScoreUrl = "/api/gameplay/doublescore";

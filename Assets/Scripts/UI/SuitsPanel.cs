@@ -159,6 +159,15 @@ public class SuitsPanel : MonoBehaviour
         InventoryManager.Instance.GetSuitsAsync();
     }
 
+    public void OpenWithForceUpdate()
+    {
+        gameObject.SetActive(true);
+        Canvaser.Instance.Suits.ResetPanel();
+        CardsPanel.SetActive(false);
+        SuitPanel.SetActive(true);
+
+        InventoryManager.Instance.GetSuitsAsync(true);
+    }
 
     public void SetCostumes(List<Costume> costumes)
     {

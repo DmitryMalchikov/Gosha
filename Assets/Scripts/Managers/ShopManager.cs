@@ -81,7 +81,7 @@ public class ShopManager : Manager
         CoroutineManager.SendRequest(GetSuitUrl, input, () =>
        {
            Debug.Log("OK");
-           Canvaser.Instance.Suits.Open();
+           Canvaser.Instance.Suits.OpenWithForceUpdate();
        });
     }
 
