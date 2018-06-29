@@ -8,6 +8,7 @@ public class AdsManager : MonoBehaviour {
 
     public event ResultCallback OnAdsDownloaded;
     public static AdsManager Instance { get; private set; }
+    public static bool Initialized = false;
 
     public string AdsUrl = "/api/ads/Advertisement";
     public string AdsImageUrl = "/api/ads/adsimage?adsId=";
@@ -22,6 +23,7 @@ public class AdsManager : MonoBehaviour {
     private void Start()
     {
         SetUrls();
+        Initialized = true;
     }
     public void SetUrls()
     {

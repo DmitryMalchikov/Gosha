@@ -72,7 +72,7 @@ public class LoginManager : MonoBehaviour
         SetUrls();
         string tokenExpires = PlayerPrefs.GetString("token_expires_in_gosha");
 
-        yield return GameController.Frame;
+        yield return new WaitUntil(() => AdsManager.Initialized);
 
         if (!string.IsNullOrEmpty(tokenExpires))
         {
