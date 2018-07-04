@@ -117,15 +117,17 @@ public class FriendsManager : Manager
 
         CoroutineManager.SendRequest(SearchPlayersUrl, search, (FriendOfferModel result) =>
        {
+
+           Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
            if (result.Id != 0)
            {
                Canvaser.Instance.FriendsPanel.PlayerSearchResult.SetPlayerObject(result);
-               Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
+               //Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
            }
            else
            {
                Canvaser.Instance.FriendsPanel.PlayerSearchResult.Warning.SetActive(true);
-               Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
+               //Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
            }
             //show info
         });
