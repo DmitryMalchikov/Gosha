@@ -14,12 +14,16 @@ public class StatisticsPanel : MonoBehaviour {
     public List<FriendObject> Leaders;
 
     public Text LeadersText;
+    public Toggle WeekToggle;
+    public Toggle MonthToggle;
 
     public void Open()
     {
         gameObject.SetActive(true);
         ClearAllContent();
 
+        MonthToggle.isOn = false;
+        WeekToggle.isOn = true;
         StatisticsManager.Instance.GetAllStatisticsAsync(0, () => Scroll.Rebuild(CanvasUpdate.PostLayout));
         StatisticsManager.Instance.GetAllStatisticsAsync(2, () => Scroll.Rebuild(CanvasUpdate.PostLayout));
     }

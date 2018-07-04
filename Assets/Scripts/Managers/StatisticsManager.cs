@@ -54,6 +54,7 @@ public class StatisticsManager : Manager
            else
            {
                Canvaser.Instance.Stats.SetLeaders(info);
+               Canvaser.Instance.Stats.LeadersText.text = period == 0 ? LocalizationManager.GetLocalizedValue("weekleaders") : LocalizationManager.GetLocalizedValue("monthleaders");
            }
 
            if (callback != null)

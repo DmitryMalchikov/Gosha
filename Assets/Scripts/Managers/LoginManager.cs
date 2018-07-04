@@ -77,7 +77,7 @@ public class LoginManager : MonoBehaviour
         if (!string.IsNullOrEmpty(tokenExpires))
         {
             DateTime tokenExpireDate = DateTime.Parse(tokenExpires);
-            if (tokenExpireDate > DateTime.Now.AddDays(-1))
+            if (tokenExpireDate > DateTime.Now.AddDays(1))
             {
                 string token = PlayerPrefs.GetString("token_gosha");
                 
