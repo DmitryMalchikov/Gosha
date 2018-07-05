@@ -21,6 +21,7 @@ public class TournamentPanel : MonoBehaviour
     public Transform StatisticsContent;
     public GameObject TournamentPlayer;
     public ScrollRect ContentScroll;
+    public GameObject GoalPanel;
 
     public List<FriendObject> Participants;
 
@@ -74,7 +75,14 @@ public class TournamentPanel : MonoBehaviour
     public void OpenTable()
     {
         gameObject.SetActive(true);
-        ContentScroll.Rebuild(CanvasUpdate.PostLayout);
+        StartCoroutine(EnableGoal());
+        //ContentScroll.Rebuild(CanvasUpdate.PostLayout);
+    }
+
+    IEnumerator EnableGoal()
+    {
+        yield return null;
+        GoalPanel.SetActive(true);
     }
 
     private void OnEnable()
