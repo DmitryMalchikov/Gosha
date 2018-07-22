@@ -107,7 +107,7 @@ public class SuitsPanel : MonoBehaviour
 
         TakeOffSuitBtn.gameObject.SetActive(PlayerPrefs.GetString("CurrentSuit") == suit.Name);
 
-        if (Name == "FB Suit" || Name == "OK Suit" || Name == "VK Suit" || Name == "Unicorn Suit")
+        if (suit.Cards.Count == 0)
         {
             ShowSuitsCards.gameObject.SetActive(false);
             Share.gameObject.SetActive(!HasSuit);
