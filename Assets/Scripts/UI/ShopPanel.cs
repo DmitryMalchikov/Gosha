@@ -91,23 +91,34 @@ public class ShopPanel : MonoBehaviour
             if (LoginManager.LocalUser)
             {
                 var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
-                current.Upgrade.value = upgrade != null ?  upgrade.UpgradeAmount : 0;
+                var amount = upgrade != null ? upgrade.UpgradeAmount : 0;
+                current.Upgrade.value = amount;
+                if (amount < 5)
+                {
+                    current.PriceText.text = (item.Cost * (amount + 1)).ToString();
+                    current.BuyButton.interactable = true;
+                }
+                else
+                {
+                    current.BuyButton.interactable = false;
+                    current.PriceText.text = "Max";
+                }
             }
             else
             {
                 current.Upgrade.value = item.Amount;
+                if (item.Amount < 5)
+                {
+                    current.PriceText.text = (item.Cost * (item.Amount + 1)).ToString();
+                    current.BuyButton.interactable = true;
+                }
+                else
+                {
+                    current.BuyButton.interactable = false;
+                    current.PriceText.text = "Max";
+                }
             }
             current.ItemID = item.Id;
-            if (item.Amount < 5)
-            {
-                current.PriceText.text = (item.Cost * (item.Amount + 1)).ToString();
-				current.BuyButton.interactable = true;
-            }
-            else
-            {
-                current.BuyButton.interactable = false;
-                current.PriceText.text = "Max";
-            }
         }
     }
 

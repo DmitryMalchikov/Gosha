@@ -86,12 +86,9 @@ public class Canvaser : MonoBehaviour
         _backButtons.Push(btn);
     }
 
-    public void OpenMyBonusesPanel()
+    public void OpenMyBonusesPanel(bool open)
     {
-        if (IsLoggedIn())
-        {
-            MyBonusesPanel.SetActive(true);
-        }
+        MyBonusesPanel.SetActive(open);
     }
 
     public bool IsLoggedIn()
@@ -280,12 +277,9 @@ public class Canvaser : MonoBehaviour
 
     public void StartRun()
     {
-        if (IsLoggedIn())
-        {
-            MainMenu.SetActive(false);
-            CameraFollow.Instance.ChangeCamera();
-            PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
-        }
+        MainMenu.SetActive(false);
+        CameraFollow.Instance.ChangeCamera();
+        PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
     }
 
     public void TradeOffered()

@@ -252,6 +252,11 @@ public static class NetworkHelper
     {
         string savedHash;
 
+        if (LoginManager.LocalUser)
+        {
+            return false;
+        }
+
         switch (type)
         {
             case DataType.Duels:

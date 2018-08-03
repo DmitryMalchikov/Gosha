@@ -180,6 +180,7 @@ public class LoginManager : MonoBehaviour
 
         CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
        {
+           Extensions.RemoveJsonData(DataType.UserInfo);
            LocalUser = false;
            userToken = token;
 

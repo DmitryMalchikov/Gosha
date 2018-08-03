@@ -149,7 +149,7 @@ public class Registration : MonoBehaviour
         }
         else
         {
-            CantContinue(LocalizationManager.GetLocalizedValue("regionchoose"));
+            CantContinue("regionchoose");
         }
     }
 

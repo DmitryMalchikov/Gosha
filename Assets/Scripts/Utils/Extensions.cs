@@ -40,7 +40,7 @@ public static class Extensions
                 break;
         }
 
-        return fileName;
+        return Path.Combine(path, fileName);
     }
 
     public static void SaveJsonData(DataType type, string dataToSave)
