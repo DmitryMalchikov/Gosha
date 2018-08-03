@@ -17,6 +17,10 @@ public class RegisterBindingModel
     public string Nickname { get; set; }
 
     public int RegionId { get; set; }
+    public int IceCream { get; set; }
+    public int Cases { get; set; }
+    public List<Bonus> Bonuses { get; set; }
+    public List<BonusUpgrade> BonusUpgrades { get; set; }
 }
 
 public class Registration : MonoBehaviour

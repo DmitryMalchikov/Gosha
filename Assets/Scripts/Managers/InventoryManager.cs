@@ -66,7 +66,7 @@ public class InventoryManager : Manager
 
     public void GetMyCasesAsync()
     {
-        Canvaser.Instance.CasesPanel.SetCases(new List<InventoryItem> { new InventoryItem { Amount = LoginManager.Instance.User.Cases, Id = LoginManager.Instance.User.CaseId } });
+        Canvaser.Instance.CasesPanel.SetCases(new List<InventoryItem> { new InventoryItem { Amount = LoginManager.User.Cases, Id = LoginManager.User.CaseId } });
         //Canvaser.ShowLoading(true);
         //StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, null,  (response) =>
         //{

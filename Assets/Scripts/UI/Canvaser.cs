@@ -45,7 +45,7 @@ public class Canvaser : MonoBehaviour
     public CanvasGroup LoadingPanelCanvasGroup;
     public LoginCanvas LoginC;
     public GameObject LoginPanel;
-    public GameObject MainMenu;
+    public MainMenuPanel MainMenu;
     public Transform MainPanel;
     public AudioMixer MusicMixer;
     public Slider MusicVolumeSlider;
@@ -102,6 +102,7 @@ public class Canvaser : MonoBehaviour
         input = input.Insert(index + 1, "(");
         input += ")";
         input = input.Replace(" Card", "");
+        input = input.Replace(" Suit", "");
         return input;
     }
 

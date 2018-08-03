@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VacuumShaders.CurvedWorld;
@@ -316,7 +317,19 @@ public class GameController : MonoBehaviour
         }
 
         CurrentBonus.Amount -= 1;
-        ScoreManager.Instance.UseBonusAsync(CurrentBonus.Id);
+        if (!LoginManager.LocalUser)
+        {
+            ScoreManager.Instance.UseBonusAsync(CurrentBonus.Id);
+        }
+        else
+        {
+            Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
+
+            ThreadHelper.RunNewThread(() =>
+            {
+                Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+            });
+        }
     }
 
     private static void LoadHashes()

@@ -13,6 +13,8 @@ public class ShopManager : Manager
     public string GetUpdgradesUrl = "/api/shop/bonusupgrades";
     public string PromoCodeUrl = "/api/shop/promocode";
     public static ShopManager Instance { get; private set; }
+    public static ShopModel CurrentShop;
+
     public void BuyItemAsync(int itemId, bool upgrade, int price, ResultCallback callback = null)
     {
         ItemBuyModel buy = new ItemBuyModel() { ItemId = itemId, Amount = 1 };
@@ -31,8 +33,8 @@ public class ShopManager : Manager
                });
            }
 
-           LoginManager.Instance.User.IceCream -= price;
-           Canvaser.Instance.SetAllIceCreams(LoginManager.Instance.User.IceCream);
+           LoginManager.User.IceCream -= price;
+           Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
            Canvaser.Instance.Shop.CheckBuyBtns();
 
            LoginManager.Instance.GetUserInfoAsync();
@@ -62,6 +64,7 @@ public class ShopManager : Manager
     {
         CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
        {
+           CurrentShop = model;
            Debug.Log("OK");
            //show tasks
            GameController.SetHash("ShopHash", model.ShopHash);
@@ -126,6 +129,11 @@ public class ShopManager : Manager
         Canvaser.Instance.Shop.SetUpgrades(model.BonusUpgrades);
 
         Canvaser.Instance.Shop.gameObject.SetActive(true);
+    }
+
+    public static void UpdateShopItems()
+    {
+        Instance.SetShopItems(CurrentShop);
     }
 
     private void SetUrls()

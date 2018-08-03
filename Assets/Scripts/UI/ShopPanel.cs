@@ -34,7 +34,7 @@ public class ShopPanel : MonoBehaviour
 
     public void SetPromoBtn()
     {
-        var date = LoginManager.Instance.User.BunnedUntil;
+        var date = LoginManager.User.BunnedUntil;
 
         if (date.HasValue && date > DateTime.Now)
         {
@@ -78,7 +78,15 @@ public class ShopPanel : MonoBehaviour
         foreach (ShopItem item in upgrades)
         {
             ItemInfo current = Items.Find(x => x.ItemName == item.Name);
-            current.Upgrade.value = item.Amount;
+            if (LoginManager.LocalUser)
+            {
+                var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
+                current.Upgrade.value = upgrade != null ?  upgrade.UpgradeAmount : 0;
+            }
+            else
+            {
+                current.Upgrade.value = item.Amount;
+            }
             current.ItemID = item.Id;
             if (item.Amount < 5)
             {
@@ -107,17 +115,17 @@ public class ShopPanel : MonoBehaviour
     {
         for (int i = 0; i < Items.Count; i++)
         {
-            Items[i].BuyButton.interactable = Items[i].PriceText.text != "Max" && int.Parse(Items[i].PriceText.text) <= LoginManager.Instance.User.IceCream;
+            Items[i].BuyButton.interactable = Items[i].PriceText.text != "Max" && int.Parse(Items[i].PriceText.text) <= LoginManager.User.IceCream;
         }
         for (int i = 0; i < Cases.Count; i++)
         {
-            Cases[i].BuyButton.interactable = int.Parse(Cases[i].PriceText.text) <= LoginManager.Instance.User.IceCream;
+            Cases[i].BuyButton.interactable = int.Parse(Cases[i].PriceText.text) <= LoginManager.User.IceCream;
         }
         for (int i = 0; i < CardSets.Count; i++)
         {
             for (int j = 0; j < CardSets[i].Cards.Count; j++)
             {
-                CardSets[i].Cards[j].BuyButton.interactable = int.Parse(CardSets[i].Cards[j].PriceText.text) <= LoginManager.Instance.User.IceCream;
+                CardSets[i].Cards[j].BuyButton.interactable = int.Parse(CardSets[i].Cards[j].PriceText.text) <= LoginManager.User.IceCream;
             }
         }
     }

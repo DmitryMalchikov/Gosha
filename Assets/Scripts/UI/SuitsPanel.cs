@@ -87,8 +87,8 @@ public class SuitsPanel : MonoBehaviour
         BoxPrizeObj.TurnOffPrizes();
         GetPrizePnl.SetActive(false);
         GetPrizeBtn.SetActive(false);
-        LoginManager.Instance.User.Cases--;
-        Canvaser.Instance.CasesCount.text = ": " + LoginManager.Instance.User.Cases;
+        LoginManager.User.Cases--;
+        Canvaser.Instance.CasesCount.text = ": " + LoginManager.User.Cases;
 
         LoginManager.Instance.GetUserInfoAsync(() =>
         {
@@ -296,7 +296,7 @@ public class SuitsPanel : MonoBehaviour
         //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
         PreopenCase.SetActive(true);
         Idle.SetActive(false);
-        LootManager.Instance.OpenCaseAsync(LoginManager.Instance.User.CaseId);
+        LootManager.Instance.OpenCaseAsync(LoginManager.User.CaseId);
         AudioManager.PlayCaseOpen();
     }
 }

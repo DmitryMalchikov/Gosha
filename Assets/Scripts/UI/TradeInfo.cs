@@ -13,7 +13,7 @@ public class TradeInfo : MonoBehaviour {
     public void SetTrade(TradeOfferModel model)
     {
         info = model;
-        if(model.UserId == LoginManager.Instance.User.Id)
+        if(model.UserId == LoginManager.User.Id)
         {
             Title.text = string.Format(LocalizationManager.GetLocalizedValue("youoffered"), model.Nickname);
         }

@@ -36,10 +36,10 @@ public class TradeDetails : MonoBehaviour {
     {
         info = model;
 
-        if(model.UserId == LoginManager.Instance.User.Id)
+        if(model.UserId == LoginManager.User.Id)
         {
             Title.text = LocalizationManager.GetLocalizedValue("yourtradeoffer") + model.Nickname;
-            FirstUserName.text = LoginManager.Instance.User.Nickname;
+            FirstUserName.text = LoginManager.User.Nickname;
             SecondUserName.text = model.Nickname;
             AcceptBtn.gameObject.SetActive(false);
         }
@@ -47,7 +47,7 @@ public class TradeDetails : MonoBehaviour {
         {
             Title.text = model.Nickname + LocalizationManager.GetLocalizedValue("offeredyou");
             FirstUserName.text = model.Nickname;
-            SecondUserName.text = LoginManager.Instance.User.Nickname;
+            SecondUserName.text = LoginManager.User.Nickname;
             AcceptBtn.gameObject.SetActive(true);
         }
         

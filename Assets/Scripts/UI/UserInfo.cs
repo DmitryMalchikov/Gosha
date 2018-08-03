@@ -30,7 +30,7 @@ public class UserInfo : MonoBehaviour
         //Avatar.SetNativeSize();
         if (isFriend)
         {
-            TradeBtn.interactable = LoginManager.Instance.User.CanOfferTrade;
+            TradeBtn.interactable = LoginManager.User.CanOfferTrade;
         }
         gameObject.SetActive(true);
     }
