@@ -278,7 +278,7 @@ public class SuitsPanel : MonoBehaviour
     public void SetCases(List<InventoryItem> cases)
     {
         Debug.Log(cases.Count);
-        if (cases.Count == 0)
+        if (cases.Count < 1 || cases[0].Amount < 1)
         {
             CaseImage.gameObject.SetActive(false);
             Warning.text = LocalizationManager.GetLocalizedValue("nocases");
@@ -295,6 +295,11 @@ public class SuitsPanel : MonoBehaviour
     }
     public void OpenCase()
     {
+        if (LoginManager.User.Cases < 1)
+        {
+            return;
+        }
+
         GetPrizePnl.SetActive(true);
         //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
         PreopenCase.SetActive(true);
