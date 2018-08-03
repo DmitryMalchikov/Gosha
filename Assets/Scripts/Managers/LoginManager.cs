@@ -396,6 +396,10 @@ public class LoginManager : MonoBehaviour
         VK.LogOut();
         Headers = null;
         userToken = null;
+        User = new UserInfoModel();
+        LocalUser = true;
+        Canvaser.Instance.SetAllIceCreams(User.IceCream);
+        Canvaser.Instance.SetNotifications(User);
     }
 
     public void SendImage(string path)
