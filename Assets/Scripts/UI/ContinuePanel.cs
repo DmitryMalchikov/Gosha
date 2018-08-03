@@ -20,7 +20,7 @@ public class ContinuePanel : MonoBehaviour {
 
     public void OpenContinuePanel()
     {
-        ContinueButton.interactable = LoginManager.Instance.User.IceCream >= ContinueCost;
+        ContinueButton.interactable = LoginManager.User.IceCream >= ContinueCost;
 
 		ContinueCostText.text = ContinueCost.ToString ();
         gameObject.SetActive(true);
@@ -42,7 +42,7 @@ public class ContinuePanel : MonoBehaviour {
 
     public void Continue()
     {
-		if (LoginManager.Instance.User.IceCream >= ContinueCost) {
+		if (LoginManager.User.IceCream >= ContinueCost) {
 			gameObject.SetActive(false);
 			GameController.Instance.ContinueGameForMoney(); 
 		}

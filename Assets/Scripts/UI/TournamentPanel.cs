@@ -36,7 +36,7 @@ public class TournamentPanel : MonoBehaviour
             Canvaser.Instance.TournamentBtn.interactable = true;
             info = model;
             TournamentName.text = model.Name;
-            Region.text = LocalizationManager.GetLocalizedValue("region") + LocalizationManager.GetLocalizedValue(LoginManager.Instance.User.Region);
+            Region.text = LocalizationManager.GetLocalizedValue("region") + LocalizationManager.GetLocalizedValue(LoginManager.User.Region);
             string[] prizes = new string[3];
             Debug.Log(model.Prizes);
             prizes = (model.Prizes.Split(';'));
@@ -59,7 +59,7 @@ public class TournamentPanel : MonoBehaviour
         for (int i = 0; i < models.Count; i++)
         {
             FriendObject newParticipant = Instantiate(TournamentPlayer, StatisticsContent).GetComponent<FriendObject>();
-            if (models[i].Id == LoginManager.Instance.User.Id)
+            if (models[i].Id == LoginManager.User.Id)
             {
                 newParticipant.YourPanelTournament(models[i], i);
             }

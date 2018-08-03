@@ -17,9 +17,9 @@ public class DuelResult : MonoBehaviour {
 
     public void SetResult(DuelResultModel model)
     {
-        IceCream.text = LoginManager.Instance.User.IceCream.ToString();
+        IceCream.text = LoginManager.User.IceCream.ToString();
         info = model;
-		bool win = info.FirstPlayer.Id == LoginManager.Instance.User.Id ? info.FirstPlayer.Result > info.SecondPlayer.Result : info.FirstPlayer.Result < info.SecondPlayer.Result;
+		bool win = info.FirstPlayer.Id == LoginManager.User.Id ? info.FirstPlayer.Result > info.SecondPlayer.Result : info.FirstPlayer.Result < info.SecondPlayer.Result;
 		if (win) {
 			Title.text = LocalizationManager.GetLocalizedValue ("duelwin");//"Поздравляем!\nВы победили!";
 			PrizeText.text = LocalizationManager.GetLocalizedValue ("yourprize");//"Ваш приз:";

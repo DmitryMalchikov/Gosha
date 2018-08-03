@@ -39,12 +39,13 @@ public class LoginManager : MonoBehaviour
     public InputField Email;
     public InputField Password;
 
-    public List<Header> Headers;
+    public List<Header> Headers = new List<Header>();
 
     string _resetEmail;
     string _resetCode;
 
-    public UserInfoModel User;
+    public static UserInfoModel User;
+    public static bool LocalUser = false;
 
     public void SetUrls()
     {
@@ -98,7 +99,14 @@ public class LoginManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(refreshExpires))
         {
-            Canvaser.Instance.CloseLoading();
+            //if not any account
+            LocalUser = true;
+            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+            AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+            LoginCanvas.Instance.EnableWarning(false);
+            LoginCanvas.Instance.Enable(false);
+            GetUserInfoAsync();
+            //Canvaser.Instance.CloseLoading();
         }
         else
         {
@@ -129,6 +137,7 @@ public class LoginManager : MonoBehaviour
     {
         CoroutineManager.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), (AccessToken token) =>
            {
+               LocalUser = false;
                userToken = token;
 
                OneSignal.SetSubscription(true);
@@ -150,7 +159,7 @@ public class LoginManager : MonoBehaviour
                GetUserInfoAsync();
                //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-               AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+               AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);               
            },
             (response) =>
             {
@@ -170,6 +179,7 @@ public class LoginManager : MonoBehaviour
 
         CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
        {
+           LocalUser = false;
            userToken = token;
 
            PlayerPrefs.SetString("refresh_token_gosha", userToken.RefreshToken);
@@ -191,7 +201,7 @@ public class LoginManager : MonoBehaviour
            GetUserInfoAsync();
            //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-           AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+           AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);           
        },
         (response) =>
         {
@@ -213,38 +223,57 @@ public class LoginManager : MonoBehaviour
     {
         CoroutineManager.SendRequest(UserInfoUrl, null, (UserInfoModel info) =>
         {
-            User = info;
-            Canvaser.Instance.Nickname.text = User.Nickname;
-            Canvaser.Instance.SBonuses.SetStartBonuses(info.Bonuses);
-            AchievementsManager.Instance.LoadAchievements(info.Achievements);
-            TasksManager.Instance.LoadTasks(info.WeeklyTasks);
-            Canvaser.Instance.SetNotifications(info);
-            Canvaser.Instance.SetAllIceCreams(User.IceCream);
-            GameController.Instance.LoadBonusesTime(info.BonusUpgrades);
-            Canvaser.Instance.DailyBonus.SetHighlights();
-            Canvaser.Instance.SettingsRegion.Key = User.Region;
-            Canvaser.Instance.Shop.SetPromoBtn();
-            if (!User.GotDailyBonus)
+            if (info == null)
             {
-                Canvaser.Instance.DailyBonus.gameObject.SetActive(true);
+                info = new UserInfoModel();
             }
-            GetAvatarImage();
 
-            //NotificationsManager.Register(User.Id);
+            User = info;
+            GameController.Instance.LoadBonusesTime(info.BonusUpgrades);
+            Canvaser.Instance.SetAllIceCreams(User.IceCream);
+            Canvaser.Instance.SBonuses.SetStartBonuses(info.Bonuses);
+            Canvaser.Instance.SetNotifications(info);
 
-            Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
-            Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);
-            Canvaser.Instance.OpenNotificationPanel(NotificationType.TradeRequest, User.NewTrades);
+            if (!LocalUser)
+            {
+                Canvaser.Instance.Nickname.text = User.Nickname;
+                AchievementsManager.Instance.LoadAchievements(info.Achievements);
+                TasksManager.Instance.LoadTasks(info.WeeklyTasks);                
+                Canvaser.Instance.DailyBonus.SetHighlights();
+                Canvaser.Instance.SettingsRegion.Key = User.Region;
+                Canvaser.Instance.Shop.SetPromoBtn();
+
+                if (!User.GotDailyBonus)
+                {
+                    Canvaser.Instance.DailyBonus.gameObject.SetActive(true);
+                }
+                GetAvatarImage();
+
+                //NotificationsManager.Register(User.Id);
+
+                Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
+                Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);
+                Canvaser.Instance.OpenNotificationPanel(NotificationType.TradeRequest, User.NewTrades);
+            }
 
             if (callback != null)
             {
                 callback();
             }
-        });
+        }, type: DataType.UserInfo);
     }
 
     public void RegisterAsync(RegisterBindingModel model)
     {
+        if (User != null)
+        {
+            model.IceCream = User.IceCream;
+            model.Cases = User.Cases;
+            model.Bonuses = User.Bonuses;
+            model.BonusUpgrades = User.BonusUpgrades;
+            Extensions.RemoveJsonData(DataType.UserInfo);
+        }
+
         CoroutineManager.SendRequest(RegisterUrl, model, () =>
        {
            GetTokenAsync(model.Email, model.Password);
@@ -330,6 +359,15 @@ public class LoginManager : MonoBehaviour
 
     public void RegisterExternal(RegisterExternalBindingModel model)
     {
+        if (User != null)
+        {
+            model.IceCream = User.IceCream;
+            model.Cases = User.Cases;
+            model.Bonuses = User.Bonuses;
+            model.BonusUpgrades = User.BonusUpgrades;
+            Extensions.RemoveJsonData(DataType.UserInfo);
+        }
+
         CoroutineManager.SendRequest(ExternalRegisterUrl, model, () =>
        {
            OpenExternalLogin(LoginProvider);
@@ -373,7 +411,7 @@ public class LoginManager : MonoBehaviour
     {
         string url = ProfileImageUrl + userId;
 
-        var headers = new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
+        var headers = Headers.ToDictionary(h => h.Name, h => h.Value);// new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
 
         WWW www = new WWW(url);
 

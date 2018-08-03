@@ -9,9 +9,9 @@ public class DailyBonusPanel : MonoBehaviour
 
     public void SetHighlights()
     {
-        Debug.Log(LoginManager.Instance.User.DaysInRow);
-        CurrentDay.value = LoginManager.Instance.User.DaysInRow;
-        GetBonusButton.SetActive(!LoginManager.Instance.User.GotDailyBonus);
-        BackButton.SetActive(LoginManager.Instance.User.GotDailyBonus);
+        Debug.Log(LoginManager.User.DaysInRow);
+        CurrentDay.value = LoginManager.User.DaysInRow;
+        GetBonusButton.SetActive(!LoginManager.User.GotDailyBonus);
+        BackButton.SetActive(LoginManager.User.GotDailyBonus);
     }
 }

@@ -174,7 +174,7 @@ public static class NetworkHelper
             if (!forceUpdate)
             {
                 string data = Extensions.LoadJsonData(type);
-                if (!string.IsNullOrEmpty(data))
+                if (!string.IsNullOrEmpty(data) || type == DataType.UserInfo)
                 {
                     response.SetFields(new AnswerModel(data));
                 }
@@ -193,7 +193,7 @@ public static class NetworkHelper
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK && forceUpdate)
         {
-            if (type != DataType.Network)
+            if (type != DataType.Network && type != DataType.UserInfo)
             {
                 ThreadHelper.RunNewThread(() =>
                 {
@@ -256,19 +256,21 @@ public static class NetworkHelper
         {
             case DataType.Duels:
                 savedHash = GameController.DuelsHash;
-                return LoginManager.Instance.User.DuelsHash != savedHash;
+                return LoginManager.User.DuelsHash != savedHash;
             case DataType.Friends:
                 savedHash = GameController.FriendsHash;
-                return LoginManager.Instance.User.FriendsHash != savedHash;
+                return LoginManager.User.FriendsHash != savedHash;
             case DataType.Shop:
                 savedHash = GameController.ShopHash;
-                return LoginManager.Instance.User.ShopHash != savedHash;
+                return LoginManager.User.ShopHash != savedHash;
             case DataType.Suits:
                 savedHash = GameController.SuitsHash;
-                return LoginManager.Instance.User.SuitsHash != savedHash;
+                return LoginManager.User.SuitsHash != savedHash;
             case DataType.Trades:
                 savedHash = GameController.TradesHash;
-                return LoginManager.Instance.User.TradesHash != savedHash;
+                return LoginManager.User.TradesHash != savedHash;
+            case DataType.UserInfo:
+                return !LoginManager.LocalUser;
         }
 
         return true;
@@ -853,6 +855,10 @@ public class RegisterExternalBindingModel
     public string Nickname { get; set; }
     public string PhoneNumber { get; set; }
     public int RegionId { get; set; }
+    public int IceCream { get; set; }
+    public int Cases { get; set; }
+    public List<Bonus> Bonuses { get; set; }
+    public List<BonusUpgrade> BonusUpgrades { get; set; }
 }
 
 public class RegionModel

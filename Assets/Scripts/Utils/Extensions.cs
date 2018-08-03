@@ -9,7 +9,7 @@ using UnityEngine;
 
 public static class Extensions
 {
-    public static void SaveJsonData(DataType type, string dataToSave)
+    public static string GetPathByDataType(DataType type)
     {
         string fileName = string.Empty;
         string path = Path.Combine(GameController.PersistentDataPath, "Data");
@@ -35,11 +35,20 @@ public static class Extensions
             case DataType.Trades:
                 fileName = "5.dat";
                 break;
+            case DataType.UserInfo:
+                fileName = "6.dat";
+                break;
         }
 
+        return fileName;
+    }
+
+    public static void SaveJsonData(DataType type, string dataToSave)
+    {
+        string filePath = GetPathByDataType(type);  
+
         BinaryFormatter formatter = new BinaryFormatter();
-        path = Path.Combine(path, fileName);
-        FileStream fs = File.Create(path);
+        FileStream fs = File.Create(filePath);
         formatter.Serialize(fs, dataToSave);
         fs.Close();
 
@@ -48,41 +57,28 @@ public static class Extensions
 
     public static string LoadJsonData(DataType type)
     {
-        string fileName = string.Empty;
-        string path = Path.Combine(GameController.PersistentDataPath, "Data");
+        string filePath = GetPathByDataType(type);       
 
-        switch (type)
-        {
-            case DataType.Duels:
-                fileName = "1.dat";
-                break;
-            case DataType.Shop:
-                fileName = "2.dat";
-                break;
-            case DataType.Friends:
-                fileName = "3.dat";
-                break;
-            case DataType.Suits:
-                fileName = "4.dat";
-                break;
-            case DataType.Trades:
-                fileName = "5.dat";
-                break;
-        }
-
-        path = Path.Combine(path, fileName);
-
-        if (!File.Exists(path))
+        if (!File.Exists(filePath))
         {
             return string.Empty;
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-        FileStream fs = File.Open(path, FileMode.Open);
+        FileStream fs = File.Open(filePath, FileMode.Open);
         string data = (string)formatter.Deserialize(fs);
         fs.Close();
 
         return data;
+    }
+
+    public static void RemoveJsonData(DataType type)
+    {
+        string filePath = GetPathByDataType(type);
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
     }
 
     public static string Sha1Hash(string input)
@@ -138,5 +134,11 @@ public static class Extensions
 
 public enum DataType
 {
-    Shop, Duels, Friends, Suits, Network, Trades
+    Shop,
+    Duels,
+    Friends,
+    Suits,
+    Network,
+    Trades,
+    UserInfo
 }

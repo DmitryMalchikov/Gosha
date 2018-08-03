@@ -13,7 +13,6 @@ public class StartBonuses : MonoBehaviour
             var bonus = bonuses.Find(p => p.Name.Name == BPanels[i].Name);
 
             BPanels[i].SetInfo(bonus);
-
         }
     }
 }

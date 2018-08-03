@@ -101,7 +101,7 @@ public class Friends : MonoBehaviour
         {
             var newFriend = Instantiate(FriendOfferObject, FriendOffersContent);
             FriendObject friendObj = newFriend.GetComponent<FriendObject>();
-            if (friends[i].Id == LoginManager.Instance.User.Id)
+            if (friends[i].Id == LoginManager.User.Id)
             {
                 friendObj.YourPanel(friends[i].Place);
             }
@@ -219,9 +219,9 @@ public class Friends : MonoBehaviour
 
     public void CorrectBet(string bet)
     {
-        if (int.Parse(bet) > LoginManager.Instance.User.IceCream)
+        if (int.Parse(bet) > LoginManager.User.IceCream)
         {
-            DuelBet.text = LoginManager.Instance.User.IceCream.ToString();
+            DuelBet.text = LoginManager.User.IceCream.ToString();
         }
     }
 
@@ -260,6 +260,6 @@ public class Friends : MonoBehaviour
     public void Trade(FriendModel info)
     {
         TraderFriend = info;
-        TradeManager.Instance.GetTradeItemsAsync(LoginManager.Instance.User.Id);
+        TradeManager.Instance.GetTradeItemsAsync(LoginManager.User.Id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -39,10 +40,17 @@ public class ScoreManager : MonoBehaviour
 
     public void SubmitScoreAsync(int distance, int iceCream, int boxes)
     {
-        StartCoroutine(SubmitScore(distance, iceCream, boxes));
+        if (!LoginManager.LocalUser)
+        {
+            StartCoroutine(SubmitScoreNetowrk(distance, iceCream, boxes));
+        }
+        else
+        {
+            SubmitScoreLocal(distance, iceCream, boxes);
+        }
     }
 
-    System.Collections.IEnumerator SubmitScore(int distance, int iceCream, int boxes)
+    System.Collections.IEnumerator SubmitScoreNetowrk(int distance, int iceCream, int boxes)
     {
         yield return new WaitUntil(() => !SubmittingScore);
 
@@ -80,6 +88,20 @@ public class ScoreManager : MonoBehaviour
         });
     }
 
+    private void SubmitScoreLocal(int distance, int iceCream, int boxes)
+    {
+        LoginManager.User.IceCream += iceCream;
+        LoginManager.User.Cases += boxes;
+        
+        Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
+        Canvaser.Instance.SetNotifications(LoginManager.User);
+
+        ThreadHelper.RunNewThread(() =>
+        {
+            Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+        });
+    }
+    
     public void UseBonusAsync(int bonusInvId)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
