@@ -65,14 +65,17 @@ public class UserInfo : MonoBehaviour
 
     public void OfferOrAddFriend()
     {
-        int newStatus = info.OfferOrAddfriend();
-        if (newStatus == 3)
+        if (Canvaser.Instance.IsLoggedIn())
         {
-            SetAddToFriendsButton(true);
-        }
-        else
-        {            
-            gameObject.SetActive(false);
+            int newStatus = info.OfferOrAddfriend();
+            if (newStatus == 3)
+            {
+                SetAddToFriendsButton(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 
@@ -107,14 +110,17 @@ public class UserInfo : MonoBehaviour
 
     public void Duel()
     {
-        if (info.Info == null)
+        if (Canvaser.Instance.IsLoggedIn())
         {
-            Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.OfferInfo.Id);
+            if (info.Info == null)
+            {
+                Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.OfferInfo.Id);
+            }
+            else
+            {
+                Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.Info.Id);
+            }
+            gameObject.SetActive(false);
         }
-        else
-        {
-            Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.Info.Id);
-        }
-        gameObject.SetActive(false);
     }
 }

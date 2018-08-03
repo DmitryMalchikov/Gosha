@@ -21,6 +21,10 @@ public class ShopPanel : MonoBehaviour
     public GameObject CaseObject;
     public List<ItemInfo> Cases;
 
+    public Toggle CardsTgl;
+    public Toggle BonusesTgl;
+    public Toggle CasesTgl;
+
     public void Open()
     {
         Synchroniser.NewSync(2);
@@ -30,6 +34,12 @@ public class ShopPanel : MonoBehaviour
         gameObject.SetActive(true);
         LoginManager.Instance.GetUserInfoAsync(() => Synchroniser.SetReady(0));
         ShopManager.Instance.GetShopItemsAsync(() => Synchroniser.SetReady(1));
+        if (LoginManager.LocalUser)
+        {
+            BonusesTgl.isOn = true;
+            CardsTgl.interactable = false;
+            CasesTgl.interactable = false;
+        }
     }
 
     public void SetPromoBtn()

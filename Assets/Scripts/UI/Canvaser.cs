@@ -79,15 +79,28 @@ public class Canvaser : MonoBehaviour
     int score;
     public static Canvaser Instance { get; private set; }
     public GameObject LoginWarning;
+    public GameObject MyBonusesPanel;
 
     public static void AddButton(BackButton btn)
     {
         _backButtons.Push(btn);
     }
 
-    public void OpenLoginWarning(bool toOpen = true)
+    public void OpenMyBonusesPanel()
     {
-        LoginWarning.SetActive(toOpen);
+        if (IsLoggedIn())
+        {
+            MyBonusesPanel.SetActive(true);
+        }
+    }
+
+    public bool IsLoggedIn()
+    {
+        if (LoginManager.LocalUser)
+        {
+            LoginWarning.SetActive(true);
+        }
+        return !LoginManager.LocalUser;
     }
 
     public static void PressBack()
@@ -267,12 +280,12 @@ public class Canvaser : MonoBehaviour
 
     public void StartRun()
     {
-        //if (!SomePanelOpened)
-        //{
-        MainMenu.SetActive(false);
-        CameraFollow.Instance.ChangeCamera();
-        PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
-        //}
+        if (IsLoggedIn())
+        {
+            MainMenu.SetActive(false);
+            CameraFollow.Instance.ChangeCamera();
+            PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
+        }
     }
 
     public void TradeOffered()
@@ -321,7 +334,7 @@ public class Canvaser : MonoBehaviour
             opacity -= Time.deltaTime;
             LoadingPanelCanvasGroup.alpha = opacity;
         }
-        
+
         LoadingPanel.SetActive(false);
     }
 

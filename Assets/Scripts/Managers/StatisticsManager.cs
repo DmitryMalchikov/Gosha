@@ -66,16 +66,20 @@ public class StatisticsManager : Manager
 
     public void GetTournamentInfoAsync()
     {
-        Canvaser.Instance.TasksPanel.SetActive(true);
 
-        CoroutineManager.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage },
-        (TournamentModel info) =>
+        if (Canvaser.Instance.IsLoggedIn())
         {
-            Canvaser.Instance.Tournament.SetTournamentInfo(info);
-            if (info.TournamentLeaders != null)
+            Canvaser.Instance.TasksPanel.SetActive(true);
+
+            CoroutineManager.SendRequest(GetTournamentInfoUrl, new { Value = (int)LocalizationManager.CurrentLanguage },
+            (TournamentModel info) =>
             {
-                Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
-            }
-        }, loadingPanelsKey: "tournament");
+                Canvaser.Instance.Tournament.SetTournamentInfo(info);
+                if (info.TournamentLeaders != null)
+                {
+                    Canvaser.Instance.Tournament.SetTournamentTable(info.TournamentLeaders);
+                }
+            }, loadingPanelsKey: "tournament");
+        }
     }
 }

@@ -127,6 +127,7 @@ public class LoginManager : MonoBehaviour
                 }
                 else
                 {
+                    LocalUser = true;
                     Canvaser.Instance.CloseLoading();
                 }
             }

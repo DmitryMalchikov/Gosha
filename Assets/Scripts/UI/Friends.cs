@@ -68,11 +68,14 @@ public class Friends : MonoBehaviour
 
     public void OpenFriendsPanel()
     {
-        gameObject.SetActive(true);
-        CleanContent(FriendsContent);
-        CleanContent(RequestsContent);
-        
-        FriendsManager.Instance.GetFriendsAsync();
+        if (Canvaser.Instance.IsLoggedIn())
+        {
+            gameObject.SetActive(true);
+            CleanContent(FriendsContent);
+            CleanContent(RequestsContent);
+
+            FriendsManager.Instance.GetFriendsAsync();
+        }
     }
 
     public void SetFriendRequests(List<FriendModel> requests)

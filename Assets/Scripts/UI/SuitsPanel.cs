@@ -151,12 +151,15 @@ public class SuitsPanel : MonoBehaviour
 
     public void Open()
     {
-        gameObject.SetActive(true);
-        Canvaser.Instance.Suits.ResetPanel();
-        CardsPanel.SetActive(false);
-        SuitPanel.SetActive(true);
+        if (Canvaser.Instance.IsLoggedIn())
+        {
+            gameObject.SetActive(true);
+            Canvaser.Instance.Suits.ResetPanel();
+            CardsPanel.SetActive(false);
+            SuitPanel.SetActive(true);
 
-        InventoryManager.Instance.GetSuitsAsync();
+            InventoryManager.Instance.GetSuitsAsync();
+        }
     }
 
     public void OpenWithForceUpdate()

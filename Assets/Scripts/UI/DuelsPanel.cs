@@ -26,9 +26,12 @@ public class DuelsPanel : MonoBehaviour {
 
     public void Open()
     {
-        ClearDuelPanel();
-        gameObject.SetActive(true);
-        DuelManager.Instance.GetDuelsAsync();
+        if (Canvaser.Instance.IsLoggedIn())
+        {
+            ClearDuelPanel();
+            gameObject.SetActive(true);
+            DuelManager.Instance.GetDuelsAsync();
+        }
     }
 
     public void OpenDirectlyRequests()
