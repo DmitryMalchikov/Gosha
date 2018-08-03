@@ -78,9 +78,16 @@ public class Canvaser : MonoBehaviour
     int coins;
     int score;
     public static Canvaser Instance { get; private set; }
+    public GameObject LoginWarning;
+
     public static void AddButton(BackButton btn)
     {
         _backButtons.Push(btn);
+    }
+
+    public void OpenLoginWarning(bool toOpen = true)
+    {
+        LoginWarning.SetActive(toOpen);
     }
 
     public static void PressBack()
