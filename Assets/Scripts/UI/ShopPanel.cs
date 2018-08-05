@@ -37,9 +37,13 @@ public class ShopPanel : MonoBehaviour
         if (LoginManager.LocalUser)
         {
             BonusesTgl.isOn = true;
-            CardsTgl.interactable = false;
-            CasesTgl.interactable = false;
         }
+        else
+        {
+            CardsTgl.isOn = true;
+        }
+        CardsTgl.interactable = !LoginManager.LocalUser;
+        CasesTgl.interactable = !LoginManager.LocalUser;
     }
 
     public void SetPromoBtn()

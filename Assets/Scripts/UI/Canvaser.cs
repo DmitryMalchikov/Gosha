@@ -45,10 +45,12 @@ public class Canvaser : MonoBehaviour
     public CanvasGroup LoadingPanelCanvasGroup;
     public LoginCanvas LoginC;
     public GameObject LoginPanel;
+    public GameObject LoginWarning;
     public MainMenuPanel MainMenu;
     public Transform MainPanel;
     public AudioMixer MusicMixer;
     public Slider MusicVolumeSlider;
+    public GameObject MyBonusesPanel;
     public TradePanel MyOffer;
     public Text Nickname;
     public List<NotificationPanel> NotificationsPanels;
@@ -61,7 +63,10 @@ public class Canvaser : MonoBehaviour
     public StartBonuses SBonuses;
     public Text Score;
     public Image SettingsAvatar;
+    public Image SettingsAvatarBorder;
+    public Text SettingsNickname;
     public LocalizedText SettingsRegion;
+    public LocalizedText SettingsRegionWord;
     public ShopPanel Shop;
     public StatisticsPanel Stats;
     public SuitsPanel Suits;
@@ -78,8 +83,6 @@ public class Canvaser : MonoBehaviour
     int coins;
     int score;
     public static Canvaser Instance { get; private set; }
-    public GameObject LoginWarning;
-    public GameObject MyBonusesPanel;
 
     public static void AddButton(BackButton btn)
     {

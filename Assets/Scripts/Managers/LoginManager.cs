@@ -392,9 +392,12 @@ public class LoginManager : MonoBehaviour
         PlayerController.Instance.TakeOffSuits();
         OneSignal.SetSubscription(false);
         FB.LogOut();
-        OK.Logout();
+        if (OK.IsInitialized)
+        {
+            OK.Logout();
+        }
         VK.LogOut();
-        Headers = null;
+        Headers = new List<Header>();
         userToken = null;
         User = new UserInfoModel();
         LocalUser = true;
