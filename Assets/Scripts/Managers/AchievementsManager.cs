@@ -159,7 +159,7 @@ public class AchievementsManager : Manager
 
            if (type == TasksTypes.Share && Canvaser.Instance.Suits.gameObject.activeInHierarchy)
            {
-               InventoryManager.Instance.GetSuitsAsync();
+               InventoryManager.Instance.GetSuitsAsync(true);
            }
             //add window
         });

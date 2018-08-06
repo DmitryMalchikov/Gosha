@@ -347,6 +347,7 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
+            LocalUser = false;
             var seconds = int.Parse(Regex.Replace(expires, "\\D", string.Empty));
             PlayerPrefs.SetString("provider_gosha", LoginProvider);
             PlayerPrefs.SetString("refresh_token_gosha", refresh);
