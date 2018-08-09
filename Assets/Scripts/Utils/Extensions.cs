@@ -12,7 +12,7 @@ public static class Extensions
     public static string GetPathByDataType(DataType type)
     {
         string fileName = string.Empty;
-        string path = Path.Combine(GameController.PersistentDataPath, "Data");
+        string path = GameController.PersistentDataPath + "/Data";
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
@@ -40,7 +40,7 @@ public static class Extensions
                 break;
         }
 
-        return Path.Combine(path, fileName);
+        return path + "/" + fileName;
     }
 
     public static void SaveJsonData(DataType type, string dataToSave)
