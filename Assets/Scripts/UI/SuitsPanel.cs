@@ -50,7 +50,7 @@ public class SuitsPanel : MonoBehaviour
     public void SetPrize(Bonus bonus)
     {
         //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
-        PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + ((LocalizationManager.CurrentLanguage == Language.EN) ? bonus.Name.Name : bonus.Name.NameRu);
+        PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + LocalizationManager.GetValue(bonus.Name.NameRu, bonus.Name.Name);
         if (bonus.Amount > 1)
         {
             PrizeAmountTxt.text += "(" + bonus.Amount.ToString() + ")";
@@ -101,7 +101,7 @@ public class SuitsPanel : MonoBehaviour
 
     public void SetCurrentCostume(Costume suit)
     {
-        string Name = suit.Name;
+        string Name = LocalizationManager.GetValue(suit.NameRu, suit.Name);
         bool HasSuit = suit.CostumeAmount > 0;
         PutOnSuitBtn.gameObject.SetActive(HasSuit);
 

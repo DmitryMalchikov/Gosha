@@ -26,6 +26,16 @@ public class LocalizationManager : MonoBehaviour
         Instance = this;
     }
 
+    public static string GetValue(string ru, string eng)
+    {
+        if (CurrentLanguage == Language.RU)
+        {
+            return ru;
+        }
+
+        return eng;
+    }
+
     // Use this for initialization
     IEnumerator Start()
     {

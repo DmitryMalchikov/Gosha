@@ -20,7 +20,7 @@ public class ItemInfo : MonoBehaviour
 
     public Slider Upgrade;
 
-	InventoryItem curItem;
+    InventoryItem curItem;
 
     public void OpenBuyInfo()
     {
@@ -34,30 +34,30 @@ public class ItemInfo : MonoBehaviour
     public void SetCard(ShopCard card)
     {
         CardInfo = card;
-        NameText.text = card.Name;
+        NameText.text = LocalizationManager.GetValue(card.NameRu, card.Name);
         PriceText.text = card.Cost.ToString();
         ItemID = card.Id;
-		ImgSource.sprite = Resources.Load<Sprite> (string.Format("{0} ({1})", CardInfo.SuitName, CardInfo.Position));
+        ImgSource.sprite = Resources.Load<Sprite>(string.Format("{0} ({1})", CardInfo.SuitName, CardInfo.Position));
     }
 
     public void SetCase(ShopItem item)
     {
         CaseInfo = item;
-        NameText.text = LocalizationManager.CurrentLanguage == Language.EN ? item.Name : item.NameRu;
+        NameText.text = LocalizationManager.GetValue(item.Name, item.NameRu);
         PriceText.text = item.Cost.ToString();
         ItemID = item.Id;
     }
 
     public void SelectItem(bool toSelect)
     {
-        if(toSelect)
+        if (toSelect)
         {
             _TradePanel.SelectedItemID = ItemID;
             _TradePanel.IcecreamForTrade = 0;
             _TradePanel.IceCreamForTradeInput.text = "";
-		}
-		NameText.text = string.Format("{0}({1})", curItem.Name, curItem.Amount - 1 * (toSelect ? 1 : 0));
-	}
+        }
+        NameText.text = string.Format("{0}({1})", curItem.Name, curItem.Amount - 1 * (toSelect ? 1 : 0));
+    }
 
     public void SetInventoryCard(InventoryCard item)
     {
@@ -69,7 +69,7 @@ public class ItemInfo : MonoBehaviour
     public void SetBonus(InventoryItem item)
     {
         gameObject.SetActive(true);
-		curItem = item;
+        curItem = item;
         NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
     }
 }
