@@ -99,14 +99,7 @@ public class LoginManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(refreshExpires))
         {
-            //if not any account
-            LocalUser = true;
-            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-            AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
-            LoginCanvas.Instance.EnableWarning(false);
-            LoginCanvas.Instance.Enable(false);
-            GetUserInfoAsync();
-            //Canvaser.Instance.CloseLoading();
+            LocalLogin();
         }
         else
         {
@@ -127,11 +120,20 @@ public class LoginManager : MonoBehaviour
                 }
                 else
                 {
-                    LocalUser = true;
-                    Canvaser.Instance.CloseLoading();
+                    LocalLogin();
                 }
             }
         }
+    }
+
+    private void LocalLogin()
+    {
+        LocalUser = true;
+        AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+        AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
+        LoginCanvas.Instance.EnableWarning(false);
+        LoginCanvas.Instance.Enable(false);
+        GetUserInfoAsync();
     }
 
     public void GetTokenByRefreshAsync(string refreshToken)
