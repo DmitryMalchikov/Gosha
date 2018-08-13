@@ -47,6 +47,8 @@ public class SuitsPanel : MonoBehaviour
 
     public NewCardsPanel NewCards;
 
+    private string _currentSuitName;
+
     public void SetPrize(Bonus bonus)
     {
         //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
@@ -128,14 +130,15 @@ public class SuitsPanel : MonoBehaviour
             UpdateCards();
         }
         //CurrentSuitImage.sprite = selected.sprite;
-        PlayerController.Instance.PutOnSuit(Name);
+        PlayerController.Instance.PutOnSuit(suit.Name);
         SuitName.text = Name;
+        _currentSuitName = suit.Name;
     }
 
     public void PutOnSuit()
     {
         SuitsScroll.PutOnSuit();
-        PlayerPrefs.SetString("CurrentSuit", SuitName.text);
+        PlayerPrefs.SetString("CurrentSuit", _currentSuitName);
     }
 
     public void TakeOffSuit()
