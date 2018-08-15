@@ -20,7 +20,6 @@ public class GoshaAuthManager : MonoBehaviour
 		string email = parsed["userName"];
 		LoginManager.userToken = new AccessToken() { Token = token };
 		LoginManager.Instance.CheckExternalRegister(refreshToken, refreshExpire, email);
-		Canvaser.Instance.CloseLoading ();
 	}
 
 	void Start(){

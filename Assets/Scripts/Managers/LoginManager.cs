@@ -71,6 +71,7 @@ public class LoginManager : MonoBehaviour
     private IEnumerator Start()
     {
         SetUrls();
+
         string tokenExpires = PlayerPrefs.GetString("token_expires_in_gosha");
 
         yield return new WaitUntil(() => AdsManager.Initialized);
@@ -359,6 +360,9 @@ public class LoginManager : MonoBehaviour
             Canvaser.Instance.LoginPanel.SetActive(false);
             GetUserInfoAsync();
             Canvaser.Instance.MainMenu.SetActive(true);
+
+            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+            AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
         }
     }
 

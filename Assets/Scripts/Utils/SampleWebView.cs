@@ -49,9 +49,7 @@ public class SampleWebView : MonoBehaviour
 			string refreshExpire = parsed ["refresh_expires_in"];
 			string email = parsed["userName"];
             LoginManager.userToken = new AccessToken() { Token = token };
-			LoginManager.Instance.CheckExternalRegister(refreshToken, refreshExpire, email);
-			CloseWindow ();
-			Canvaser.Instance.CloseLoading ();
+			LoginManager.Instance.CheckExternalRegister(refreshToken, refreshExpire, email);			
         }
         else
         {
