@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CoroutineManager : MonoBehaviour
+public class CoroutineManager : Singleton<CoroutineManager>
 {
-    public static CoroutineManager Instance { get; private set; }
-
-    private void Awake()
+    private static WaitForEndOfFrame _frame;
+    public static WaitForEndOfFrame Frame
     {
-        Instance = this;
+        get
+        {
+            if (_frame == null)
+            {
+                _frame = new WaitForEndOfFrame();
+            }
+
+            return _frame;
+        }
     }
 
     public static Coroutine SendRequest(string url, object parameters, string contentType, Action successMethod = null, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)

@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using UnityEngine;
 
-public class ShopManager : Manager
+public class ShopManager : APIManager<ShopManager>
 {
-
     public string BuyItemUrl = "/api/shop/buyitem";
     public string GetBonusesUrl = "/api/shop/bonuses";
     public string GetCardsUrl = "/api/shop/cards";
@@ -12,7 +11,6 @@ public class ShopManager : Manager
     public string GetSuitUrl = "/api/shop/getsuit";
     public string GetUpdgradesUrl = "/api/shop/bonusupgrades";
     public string PromoCodeUrl = "/api/shop/promocode";
-    public static ShopManager Instance { get; private set; }
     public static ShopModel CurrentShop;
 
     public void BuyItemAsync(int itemId, bool upgrade, int price, ResultCallback callback = null)
@@ -65,8 +63,6 @@ public class ShopManager : Manager
         CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
        {
            CurrentShop = model;
-           Debug.Log("OK");
-           //show tasks
            GameController.SetHash("ShopHash", model.ShopHash);
 
            SetShopItems(model);
@@ -83,44 +79,10 @@ public class ShopManager : Manager
         InputInt input = new InputInt() { Value = suitID };
         CoroutineManager.SendRequest(GetSuitUrl, input, () =>
        {
-           Debug.Log("OK");
            Canvaser.Instance.Suits.OpenWithForceUpdate();
        });
     }
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    //public void GetCardsAsync(ResultCallback callback = null)
-    //{
-    //    StartCoroutine(NetworkHelper.SendRequest(GetCardsUrl, null,  (response) =>
-    //    {
-    //        Debug.Log("OK");
-    //        //show tasks
-    //        List<ShopCard> upgrades = JsonConvert.DeserializeObject<List<ShopCard>>(response.Text);
-    //        Canvaser.Instance.Shop.SetCards(upgrades);
-    //        if (callback != null)
-    //        {
-    //            callback();
-    //        }
-    //    }));
-    //}
-    //public void GetCasesAsync(ResultCallback callback = null)
-    //{
-    //    StartCoroutine(NetworkHelper.SendRequest(GetCasesUrl, null,  (response) =>
-    //    {
-    //        Debug.Log("OK");
-    //        //show tasks
-    //        List<ShopItem> upgrades = JsonConvert.DeserializeObject<List<ShopItem>>(response.Text);
-    //        Canvaser.Instance.Shop.SetCases(upgrades);
-    //        if (callback != null)
-    //        {
-    //            callback();
-    //        }
-    //    }));
-    //}
     private void SetShopItems(ShopModel model)
     {
         Canvaser.Instance.Shop.SetBonuses(model.Bonuses);
@@ -136,7 +98,7 @@ public class ShopManager : Manager
         Instance.SetShopItems(CurrentShop);
     }
 
-    private void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref BuyItemUrl);
         ServerInfo.SetUrl(ref GetUpdgradesUrl);
@@ -147,36 +109,4 @@ public class ShopManager : Manager
         ServerInfo.SetUrl(ref GetBonusesUrl);
         ServerInfo.SetUrl(ref GetShopItemsUrl);
     }
-    private void Start()
-    {
-        SetUrls();
-    }
-    //public void GetBonusesAsync(ResultCallback callback = null)
-    //{
-    //    StartCoroutine(NetworkHelper.SendRequest(GetBonusesUrl, null,  (response) =>
-    //    {
-    //        Debug.Log("OK");
-    //        //show tasks
-    //        List<ShopItem> upgrades = JsonConvert.DeserializeObject<List<ShopItem>>(response.Text);
-    //        Canvaser.Instance.Shop.SetBonuses(upgrades);
-    //        if (callback != null)
-    //        {
-    //            callback();
-    //        }
-    //    }));
-    //}
-    //public void GetBonusesUpgradesAsync(ResultCallback callback = null)
-    //{
-    //    StartCoroutine(NetworkHelper.SendRequest(GetUpdgradesUrl, null,  (response) =>
-    //    {
-    //        Debug.Log("OK");
-    //        //show tasks
-    //        List<ShopItem> upgrades = JsonConvert.DeserializeObject<List<ShopItem>>(response.Text);
-    //        Canvaser.Instance.Shop.SetUpgrades(upgrades);
-    //        if (callback != null)
-    //        {
-    //            callback();
-    //        }
-    //    }));
-    //}
 }

@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FriendsManager : Manager
+public class FriendsManager : APIManager<FriendsManager>
 {
-
-    public static FriendsManager Instance { get; private set; }
-
     public string GetFriendsOffersUrl = "/api/friends/friendoffers";
     public string GetFriendsUrl = "/api/friends/friendslist";
     public string OfferFriendshipUrl = "/api/friends/offerfriendship";
@@ -16,16 +11,7 @@ public class FriendsManager : Manager
     public string SearchFriendsUrl = "/api/friends/friendssearch";
     public string SearchPlayersUrl = "/api/friends/playerssearch";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-    private void Start()
-    {
-        SetUrls();
-    }
-
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref GetFriendsOffersUrl);
         ServerInfo.SetUrl(ref GetFriendsUrl);

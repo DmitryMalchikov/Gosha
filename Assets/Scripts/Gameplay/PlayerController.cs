@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
     #region Constants
     public const RigidbodyConstraints FreezeExceptJump = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
@@ -21,9 +21,7 @@ public class PlayerController : MonoBehaviour
     public static int StartedHash = Animator.StringToHash("Started");
     public static int RocketHash = Animator.StringToHash("Rocket");
     #endregion
-
-    public static PlayerController Instance;
-
+    
     public float Step = 2;
     [Range(0, 1)]
     public float GravityOnPercent = .75f;
@@ -45,7 +43,6 @@ public class PlayerController : MonoBehaviour
     public float MaxCollisionAngle;
     public float MinCollisionAngle;
     public int MaxHitsCount = 2;
-    public float DeltaXOffset = .1f;
 
     [Header("Effects")]
     public Effect IceEffect;
@@ -89,19 +86,11 @@ public class PlayerController : MonoBehaviour
     int environmentMask;
     public float LastGroundY = 0;
     public Animator PlayerAnimator;
-    public Transform Position;
 
     private Collider lastHit;
     private Vector3 velocityBeforePhysics;
     private byte hitsCount;
     private SuitInfo[] _suitsItems;
-
-    private void Awake()
-    {
-        Application.targetFrameRate = 60;
-        QualitySettings.vSyncCount = 0;
-        Instance = this;
-    }
 
     public void ResetSas()
     {
@@ -121,6 +110,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+
         FallDistance = Step * (1f - GravityOnPercent);
         environmentMask = LayerMask.GetMask("Ground", "Default");
         rb = GetComponent<Rigidbody>();
@@ -587,7 +579,7 @@ public class PlayerController : MonoBehaviour
 
         while (GameController.Instance.ShieldTimeLeft > 0 && GameController.Instance.Shield)
         {
-            yield return GameController.Frame;
+            yield return CoroutineManager.Frame;
             GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
         }
@@ -622,7 +614,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator WaitEffect()
     {
 
-        yield return GameController.Frame;
+        yield return CoroutineManager.Frame;
 
         var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 8.5f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
         for (int i = 0; i < obstacles.Length; i++)

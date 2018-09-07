@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using uSignalR.Hubs;
 
-public class NotificationsManager : MonoBehaviour
+public class NotificationsManager : Singleton<NotificationsManager>
 {
     public delegate void NotificationReceivedHandler(int playerId, string playerNickname);
     public delegate void RegisterResultHandler();
-
-    public static NotificationsManager Instance;
 
     public event NotificationReceivedHandler OnFriendNotification;
     public event NotificationReceivedHandler OnTradeNotification;
@@ -23,11 +21,6 @@ public class NotificationsManager : MonoBehaviour
     static bool _connectionStarted = false;
 
     public List<NotificationObject> Notifications = new List<NotificationObject>();
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     void Start()
     {

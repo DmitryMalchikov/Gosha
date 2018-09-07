@@ -1,17 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BonusCollector : MonoBehaviour {
-
-    public static BonusCollector Instance { get; private set; }
-
-    IPickable _pickable;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
+public class BonusCollector : Singleton<BonusCollector>
+{
+    IPickable _pickable;    
 
     private void OnTriggerEnter(Collider other)
     {

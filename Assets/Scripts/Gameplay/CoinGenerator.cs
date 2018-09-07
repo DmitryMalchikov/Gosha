@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinGenerator : MonoBehaviour
+public class CoinGenerator : Singleton<CoinGenerator>
 {
-    public static CoinGenerator Instance { get; private set; }
-
     public Transform Generator;
 
     public float CoinDistance = 0.2f;
@@ -22,11 +20,6 @@ public class CoinGenerator : MonoBehaviour
     int _coinsNumber = 0;
     int _totalCoins = 0;
 	private Vector3 PreviousRot = Vector3.zero;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void Start()
     {
@@ -95,7 +88,7 @@ public class CoinGenerator : MonoBehaviour
                 {
                     Generator.position += Vector3.forward * CoinDistance;
                 }
-                yield return GameController.Frame;
+                yield return CoroutineManager.Frame;
             }
 
 			if (Generator.position.z < ZDIstance && EnoughTime(endTime))
@@ -145,7 +138,7 @@ public class CoinGenerator : MonoBehaviour
     {
         while (_avaliableCoins.Count < 1)
         {
-            yield return GameController.Frame;
+            yield return CoroutineManager.Frame;
         }
 
         var coin = _avaliableCoins[0];

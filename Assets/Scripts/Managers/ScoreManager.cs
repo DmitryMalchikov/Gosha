@@ -2,33 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : APIManager<ScoreManager>
 {
     private static Dictionary<int, byte> uses;
-
-    public static ScoreManager Instance { get; private set; }
 
     public string SubmitScoreUrl = "/api/user/submitscore";
     public string UseBonusUrl = "/api/gameplay/usebonus";
     public string GetKeyUrl = "";
     public string ContinueForMoneyUrl = "/api/gameplay/continueformoney";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        SetUrls();
-    }
-
     public static void StartRun()
     {
         uses = new Dictionary<int, byte>();
     }
 
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref SubmitScoreUrl);
         ServerInfo.SetUrl(ref UseBonusUrl);

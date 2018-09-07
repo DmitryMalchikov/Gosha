@@ -15,4 +15,18 @@ public class StartBonuses : MonoBehaviour
             BPanels[i].SetInfo(bonus);
         }
     }
+
+    public void ResetStartBonuses()
+    {
+        for (int i = 0; i < BPanels.Count; i++)
+        {
+            BPanels[i].Active.isOn = false;
+            var bonus = BPanels[i].Bonus;
+            if (bonus != null)
+            {
+                bonus.Amount = 0;
+                BPanels[i].SetInfo(bonus);
+            }
+        }
+    }
 }

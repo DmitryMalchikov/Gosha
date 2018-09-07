@@ -10,9 +10,8 @@ using System.Linq;
 
 public delegate void ResultCallback();
 
-public class LoginManager : MonoBehaviour
+public class LoginManager : Singleton<LoginManager>
 {
-    public static LoginManager Instance { get; private set; }
     public static AccessToken userToken;
     public static string LoginProvider;
 
@@ -61,11 +60,6 @@ public class LoginManager : MonoBehaviour
         ServerInfo.SetUrl(ref ImageUploadUrl);
         ServerInfo.SetUrl(ref ExternalLoginUrl);
         ServerInfo.SetUrl(ref GetRegionsUrl);
-    }
-
-    private void Awake()
-    {
-        Instance = this;
     }
 
     private IEnumerator Start()
@@ -174,6 +168,7 @@ public class LoginManager : MonoBehaviour
 
     public void GetTokenAsync()
     {
+        Canvaser.Instance.SBonuses.ResetStartBonuses();
         GetTokenAsync(Email.text, Password.text);
     }
 
@@ -336,6 +331,7 @@ public class LoginManager : MonoBehaviour
 
     public void OpenExternalLogin(string provider)
     {
+        Canvaser.Instance.SBonuses.ResetStartBonuses();
         LoginProvider = provider;
         SampleWebView.Instance.OpenWindow(string.Format(ExternalLoginUrl, provider));
     }
@@ -410,6 +406,8 @@ public class LoginManager : MonoBehaviour
         LocalUser = true;
         Canvaser.Instance.SetAllIceCreams(User.IceCream);
         Canvaser.Instance.SetNotifications(User);
+        GameController.Instance.ResetBonusesTime();
+        Canvaser.Instance.SBonuses.ResetStartBonuses();
     }
 
     public void SendImage(string path)

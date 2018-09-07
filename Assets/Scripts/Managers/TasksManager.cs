@@ -1,11 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class TasksManager : Manager
+public class TasksManager : APIManager<TasksManager>
 {
-    public static TasksManager Instance { get; private set; }
-
     public List<PlayerTasks> RunTasks = new List<PlayerTasks>();
     public List<PlayerTasks> JumpTasks = new List<PlayerTasks>();
     public List<PlayerTasks> PlayTasks = new List<PlayerTasks>();
@@ -14,20 +10,12 @@ public class TasksManager : Manager
     public string SubmitTaskUrl = "/api/tasks/submittask";
     public string GetTasksUrl = "/api/tasks/WeeklyTasksInfo";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        SetUrls();
-    }
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref SubmitTaskUrl);
         ServerInfo.SetUrl(ref GetTasksUrl);
     }
+
     public void LoadTasks(List<PlayerTasks> tasks)
     {
         for (int i = 0; i < tasks.Count; i++)

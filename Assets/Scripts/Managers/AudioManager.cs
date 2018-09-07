@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
     private AudioSource _source;
-
-    public static AudioManager Instance;
 
     public AudioClip IceCreamPick;
     public AudioClip EffectPick;
@@ -25,11 +23,6 @@ public class AudioManager : MonoBehaviour
 
     private static AudioSource Source { get { return Instance._source; } }
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
     private void Start()
     {
         _source = GetComponent<AudioSource>();
@@ -43,8 +36,7 @@ public class AudioManager : MonoBehaviour
     public static void PlayBtnTapSound()
     {
        Source.PlayOneShot(Instance.BtnTap, .7f);
-    }
-    
+    }    
 
     public static void StopEffectsSound()
     {

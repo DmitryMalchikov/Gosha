@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public class Canvaser : MonoBehaviour
+public class Canvaser : Singleton<Canvaser>
 {
     public static Queue<Exception> Errors = new Queue<Exception>();
     public AchievementInfo AchievementInfo;
@@ -22,7 +22,6 @@ public class Canvaser : MonoBehaviour
     public ContinuePanel ContinueForMoney;
     public GameObject Countdown;
     public DailyBonusPanel DailyBonus;
-    public Button DailyBonusBtn;
     public bool DoubleIcecreamClicked;
     public GameObject DoubleScoreButton;
     public DuelsPanel Duels;
@@ -33,7 +32,6 @@ public class Canvaser : MonoBehaviour
     public ForgotPasswordPanel ForgotPassword;
     public Notification FriendsNotification;
     public Friends FriendsPanel;
-    public Image GameAvatar;
     public Text GameOverCases;
     public Text GameOverDistance;
     public IceCreamChanger GameOverIceCream;
@@ -43,7 +41,6 @@ public class Canvaser : MonoBehaviour
     public Dropdown LanguageDropdown;
     public GameObject LoadingPanel;
     public CanvasGroup LoadingPanelCanvasGroup;
-    public LoginCanvas LoginC;
     public GameObject LoginPanel;
     public GameObject LoginWarning;
     public MainMenuPanel MainMenu;
@@ -82,7 +79,6 @@ public class Canvaser : MonoBehaviour
     int cases;
     int coins;
     int score;
-    public static Canvaser Instance { get; private set; }
 
     public static void AddButton(BackButton btn)
     {
@@ -301,12 +297,6 @@ public class Canvaser : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        Instance = this;
-        offer = new TradeOfferModel();
-    }
-
     IEnumerator ErrorCheck()
     {
         while (true)
@@ -347,6 +337,7 @@ public class Canvaser : MonoBehaviour
         EffectsVolumeSlider.value = effectsVolume;
 
         Application.runInBackground = true;
+        offer = new TradeOfferModel();
         StartCoroutine(ErrorCheck());
     }
 }

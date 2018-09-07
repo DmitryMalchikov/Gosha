@@ -8,7 +8,6 @@ public class GoshaAuthManager : MonoBehaviour
 	[DllImport("__Internal")]
 	private static extern void GoshaInit(string gameObject);
 
-
 	public void OnGoshaAuthorization(string url){
 
 		url = url.Split ('#')[1];

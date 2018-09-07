@@ -1,12 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class CameraFollow : MonoBehaviour {
-
-    public static CameraFollow Instance{ get; private set; }
-
+public class CameraFollow : Singleton<CameraFollow>
+{
 	public Transform target;
 	public Vector3 offset;
 	public float ZOffset;
@@ -23,11 +19,6 @@ public class CameraFollow : MonoBehaviour {
 	private float _shakeDuration;
 	private bool _shaking = false;
 	private Vector3 _originalPos;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void OnEnable()
     {

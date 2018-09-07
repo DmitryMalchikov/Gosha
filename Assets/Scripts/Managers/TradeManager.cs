@@ -1,27 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class TradeManager : MonoBehaviour
+﻿public class TradeManager : APIManager<TradeManager>
 {
-
-    public static TradeManager Instance { get; private set; }
-
     public string TradeItemsUrl = "/api/trade/tradeitems";
     public string OfferTradeUrl = "/api/trade/offertrade";
     public string AcceptTradeUrl = "/api/trade/accept";
     public string DeclineTradeUrl = "/api/trade/decline";
     public string TradeOffersUrl = "/api/trade/offers";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-    private void Start()
-    {
-        SetUrls();
-    }
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref TradeItemsUrl);
         ServerInfo.SetUrl(ref OfferTradeUrl);

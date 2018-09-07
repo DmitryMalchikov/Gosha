@@ -1,36 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class IceCreamRotator : MonoBehaviour {
+public class IceCreamRotator : Singleton<IceCreamRotator>
+{
+    public Animator animator;
+    public float AngleDelta;
 
-	public static IceCreamRotator Instance{ get; private set;}
+    private int pickableLayer;
+    private Vector3 previousRot;
 
-	public Animator animator;
-	public float AngleDelta;
+    public static void SetRotator(bool started)
+    {
+        Instance.animator.SetBool("Started", started);
+    }
 
-	private int pickableLayer;
-	private Vector3 previousRot;
+    void Start()
+    {
+        pickableLayer = LayerMask.NameToLayer("Pickable");
+    }
 
-	void Awake(){
-		Instance = this;	
-	}
-
-	public static void SetRotator(bool started){
-		Instance.animator.SetBool ("Started", started);
-	}
-
-	void Start(){
-		pickableLayer = LayerMask.NameToLayer ("Pickable");
-	}
-
-	void OnTriggerEnter(Collider other){
-		if (other.gameObject.layer == pickableLayer) {
-				previousRot = previousRot - Vector3.up * AngleDelta;
-				if (previousRot.y <= -360) {
-					previousRot.y %= 360;
-				}
-				other.GetComponentInChildren<Spinner> ().StartRotation (previousRot);
-		}
-	}
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == pickableLayer)
+        {
+            previousRot = previousRot - Vector3.up * AngleDelta;
+            if (previousRot.y <= -360)
+            {
+                previousRot.y %= 360;
+            }
+            other.GetComponentInChildren<Spinner>().StartRotation(previousRot);
+        }
+    }
 }

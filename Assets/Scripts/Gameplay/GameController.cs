@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using VacuumShaders.CurvedWorld;
 
-public class GameController : MonoBehaviour
+public class GameController : Singleton<GameController>
 {
-
     public static bool Paused = false;
     public static float SpeedMultiplyer = 1;
     public bool BlockMoving = false;
@@ -53,9 +52,7 @@ public class GameController : MonoBehaviour
     bool setRun = false;
     private float SkyboxRotation = 0f;
     public static string DuelsHash { get; set; }
-    public static WaitForEndOfFrame Frame { get; private set; }
     public static string FriendsHash { get; set; }
-    public static GameController Instance { get; private set; }
     public static string PersistentDataPath { get; private set; }
     public static string ShopHash { get; set; }
     public static string SuitsHash { get; set; }
@@ -67,6 +64,7 @@ public class GameController : MonoBehaviour
             return Mathf.Abs(RocketTime * Speed.z);
         }
     }
+
     public static void SetHash(string name, string value)
     {
         PlayerPrefs.SetString(name, value);
@@ -224,6 +222,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void ResetBonusesTime()
+    {
+        ShieldTime = 6;
+        MagnetTime = 6;
+        RocketTime = 6;
+        DecelerationTime = 6;
+    }
+
     public void PauseGame()
     {
         Time.timeScale = 0;
@@ -272,6 +278,7 @@ public class GameController : MonoBehaviour
         SpeedMultiplyer = 0;
         Started = false;
         Paused = false;
+        CanUseCurrentBonus = true;
         CameraFollow.Instance.ChangeCamera();
         PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
         PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
@@ -339,12 +346,6 @@ public class GameController : MonoBehaviour
         SuitsHash = PlayerPrefs.GetString("SuitsHash");
         ShopHash = PlayerPrefs.GetString("ShopHash");
         TradesHash = PlayerPrefs.GetString("TradesHash");
-    }
-
-    private void Awake()
-    {
-        Instance = this;
-        Frame = new WaitForEndOfFrame();
     }
 
     IEnumerator ChangeDirection()
@@ -438,7 +439,7 @@ public class GameController : MonoBehaviour
 
         while (DecelerationTimeLeft > 0 && Deceleration)
         {
-            yield return Frame;
+            yield return CoroutineManager.Frame;
             DecelerationTimeLeft -= Time.deltaTime;
 
             Canvaser.Instance.GamePanel.Decelerator.SetTimer(DecelerationTimeLeft);
@@ -524,7 +525,7 @@ public class GameController : MonoBehaviour
         {
             RocketTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
-            yield return Frame;
+            yield return CoroutineManager.Frame;
         }
 
         if (!Rocket)

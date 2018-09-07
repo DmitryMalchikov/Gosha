@@ -1,12 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class AchievementsManager : Manager
+public class AchievementsManager : APIManager<AchievementsManager>
 {
-
-    public static AchievementsManager Instance { get; private set; }
-
     public List<PlayerTasks> RunAchievements = new List<PlayerTasks>();
     public List<PlayerTasks> JumpAchievements = new List<PlayerTasks>();
     public List<PlayerTasks> CollectIceCreamAchievements = new List<PlayerTasks>();
@@ -17,17 +12,7 @@ public class AchievementsManager : Manager
     public string GetAchievementsUrl = "/api/account/achievementsinfo";
     public string SubmitAchievementUrl = "/api/achievements/submitachievement";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        SetUrls();
-    }
-
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref GetAchievementsUrl);
         ServerInfo.SetUrl(ref SubmitAchievementUrl);

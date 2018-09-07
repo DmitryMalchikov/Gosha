@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 public class Coin : MonoBehaviour, IPickable
@@ -39,7 +37,7 @@ public class Coin : MonoBehaviour, IPickable
     {
         while (true)
         {
-            yield return GameController.Frame;
+            yield return CoroutineManager.Frame;
             transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, GameController.Instance.CoinSpeed * GameController.SpeedMultiplyer * Time.deltaTime);
         }
     }

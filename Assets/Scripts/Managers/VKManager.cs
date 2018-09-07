@@ -1,14 +1,6 @@
-﻿using UnityEngine;
-
-public class VKManager : MonoBehaviour
+﻿public class VKManager : Singleton<VKManager>
 {
-    public static VKManager Instance;
     private string _currentAchievement;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     public void OpenShare(string achievementName)
     {

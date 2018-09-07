@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AdsManager : MonoBehaviour {
-
+public class AdsManager : APIManager<AdsManager>
+{
     public event ResultCallback OnAdsDownloaded;
-    public static AdsManager Instance { get; private set; }
     public static bool Initialized = false;
 
     public string AdsUrl = "/api/ads/Advertisement";
@@ -16,20 +14,12 @@ public class AdsManager : MonoBehaviour {
 
     private List<GameObject> _loadingPanels;
 
-	private void Awake()
-    {
-        Instance = this;
-    }
-    private void Start()
-    {
-        SetUrls();
-        Initialized = true;
-    }
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref AdsUrl);
         ServerInfo.SetUrl(ref AdsImageUrl);
 		ServerInfo.SetUrl(ref DoubleScoreUrl);
+        Initialized = true;
     }
 
 	public void DoubleScoreAds(Text text, RawImage image)

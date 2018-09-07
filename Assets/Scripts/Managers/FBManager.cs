@@ -1,18 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Facebook.Unity;
-using UnityEngine.UI;
 
-public class FBManager : MonoBehaviour
+public class FBManager : Singleton<FBManager>
 {
-    public static FBManager Instance;
     private string _currentAchievement;
 
-    private void Awake()
+    private void Start()
     {
-        Instance = this;
-
         if (!FB.IsInitialized)
         {
 			FB.Init(OnInitComplete);

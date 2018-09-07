@@ -1,22 +1,9 @@
-﻿using UnityEngine;
-
-public class LootManager : MonoBehaviour
+﻿public class LootManager : APIManager<LootManager>
 {
-    public static LootManager Instance { get; private set; }
-
     public string GetBonusUrl = "/api/loot/getbonus";
     public string OpenCaseUrl = "/api/loot/opencase";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-    private void Start()
-    {
-        SetUrls();
-    }
-
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref GetBonusUrl);
         ServerInfo.SetUrl(ref OpenCaseUrl);

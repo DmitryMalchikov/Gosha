@@ -4,15 +4,12 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class OKManager : MonoBehaviour
+public class OKManager : Singleton<OKManager>
 {
-    public static OKManager Instance;
     private string _currentAchievement;
 
-    private void Awake()
+    private void Start()
     {
-        Instance = this;
-
         if (!OK.IsInitialized)
         {
             OK.Init();

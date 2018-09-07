@@ -2,17 +2,11 @@
 using System.Linq;
 using UnityEngine;
 
-public class LoadingManager : MonoBehaviour
-{
-    public static LoadingManager Instance { get; private set; }
+public class LoadingManager : Singleton<LoadingManager>
+{ 
     public static string PanelKeyToEnable = null; 
 
     public List<LoadingPanel> LoadingPanels;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void Update()
     {

@@ -1,27 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
 
-public class StatisticsManager : Manager
+public class StatisticsManager : APIManager<StatisticsManager>
 {
-
-    public static StatisticsManager Instance { get; private set; }
-
     public string GetTournamentLeadersUrl = "/api/statistics/tournamentleaders";
     public string GetAllStatisticsUrl = "/api/statistics/allstatistics";
     public string GetTournamentInfoUrl = "/api/statistics/tournamentinfo";
 
-
-    private void Awake()
-    {
-        Instance = this;
-    }
-    private void Start()
-    {
-        SetUrls();
-    }
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref GetTournamentLeadersUrl);
         ServerInfo.SetUrl(ref GetAllStatisticsUrl);

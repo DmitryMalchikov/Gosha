@@ -3,12 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class LocalizationManager : MonoBehaviour
+public class LocalizationManager : Singleton<LocalizationManager>
 {
-    public static LocalizationManager Instance { get; private set; }
-
     private static Dictionary<string, string> localizedText;
 
     public string NotFoundKey = "Missing text";
@@ -20,11 +17,6 @@ public class LocalizationManager : MonoBehaviour
         { Language.EN, "localization_eng.json" },
         { Language.RU, "localization_ru.json" }
     };
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     public static string GetValue(string ru, string eng)
     {

@@ -1,15 +1,8 @@
 ﻿using UnityEngine;
 
-public class LoginCanvas : MonoBehaviour {
-
-    public static LoginCanvas Instance { get; private set; }
-
+public class LoginCanvas : Singleton<LoginCanvas>
+{
     public GameObject Warning;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     public void Enable(bool enable)
     {

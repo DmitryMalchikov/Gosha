@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGenerator : MonoBehaviour
+public class MapGenerator : Singleton<MapGenerator>
 {
-
-    public static MapGenerator Instance { get; private set; }
-
     public Tile StartTile;
     public float TileSize = 10;
     public int StartTilesNumber = 10;
@@ -15,11 +12,6 @@ public class MapGenerator : MonoBehaviour
     Tile _lastTile;
 
     public float TileScale = 2;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void ResetTiles()
     {

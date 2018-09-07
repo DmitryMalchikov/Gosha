@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class DuelManager : Manager
+public class DuelManager : APIManager<DuelManager>
 {
-    public static DuelManager Instance { get; private set; }
-
     public string FullDuelsInfo = "/api/duels/getallduels";
     public string OfferDuelUrl = "/api/duels/offerduel";
     public string AcceptDuelUrl = "/api/duels/acceptduel";
@@ -14,16 +12,7 @@ public class DuelManager : Manager
     public string StartRunUrl = "/api/duels/startrun";
     public string DuelResultUrl = "/api/duels/duelresult";
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        SetUrls();
-    }
-    public void SetUrls()
+    public override void SetUrls()
     {
         ServerInfo.SetUrl(ref FullDuelsInfo);
         ServerInfo.SetUrl(ref OfferDuelUrl);

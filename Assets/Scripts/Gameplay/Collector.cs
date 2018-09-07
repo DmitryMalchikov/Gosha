@@ -1,22 +1,14 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Collector : MonoBehaviour {
-
-    public static Collector Instance { get; private set; }
-
+public class Collector : Singleton<Collector>
+{ 
 	Coin _coin;
 	private string IceCreamTag = "IceCream";
 
     public BoxCollider Collider;
     public Vector3 MagnetSize = new Vector3(15, 15, 8);
     public Vector3 StandardSize = new Vector3(1, 2, 1);
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void Start()
     {
@@ -25,7 +17,6 @@ public class Collector : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-
 		if (other.transform.tag == IceCreamTag)
         {
 			if (GameController.Instance.Magnet) {
@@ -72,7 +63,7 @@ public class Collector : MonoBehaviour {
 
         while (GameController.Instance.MagnetTimeLeft > 0)
         {
-            yield return GameController.Frame;
+            yield return CoroutineManager.Frame;
             GameController.Instance.MagnetTimeLeft -= Time.deltaTime;
             Canvaser.Instance.GamePanel.Magnet.SetTimer(GameController.Instance.MagnetTimeLeft);
         }      
