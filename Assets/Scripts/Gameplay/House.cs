@@ -5,7 +5,8 @@ using UnityEngine;
 public class House : MonoBehaviour {
 
     public List<GameObject> Objects;
-    public GameObject Roofs;
+    public List<GameObject> Roofs;
+    public Transform RoofsParent;
 
 	public MeshRenderer Visor;
 	public List<Material> VisorMaterials;
@@ -23,13 +24,6 @@ public class House : MonoBehaviour {
         SetHouse();
     }
 
-//	private void OnDisable(){
-//		for (int i = 0; i < InstMaterials.Count; i++) {
-//			Destroy (InstMaterials [i]);
-//		}
-//		InstMaterials.Clear ();
-//	}
-
     public void SetHouse()
     {
 		Visor.material = VisorMaterials[Random.Range (0, VisorMaterials.Count)];
@@ -39,12 +33,12 @@ public class House : MonoBehaviour {
         if (Random.Range(0,4) == 0)
         {
             Floors[1].transform.parent.gameObject.SetActive(false);
-            Roofs.transform.localPosition = SecondFloor;
+            RoofsParent.localPosition = SecondFloor;
         }
         else
         {
             Floors[1].transform.parent.gameObject.SetActive(true);
-            Roofs.transform.localPosition = ThirdFloor;
+            RoofsParent.localPosition = ThirdFloor;
         }
 
 		for (int i = 0; i < Floors.Count; i++) 
@@ -52,20 +46,35 @@ public class House : MonoBehaviour {
 			var materials = Floors [i].sharedMaterials;
 			materials [materials.Length - 1] = FloorMaterials [FloorColor];
 			Floors [i].sharedMaterials = materials;
-			//InstMaterials.AddRange (materials);
 		}
 
-        for (int i = 0; i < Objects.Count; i++)
+        int roofNum = Random.Range(0, Roofs.Count);
+
+        for (int i = 0; i < Roofs.Count; i++)
+        {
+            if (i == roofNum)
+            {
+                Roofs[i].SetActive(true);
+            }
+            else
+            {
+                Roofs[i].SetActive(false);
+            }
+        }
+
+        int objectsCount = 0;
+
+        for (int i = 0; i < Objects.Count && objectsCount < 3; i++)
         {
             if (Random.Range(0, 4) == 0)
             {
                 Objects[i].SetActive(true);
+                objectsCount++;
             }
             else
             {
                 Objects[i].SetActive(false);
             }
-
         }
     }
 }

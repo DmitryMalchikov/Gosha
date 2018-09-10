@@ -46,7 +46,7 @@ public class Tile : MonoBehaviour
 
         if (!Generated)
         {
-            if (MapGenerator.Instance.transform.position.z - transform.position.z > MapGenerator.Instance.TileSize)
+            if (MapGenerator.Instance.transform.position.z - transform.position.z > MapGenerator.Instance.TileSize * 0.85f)
             {
                 StartCoroutine(NextTile());
             }
@@ -60,7 +60,7 @@ public class Tile : MonoBehaviour
 
         if (transform.position.z < -MapGenerator.Instance.TileSize / 2 - 10)
         {
-            Generated = false;
+            Generated = !StartTile;
 
             for (int i = 0; i < Bonus.childCount; i++)
             {
