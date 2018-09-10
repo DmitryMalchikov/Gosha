@@ -60,18 +60,14 @@ public class Tile : MonoBehaviour
 
         if (transform.position.z < -MapGenerator.Instance.TileSize / 2 - 10)
         {
-            Generated = !StartTile;
+            Generated = StartTile;
 
             for (int i = 0; i < Bonus.childCount; i++)
             {
                 Bonus.GetChild(i).gameObject.SetActive(false);
             }
-
-            //EnableColliders ();
             CarsStarted = false;
             Obstacles.StopCars();
-            //EnableObstcles ();
-            //Obstacles.gameObject.SetActive(true);
 
             if (!StartTile)
             {
