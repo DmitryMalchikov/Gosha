@@ -61,7 +61,7 @@ Shader "VacuumShaders/Curved World/Unlit"
 			 } 
 		LOD 100		     
 		            
-		Cull Off     
+		//Cull Off     
 			        
 		//PassName "BASE" 
 		Pass       

@@ -1,29 +1,21 @@
 fileFormatVersion: 2
-guid: 72795af107e4b874b9f07f874b5b2b08
-timeCreated: 1536931693
+guid: f895ce8bcaedc4c46b1760c74c1e410d
+timeCreated: 1537285510
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: 'Material #26'
-    2100002: 'Material #25'
-    2100004: 'Material #26.001'
-    2100006: 'Material #25.001'
-    2100008: 'Material #26.003'
+    2100000: 'Material #26.003'
     2300000: //RootNode
     3300000: //RootNode
-    4300000: truck
-    4300002: truck.001
-    7400000: truck|truck|Take 001|BaseLayer
-    7400002: truck|truck|Take 001|BaseLayer.001
-    7400004: truck.001|truck.001|truck|truck|Take 001|BaseLayer.001|truck|truck|Take
-      0
-    7400006: truck.001|truck.001|truck|truck|Take 001|BaseLayer|truck|truck|Take 001|B
-    7400008: truck.001|truck|Take 001|BaseLayer
-    7400010: truck.001|truck|Take 001|BaseLayer.001
-    7400012: truck.001|truck|Take 001|BaseLayer.002
+    4300000: truck.001
+    7400000: truck.001|truck.001|truck.001|truck.001|truck|truck|Take 001|BaseLayer.00
+    7400002: truck.001|truck.001|truck.001|truck.001|truck|truck|Take 001|BaseLayer|tr
+    7400004: truck.001|truck.001|truck.001|truck|Take 001|BaseLayer.001|truck.001|truc
+    7400006: truck.001|truck.001|truck.001|truck|Take 001|BaseLayer.002|truck.001|truc
+    7400008: truck.001|truck.001|truck.001|truck|Take 001|BaseLayer|truck.001|truck|Ta
     9500000: //RootNode
   externalObjects: {}
   materials:

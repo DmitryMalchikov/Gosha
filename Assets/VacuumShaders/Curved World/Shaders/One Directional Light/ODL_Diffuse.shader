@@ -68,47 +68,47 @@ Shader "VacuumShaders/Curved World/One Directional Light"
 
 		//PassName "FORWARD" 
 		Pass
-	    {
+		{
 			Name "FORWARD"
-			Tags { "LightMode" = "ForwardBase" } 
+			Tags { "LightMode" = "ForwardBase" }
 
-			CGPROGRAM       
+			CGPROGRAM
 			#pragma vertex vert  
-	    	#pragma fragment frag  
+			#pragma fragment frag  
 			#define UNITY_PASS_FORWARDBASE   		  
 			#pragma multi_compile_fwdbase nodirlightmap nodynlightmap
-						       
 
-/*DO NOT DELETE - CURVED WORLD ODL LIGHT TYPE*/ 
-/*DO NOT DELETE - CURVED WORLD ODL INCLUDE POINT LIGHTS*/ 
-/*DO NOT DELETE - CURVED WORLD ODL INCLUDE SPHERICAL HARMONICS AND UNITY AMBIENT*/ #define V_CW_INCLUDE_SPH_AND_AMBIENT
-			#pragma shader_feature V_CW_REFLECTIVE_OFF V_CW_REFLECTIVE V_CW_REFLECTIVE_FRESNEL
-			#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR 
-			#pragma shader_feature _EMISSION_OFF _EMISSION
-			#pragma shader_feature V_CW_RIM_OFF V_CW_RIM
-				
-			#pragma shader_feature _NORMALMAP_OFF _NORMALMAP
-			#pragma shader_feature V_CW_SPECULAR_OFF V_CW_SPECULAR
 
-			#pragma shader_feature V_CW_USE_LIGHT_RAMP_TEXTURE_OFF V_CW_USE_LIGHT_RAMP_TEXTURE
+		/*DO NOT DELETE - CURVED WORLD ODL LIGHT TYPE*/
+		/*DO NOT DELETE - CURVED WORLD ODL INCLUDE POINT LIGHTS*/
+		/*DO NOT DELETE - CURVED WORLD ODL INCLUDE SPHERICAL HARMONICS AND UNITY AMBIENT*/
+					#pragma shader_feature V_CW_REFLECTIVE_OFF V_CW_REFLECTIVE V_CW_REFLECTIVE_FRESNEL
+					#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR 
+					#pragma shader_feature _EMISSION_OFF _EMISSION
+					#pragma shader_feature V_CW_RIM_OFF V_CW_RIM
 
-			#pragma shader_feature V_CW_FOG_OFF V_CW_FOG
-			#ifdef V_CW_FOG
-				#pragma multi_compile_fog
-			#endif   
+					#pragma shader_feature _NORMALMAP_OFF _NORMALMAP
+					#pragma shader_feature V_CW_SPECULAR_OFF V_CW_SPECULAR
 
-			#ifdef _NORMALMAP
-				#ifndef V_CW_CALCULATE_LIGHT_PER_PIXEL
-				#define V_CW_CALCULATE_LIGHT_PER_PIXEL
-				#endif
-			#endif
-			 
-			#include "../cginc/CurvedWorld_ForwardBase.cginc" 
+					#pragma shader_feature V_CW_USE_LIGHT_RAMP_TEXTURE_OFF V_CW_USE_LIGHT_RAMP_TEXTURE
 
-			
-			ENDCG    
-			 
-		} //Pass   	
+					#pragma shader_feature V_CW_FOG_OFF V_CW_FOG
+					#ifdef V_CW_FOG
+						#pragma multi_compile_fog
+					#endif   
+
+					#ifdef _NORMALMAP
+						#ifndef V_CW_CALCULATE_LIGHT_PER_PIXEL
+						#define V_CW_CALCULATE_LIGHT_PER_PIXEL
+						#endif
+					#endif
+
+					#include "../cginc/CurvedWorld_ForwardBase.cginc" 
+
+
+					ENDCG
+
+				} //Pass   	
 			
 	} //SubShader
 
