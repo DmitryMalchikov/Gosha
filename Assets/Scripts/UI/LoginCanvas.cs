@@ -6,8 +6,9 @@ public class LoginCanvas : Singleton<LoginCanvas>
 
     public void Enable(bool enable)
     {
+        EnableWarning(false);
         gameObject.SetActive(enable);
-        Canvaser.Instance.MainMenu.SetActive(!enable);
+        Canvaser.Instance.MainMenu.SetActive(!enable);        
     }
 
     public void EnableWarning(bool enable)

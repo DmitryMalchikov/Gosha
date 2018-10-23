@@ -15,8 +15,6 @@ public class LoginManager : Singleton<LoginManager>
     public static AccessToken userToken;
     public static string LoginProvider;
 
-    public RawImage Image;
-    public Text Error;
     public Button LoginBtn;
     public Button SendResetCodeBtn;
 
@@ -40,9 +38,6 @@ public class LoginManager : Singleton<LoginManager>
 
     public List<Header> Headers = new List<Header>();
 
-    string _resetEmail;
-    string _resetCode;
-
     public static UserInfoModel User;
     public static bool LocalUser = false;
 
@@ -58,7 +53,6 @@ public class LoginManager : Singleton<LoginManager>
         ServerInfo.SetUrl(ref RegisterUserInfoUrl);
         ServerInfo.SetUrl(ref ExternalRegisterUrl);
         ServerInfo.SetUrl(ref ImageUploadUrl);
-        ServerInfo.SetUrl(ref ExternalLoginUrl);
         ServerInfo.SetUrl(ref GetRegionsUrl);
     }
 
@@ -470,11 +464,9 @@ public class LoginManager : Singleton<LoginManager>
 
     public void GetRegions()
     {
-
         CoroutineManager.SendRequest(GetRegionsUrl, null, (List<RegionModel> regions) =>
        {
            Canvaser.Instance.RegistrationPanel.SetRegions(regions);
        });
-
     }
 }
