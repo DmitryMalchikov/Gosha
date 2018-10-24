@@ -15,6 +15,8 @@ public static class NetworkHelper
     public static UnityWebRequest GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
         if (string.IsNullOrEmpty(postParameters))
+        {
+            postParameters = "sas";
         }
         var data = Encoding.UTF8.GetBytes(postParameters);
         UnityWebRequest req = new UnityWebRequest(url, "POST");
