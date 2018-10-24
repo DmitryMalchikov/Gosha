@@ -169,8 +169,16 @@ public static class NetworkHelper
         {
             LoadingManager.PanelKeyToEnable = loadingPanelsKey;
             var req = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
+#if UNITY_2017
             yield return req.SendWebRequest();
+#elif UNITY_5
+             yield return req.Send();
+#endif
+#if UNITY_2017
             if (req.isHttpError)
+#elif UNITY_5
+                if (req.isError)
+#endif
             {
                 response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
             }
