@@ -7,55 +7,35 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using uTasks;
 
 public static class NetworkHelper
 {
-    public static AnswerModel GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
+    public static UnityWebRequest GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-
-        var postData = postParameters;
-        var data = Encoding.UTF8.GetBytes(postData);
+        if (string.IsNullOrEmpty(postParameters))
+        }
+        var data = Encoding.UTF8.GetBytes(postParameters);
+        UnityWebRequest req = new UnityWebRequest(url, "POST");
+        req.uploadHandler = new UploadHandlerRaw(data);
+        req.downloadHandler = new DownloadHandlerBuffer();
 
         if (!string.IsNullOrEmpty(ContentType))
         {
-            request.ContentType = ContentType;
+            req.SetRequestHeader("Content-Type", ContentType);
+            req.uploadHandler.contentType = ContentType;
         }
 
-        request.ContentLength = data.Length;
-        request.Method = "POST";
-        request.PreAuthenticate = true;
         if (headers != null)
         {
             for (int i = 0; i < headers.Count; i++)
             {
-                request.Headers[headers[i].Name] = headers[i].Value;
+                req.SetRequestHeader(headers[i].Name, headers[i].Value);
             }
         }
-        request.UserAgent = "GoshaGame";
-        //request.Proxy = new WebProxy("http://127.0.0.1:8888");
-
-        using (var stream = request.GetRequestStream())
-        {
-            stream.Write(data, 0, data.Length);
-        }
-
-        try
-        {
-            WebResponse response = request.GetResponse();
-            Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            string responseFromServer = reader.ReadToEnd();
-            reader.Close();
-            response.Close();
-
-            return new AnswerModel(responseFromServer);
-        }
-        catch (WebException e)
-        {
-            return HandleWebException(e);
-        }
+        req.SetRequestHeader("UserAgent", "GoshaGame");
+        return req;
     }
 
     public static IEnumerator SendRequest(string url, object parameters, string contentType, Action successMethod = null, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
@@ -95,7 +75,7 @@ public static class NetworkHelper
     }
 
     public static IEnumerator SendRequest<T>(string url, object parameters, string contentType, Action<T> successMethod, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
-    {       
+    {
         AnswerModel response = new AnswerModel();
         for (IEnumerator e = StartRequest(url, parameters, contentType, forceUpdate, type, response, loadingPanelsKey); e.MoveNext();)
         {
@@ -153,11 +133,11 @@ public static class NetworkHelper
         {
             yield return null;
         }
+        string parms = string.Empty;
 
-        ThreadHelper.RunNewThread(() =>
+        if (parameters != null)
         {
-            string parms = string.Empty;
-            if (parameters != null)
+            ThreadHelper.RunNewThread(() =>
             {
                 if (!(parameters is string))
                 {
@@ -167,28 +147,35 @@ public static class NetworkHelper
                 {
                     parms = parameters as string;
                 }
-            }
+            });
 
-            //load local data
-            //forceUpdate = GetForceUpdate(type);
-            if (!forceUpdate)
+            while (string.IsNullOrEmpty(parms))
             {
-                string data = Extensions.LoadJsonData(type);
-                if (!string.IsNullOrEmpty(data) || type == DataType.UserInfo)
-                {
-                    response.SetFields(new AnswerModel(data));
-                }
+                yield return null;
             }
-            if (response.StatusCode == 0)
-            {
-                LoadingManager.PanelKeyToEnable = loadingPanelsKey;
-                response.SetFields(GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers));
-            }
-        });
+        }
 
-        while (response.StatusCode == 0)
+        if (!forceUpdate)
         {
-            yield return null;
+            string data = Extensions.LoadJsonData(type);
+            if (!string.IsNullOrEmpty(data) || type == DataType.UserInfo)
+            {
+                response.SetFields(new AnswerModel(data));
+            }
+        }
+        if (response.StatusCode == 0)
+        {
+            LoadingManager.PanelKeyToEnable = loadingPanelsKey;
+            var req = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
+            yield return req.SendWebRequest();
+            if (req.isHttpError)
+            {
+                response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
+            }
+            else
+            {
+                response.SetFields(new AnswerModel(req.downloadHandler.text));
+            }
         }
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK && forceUpdate)
@@ -201,7 +188,7 @@ public static class NetworkHelper
                 });
             }
         }
-        }
+    }
 
     public static void HandleRequestError(AnswerModel response, Action<AnswerModel> errorMethod)
     {
@@ -224,28 +211,33 @@ public static class NetworkHelper
             using (Stream data1 = response.GetResponseStream())
             {
                 string text = new StreamReader(data1).ReadToEnd();
-                Debug.Log(text);
-                var errors = new ErrorAnswer();
-                Dictionary<string, IList<string>> errorCodes = null;
-                try
-                {
-                    errors = JsonConvert.DeserializeObject<ErrorAnswer>(text);
-                    if (errors.ModelState != null && errors.ModelState.Any())
-                    {
-                        errorCodes = errors.ModelState;
-                    }
-                    else
-                    {
-                        errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { errors.Message } } };
-                    }
-                }
-                catch
-                {
-                    errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { "FatalError" } } };
-                }
-                return new AnswerModel() { StatusCode = httpResponse.StatusCode, Errors = errorCodes };
+                return HandleExceptionText(text, httpResponse.StatusCode);
             }
         }
+    }
+
+    private static AnswerModel HandleExceptionText(string text, HttpStatusCode code)
+    {
+        Debug.Log(text);
+        var errors = new ErrorAnswer();
+        Dictionary<string, IList<string>> errorCodes = null;
+        try
+        {
+            errors = JsonConvert.DeserializeObject<ErrorAnswer>(text);
+            if (errors.ModelState != null && errors.ModelState.Any())
+            {
+                errorCodes = errors.ModelState;
+            }
+            else
+            {
+                errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { errors.Message } } };
+            }
+        }
+        catch
+        {
+            errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { "FatalError" } } };
+        }
+        return new AnswerModel() { StatusCode = code, Errors = errorCodes };
     }
 
     private static bool GetForceUpdate(DataType type)
