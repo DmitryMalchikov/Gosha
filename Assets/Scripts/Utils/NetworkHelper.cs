@@ -12,7 +12,7 @@ using uTasks;
 
 public static class NetworkHelper
 {
-    public static UnityWebRequest GetResponsePost(string url, string postParameters, string ContentType, List<Header> headers = null)
+    public static UnityWebRequest CreateRequest(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
         if (string.IsNullOrEmpty(postParameters))
         {
@@ -36,7 +36,7 @@ public static class NetworkHelper
                 req.SetRequestHeader(headers[i].Name, headers[i].Value);
             }
         }
-        req.SetRequestHeader("UserAgent", "GoshaGame");
+        req.SetRequestHeader("User-Agent", "GoshaGame");
         return req;
     }
 
@@ -122,10 +122,8 @@ public static class NetworkHelper
 
     public static IEnumerator StartRequest(string url, object parameters, string contentType, bool forceUpdate, DataType type, AnswerModel response, string loadingPanelsKey)
     {
-        if (type != DataType.Network && forceUpdate == false)
-        {
-            forceUpdate = GetForceUpdate(type);
-        }
+        forceUpdate = GetForceUpdate(type, forceUpdate);
+
         if (forceUpdate)
         {
             Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey));
@@ -137,23 +135,16 @@ public static class NetworkHelper
         }
         string parms = string.Empty;
 
-        if (parameters != null)
+        for (IEnumerator e = SerializeParameters(parameters); ;)
         {
-            ThreadHelper.RunNewThread(() =>
+            if (!e.MoveNext())
             {
-                if (!(parameters is string))
-                {
-                    parms = JsonConvert.SerializeObject(parameters);
-                }
-                else
-                {
-                    parms = parameters as string;
-                }
-            });
-
-            while (string.IsNullOrEmpty(parms))
+                parms = e.Current as string;
+                break;
+            }
+            else
             {
-                yield return null;
+                yield return e.Current;
             }
         }
 
@@ -167,37 +158,98 @@ public static class NetworkHelper
         }
         if (response.StatusCode == 0)
         {
+            forceUpdate = true;
             LoadingManager.PanelKeyToEnable = loadingPanelsKey;
-            var req = GetResponsePost(url, parms, contentType, LoginManager.Instance.Headers);
+            var req = CreateRequest(url, parms, contentType, LoginManager.Instance.Headers);
+            yield return SendRequest(req);
+            SetResponse(response, req);
+        }
+
+        if (NeedSave(response.StatusCode, forceUpdate, type))
+        {
+            Extensions.SaveJsonDataAsync(type, response.Text);
+        }
+    }
+
+    private static IEnumerator SendRequest(UnityWebRequest req)
+    {
 #if UNITY_2017
-            yield return req.SendWebRequest();
+        yield return req.SendWebRequest();
 #elif UNITY_5
              yield return req.Send();
 #endif
+    }
+
+    private static void SetResponse(AnswerModel response, UnityWebRequest req)
+    {
 #if UNITY_2017
-            if (req.isHttpError)
+        if (req.isHttpError)
 #elif UNITY_5
                 if (req.isError)
 #endif
+        {
+            response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
+        }
+        else
+        {
+            response.SetFields(new AnswerModel(req.downloadHandler.text));
+        }
+    }
+
+    private static bool NeedSave(HttpStatusCode code, bool wasForceUpdate, DataType type)
+    {
+        if (type == DataType.UserInfo || type == DataType.Network)
+        {
+            return false;
+        }
+        if (code == System.Net.HttpStatusCode.OK && wasForceUpdate)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private static bool GetForceUpdate(DataType type, bool inputForceUpdate)
+    {
+        if (type == DataType.Network)
+        {
+            return true;
+        }
+        if (type != DataType.Network && inputForceUpdate == false)
+        {
+            return GetForceUpdate(type);
+        }
+        return inputForceUpdate;
+    }
+
+    private static IEnumerator SerializeParameters(object parameters)
+    {
+        if (parameters == null)
+        {
+            yield return string.Empty;
+        }
+
+        var task = Task.Run(() =>
+        {
+            string parms = string.Empty;
+
+            if (!(parameters is string))
             {
-                response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
+                parms = JsonConvert.SerializeObject(parameters);
             }
             else
             {
-                response.SetFields(new AnswerModel(req.downloadHandler.text));
+                parms = parameters as string;
             }
-        }
 
-        if (response.StatusCode == System.Net.HttpStatusCode.OK && forceUpdate)
+            return parms;
+        });
+
+        while (!task.IsCompleted)
         {
-            if (type != DataType.Network && type != DataType.UserInfo)
-            {
-                ThreadHelper.RunNewThread(() =>
-                {
-                    Extensions.SaveJsonData(type, response.Text);
-                });
-            }
+            yield return null;
         }
+        yield return task.Result;
     }
 
     public static void HandleRequestError(AnswerModel response, Action<AnswerModel> errorMethod)
@@ -210,19 +262,6 @@ public static class NetworkHelper
         if (errorMethod != null)
         {
             errorMethod(response);
-        }
-    }
-
-    private static AnswerModel HandleWebException(WebException exception)
-    {
-        using (WebResponse response = exception.Response)
-        {
-            HttpWebResponse httpResponse = (HttpWebResponse)response;
-            using (Stream data1 = response.GetResponseStream())
-            {
-                string text = new StreamReader(data1).ReadToEnd();
-                return HandleExceptionText(text, httpResponse.StatusCode);
-            }
         }
     }
 
