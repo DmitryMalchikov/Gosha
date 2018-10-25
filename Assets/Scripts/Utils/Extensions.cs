@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using uTasks;
 
 public static class Extensions
 {
@@ -51,8 +52,14 @@ public static class Extensions
         FileStream fs = File.Create(filePath);
         formatter.Serialize(fs, dataToSave);
         fs.Close();
+    }
 
-        //File.wri(path, dataToSave);
+    public static void SaveJsonDataAsync(DataType type, string dataToSave)
+    {
+        Task.Run(() =>
+        {
+            SaveJsonData(type, dataToSave);
+        });
     }
 
     public static string LoadJsonData(DataType type)
