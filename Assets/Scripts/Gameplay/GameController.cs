@@ -332,10 +332,7 @@ public class GameController : Singleton<GameController>
         {
             Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
 
-            ThreadHelper.RunNewThread(() =>
-            {
-                Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
-            });
+            Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
         }
     }
 

@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuyInfo : MonoBehaviour {
+public class BuyInfo : MonoBehaviour
+{
 
     public Text Title;
     public Image Sprite;
@@ -43,7 +44,7 @@ public class BuyInfo : MonoBehaviour {
                 {
                     bonusUpgrade.UpgradeAmount++;
                 }
-              
+
                 ShopManager.CurrentShop.BonusUpgrades.Find(bu => bu.Id == ItemID).Amount++;
                 ShopManager.UpdateShopItems();
                 LoginManager.User.IceCream -= price;
@@ -51,11 +52,7 @@ public class BuyInfo : MonoBehaviour {
 
                 Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
 
-                ThreadHelper.RunNewThread(() =>
-                {
-                    //Extensions.SaveJsonData(DataType.Shop, JsonConvert.SerializeObject(ShopManager.CurrentShop));
-                    Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
-                });
+                Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
             }
             else if (!string.IsNullOrEmpty(ItemName))
             {
@@ -73,14 +70,11 @@ public class BuyInfo : MonoBehaviour {
                 Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
                 Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
 
-                ThreadHelper.RunNewThread(() =>
-                {
-                    Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
-                });
+                Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
             }
 
             Canvaser.Instance.Shop.CheckBuyBtns();
             gameObject.SetActive(false);
-        }        
+        }
     }
 }

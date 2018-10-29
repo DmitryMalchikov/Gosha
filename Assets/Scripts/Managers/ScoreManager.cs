@@ -80,16 +80,13 @@ public class ScoreManager : APIManager<ScoreManager>
     {
         LoginManager.User.IceCream += iceCream;
         LoginManager.User.Cases += boxes;
-        
+
         Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
         Canvaser.Instance.SetNotifications(LoginManager.User);
 
-        ThreadHelper.RunNewThread(() =>
-        {
-            Extensions.SaveJsonData(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
-        });
+        Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
     }
-    
+
     public void UseBonusAsync(int bonusInvId)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)

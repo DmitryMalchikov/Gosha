@@ -25,10 +25,7 @@ public class ShopManager : APIManager<ShopManager>
 
                model.BonusUpgrades.Find(bu => bu.Id == itemId).Amount++;
                SetShopItems(model);
-               ThreadHelper.RunNewThread(() =>
-               {
-                   Extensions.SaveJsonData(DataType.Shop, JsonConvert.SerializeObject(model));
-               });
+               Extensions.SaveJsonDataAsync(DataType.Shop, JsonConvert.SerializeObject(model));
            }
 
            LoginManager.User.IceCream -= price;
