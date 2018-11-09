@@ -130,7 +130,7 @@ public class SuitsPanel : MonoBehaviour
             UpdateCards();
         }
         //CurrentSuitImage.sprite = selected.sprite;
-        PlayerController.Instance.PutOnSuit(suit.Name);
+        SuitsManager.PutOnSuit(suit.Name);
         SuitName.text = Name;
         _currentSuitName = suit.Name;
     }
@@ -207,7 +207,7 @@ public class SuitsPanel : MonoBehaviour
     public void ShowCards()
     {
         SuitPanel.SetActive(false);
-        PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+        SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
         CardsPanel.SetActive(true);
         UpdateCards();
     }
@@ -229,7 +229,6 @@ public class SuitsPanel : MonoBehaviour
 
     public void UpdateCards()
     {
-        Debug.Log("Update cards");
         TurnOffCards();
         if (SuitsScroll.Costumes.Count > 0)
         {
@@ -254,7 +253,7 @@ public class SuitsPanel : MonoBehaviour
     public void ShowCostume()
     {
         CardsPanel.SetActive(false);
-        PlayerController.Instance.PutOnSuit(SuitName.text);
+        SuitsManager.PutOnSuit(SuitName.text);
         SuitPanel.SetActive(true);
     }
 
@@ -267,7 +266,7 @@ public class SuitsPanel : MonoBehaviour
         }
         else
         {
-            PlayerController.Instance.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+            SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
             SuitCamera.SetActive(false);
         }
         gameObject.SetActive(false);
@@ -280,7 +279,6 @@ public class SuitsPanel : MonoBehaviour
 
     public void SetCases(List<InventoryItem> cases)
     {
-        Debug.Log(cases.Count);
         if (cases.Count < 1 || cases[0].Amount < 1)
         {
             CaseImage.gameObject.SetActive(false);

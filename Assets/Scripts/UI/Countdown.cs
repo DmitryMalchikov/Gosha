@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class Countdown : MonoBehaviour
 {
-
     public Text SecondsLeft;
 
     private WaitForSeconds second = new WaitForSeconds(1);
@@ -28,10 +27,9 @@ public class Countdown : MonoBehaviour
         if (!GameController.Paused)
         {
             PlayerController.Instance.RemoveObstcles();
-            //PlayerController.ResetPositionForContinue();
         }
-        GameController.Paused = false;
-        gameObject.SetActive(false);
-        Time.timeScale = 1;        
+
+        GameController.Instance.ContinueAfterCountdown();
+        gameObject.SetActive(false);     
     }
 }

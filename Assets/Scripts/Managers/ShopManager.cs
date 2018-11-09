@@ -60,7 +60,7 @@ public class ShopManager : APIManager<ShopManager>
         CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
        {
            CurrentShop = model;
-           GameController.SetHash("ShopHash", model.ShopHash);
+           HashManager.SetShopHash(model.ShopHash);
 
            SetShopItems(model);
 

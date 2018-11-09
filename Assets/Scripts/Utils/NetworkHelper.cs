@@ -84,7 +84,10 @@ public static class NetworkHelper
 
     private static IEnumerator Empty(Action action)
     {
-        action();
+        if (action != null)
+        {
+            action();
+        }
         yield break;
     }
 
@@ -284,19 +287,19 @@ public static class NetworkHelper
         switch (type)
         {
             case DataType.Duels:
-                savedHash = GameController.DuelsHash;
+                savedHash = HashManager.DuelsHash;
                 return LoginManager.User.DuelsHash != savedHash;
             case DataType.Friends:
-                savedHash = GameController.FriendsHash;
+                savedHash = HashManager.FriendsHash;
                 return LoginManager.User.FriendsHash != savedHash;
             case DataType.Shop:
-                savedHash = GameController.ShopHash;
+                savedHash = HashManager.ShopHash;
                 return LoginManager.User.ShopHash != savedHash;
             case DataType.Suits:
-                savedHash = GameController.SuitsHash;
+                savedHash = HashManager.SuitsHash;
                 return LoginManager.User.SuitsHash != savedHash;
             case DataType.Trades:
-                savedHash = GameController.TradesHash;
+                savedHash = HashManager.TradesHash;
                 return LoginManager.User.TradesHash != savedHash;
             case DataType.UserInfo:
                 return !LoginManager.LocalUser;
@@ -544,6 +547,34 @@ public class Bonus
     public int Amount { get; set; }
     public int Id { get; set; }
     public NameLocalization Name { get; set; }
+
+    public bool Use()
+    {
+        if (Amount < 1)
+        {
+            return false;
+        }
+
+        Amount -= 1;
+        if (!LoginManager.LocalUser)
+        {
+            ScoreManager.Instance.UseBonusAsync(Id);
+        }
+        else
+        {
+            Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
+            Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+        }
+        return true;
+    }
+
+    public void Copy(Bonus bonus)
+    {
+        Type = bonus.Type;
+        Amount = bonus.Amount;
+        Id = bonus.Id;
+        Name = bonus.Name;
+    }
 }
 
 public class NameLocalization
@@ -564,7 +595,6 @@ public class NameLocalization
         Name = name;
         NameRu = NameRu;
     }
-
 }
 
 public class InputInt

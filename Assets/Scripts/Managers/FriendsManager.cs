@@ -26,7 +26,7 @@ public class FriendsManager : APIManager<FriendsManager>
     {
         CoroutineManager.SendRequest(GetFriendsUrl, null, (FullFriendInfoModel model) =>
         {
-            GameController.SetHash("FriendsHash", model.FriendsHash);
+            HashManager.SetFriendsHash(model.FriendsHash);
 
             Canvaser.Instance.FriendsPanel.SetFriends(model.Friends);
             Canvaser.Instance.FriendsPanel.SetFriendRequests(model.FriendRequests);

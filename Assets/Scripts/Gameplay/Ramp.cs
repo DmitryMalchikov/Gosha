@@ -1,17 +1,35 @@
 ﻿using UnityEngine;
 
-public class Ramp : MonoBehaviour {
-	void OnTriggerEnter(Collider other){
-		if (other.CompareTag ("Player")) {
-			PlayerController.Instance.OnRamp = true;
-		}
-	}
+public class Ramp : MonoBehaviour
+{
+    public static bool PlayerOnRamp { get; private set; }
 
-	void OnTriggerExit(Collider other){
-		if (other.CompareTag ("Player")) {
-			PlayerController.Instance.OnRamp = false;
-			//PlayerController.Instance.rb.velocity += Vector3.down * PlayerController.Instance.rb.velocity.y;
-		}
-	}
+    static Ramp()
+    {
+        PlayerOnRamp = false;
+    }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerOnRamp = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerOnRamp = false;
+        }
+    }
+
+    public static void StickPlayerToGround()
+    {
+        if (PlayerOnRamp)
+        {
+            PlayerController.Instance.StickToGround();
+        }
+    }
 }

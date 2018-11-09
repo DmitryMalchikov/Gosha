@@ -23,7 +23,7 @@ public class TradeInfo : MonoBehaviour {
         }
         if (model.OfferItem.Name.Contains("Card"))
         {
-            Item1.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.OfferItem.Name));
+            Item1.sprite = Resources.Load<Sprite>(model.OfferItem.Name.AddBrackets());
         }
         else
         {
@@ -31,7 +31,7 @@ public class TradeInfo : MonoBehaviour {
         }
         if (model.RequestItem.Name.Contains("Card"))
         {
-            Item2.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.RequestItem.Name));
+            Item2.sprite = Resources.Load<Sprite>(model.RequestItem.Name.AddBrackets());
         }
         else
         {

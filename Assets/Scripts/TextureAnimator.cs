@@ -14,10 +14,10 @@ public class TextureAnimator : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!GameController.Instance.Started)
+		if (!GameController.Started)
 			return;
 
-		offset += Time.deltaTime * GameController.Instance.Speed.z * SpeedCoef;
+		offset += Time.deltaTime * SpeedController.Speed.z * SpeedCoef;
 		offset %= 1;
 		mat.SetTextureOffset ("_MainTex", new Vector2(0, offset));
 	}

@@ -28,15 +28,15 @@
         CoroutineManager.SendRequest(OfferTradeUrl, offer, () =>
        {
            Canvaser.Instance.TradeOffered();
-            //LoginManager.Instance.GetUserInfoAsync();
-        });
+           //LoginManager.Instance.GetUserInfoAsync();
+       });
     }
     public void GetTradeOffersAsync()
     {
         CoroutineManager.SendRequest(TradeOffersUrl, null, (TradeModel info) =>
        {
            Canvaser.Instance.TradePanel.SetTrades(info.Trades);
-           GameController.SetHash("TradesHash", info.TradesHash);
+           HashManager.SetTradesHash(info.TradesHash);
        }, loadingPanelsKey: "trades", type: DataType.Trades);
     }
 

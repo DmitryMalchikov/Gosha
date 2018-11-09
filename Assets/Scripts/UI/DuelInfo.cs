@@ -41,9 +41,7 @@ public class DuelInfo : MonoBehaviour {
 
     public void Run()
     {
-        Canvaser.Instance.Duels.gameObject.SetActive(false);
-        GameController.Instance.InDuel = true;
-        GameController.Instance.DuelID = info.Id;
+        Canvaser.Instance.Duels.gameObject.SetActive(false);        
         Canvaser.Instance.StartRun();
     }
 

@@ -3,6 +3,17 @@ using UnityEngine;
 
 public class DuelManager : APIManager<DuelManager>
 {
+    private static int _duelID;
+    private static bool _inDuel;
+
+    public static bool InDuel
+    {
+        get
+        {
+            return _inDuel;
+        }
+    }
+
     public string FullDuelsInfo = "/api/duels/getallduels";
     public string OfferDuelUrl = "/api/duels/offerduel";
     public string AcceptDuelUrl = "/api/duels/acceptduel";
@@ -41,7 +52,7 @@ public class DuelManager : APIManager<DuelManager>
     {
         CoroutineManager.SendRequest(FullDuelsInfo, null, (DuelsFullInfoModel model) =>
        {
-           GameController.SetHash("DuelsHash", model.DuelsHash);
+           HashManager.SetDuelsHash(model.DuelsHash);
            Canvaser.Instance.Duels.SetDuels(model.DuelOffers);
            Canvaser.Instance.Duels.SetRequests(model.DuelRequests);
 
@@ -75,6 +86,7 @@ public class DuelManager : APIManager<DuelManager>
 
     public void StartRunAsync(int duelID)
     {
+        SetDuel(duelID);
         InputInt input = new InputInt() { Value = duelID };
         CoroutineManager.SendRequest(StartRunUrl, input, () =>
        {
@@ -93,17 +105,28 @@ public class DuelManager : APIManager<DuelManager>
        });
     }
 
-    public void SubmitDuelResultAsync(int duelID, int distance)
+    public void SubmitDuelResultAsync(int distance)
     {
-        SubmitDuelScoreModel input = new SubmitDuelScoreModel() { Id = duelID, Distance = distance };
+        if (!_inDuel)
+        {
+            return;
+        }
+
+        _inDuel = false;
+        SubmitDuelScoreModel input = new SubmitDuelScoreModel() { Id = _duelID, Distance = distance };
 
         CoroutineManager.SendRequest(SubmitDuelResultUrl, input, (DuelResultModel DRM) =>
        {
-            //DuelResultModel DRM = JsonConvert.DeserializeObject<DuelResultModel>(response.Text);
             if (DRM.FirstPlayer != null)
            {
                Canvaser.Instance.Duels.SetResult(DRM);
            }
        });
+    }
+
+    public static void SetDuel(int duelID)
+    {
+        _inDuel = true;
+        _duelID = duelID;
     }
 }

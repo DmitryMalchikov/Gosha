@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class BuyInfo : MonoBehaviour
 {
-
     public Text Title;
     public Image Sprite;
     public Text Description;

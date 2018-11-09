@@ -130,12 +130,14 @@ public static class Extensions
         }
     }
 
-    public static void Execute(this Action action)
+    public static string AddBrackets(this string input)
     {
-        if (action != null)
-        {
-            action();
-        }
+        int index = input.LastIndexOf(" ");
+        input = input.Insert(index + 1, "(");
+        input += ")";
+        input = input.Replace(" Card", "");
+        input = input.Replace(" Suit", "");
+        return input;
     }
 }
 

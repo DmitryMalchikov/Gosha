@@ -7,11 +7,11 @@ public class BonusPanel : MonoBehaviour
     public string Name;
     public int Count;
     public Toggle Active;
-    public Bonus Bonus;
+    public IBonus Bonus;
 
     public void SetInfo(Bonus bonus)
     {
-        Bonus = bonus;
+        Bonus = UserBonusFactory.CreateUserBonus(bonus);
 
         if (Bonus != null)
         {

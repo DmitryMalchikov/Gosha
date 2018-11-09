@@ -96,7 +96,7 @@ public class AchievementsManager : APIManager<AchievementsManager>
 
     private void OnApplicationPause(bool pause)
     {
-        if (pause && GameController.Instance.Started)
+        if (pause && GameController.Started)
         {
             SubmitAllAchievements(false);
         }

@@ -4,7 +4,7 @@ public class Deceleration : MonoBehaviour, IPickable
 {
     public void PickUp()
     {
-        GameController.Instance.ApplyDeceleration();
+        SpeedController.Instance.ApplyDeceleration();
         gameObject.SetActive(false);
         AudioManager.PlayEffectPickup();
     }

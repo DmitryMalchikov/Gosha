@@ -2,127 +2,51 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VacuumShaders.CurvedWorld;
 
 public class GameController : Singleton<GameController>
 {
-    public static bool Paused = false;
-    public static float SpeedMultiplyer = 1;
-    public bool BlockMoving = false;
+    public static bool Paused { get; private set; }
     public int BonusChance;
     public int BoxChance = 1;
     public string CancelBtn = "Cancel";
     public bool CanUseCurrentBonus = true;
     public float CoinSpeed = 10;
     public bool Continued = false;
-    public Bonus CurrentBonus;
+    public IBonus CurrentBonus;
     public int CurrentBoxes = 0;
     public int CurrentCoins = 0;
     public float CurrentPoints = 0;
-    public bool Deceleration = false;
     public float DecelerationTime;
-    public float DecelerationTimeLeft;
-    public int DuelID;
-    public float IncreaseTimeStep;
-    public float IncreaseValue;
-    public bool InDuel;
-    public bool Magnet = false;
     public float MagnetTime;
-    public float MagnetTimeLeft;
-    public int MaxSpeed = -35;
-    public bool NormalSpeed = true;
     public float returnTime = 1f;
-    public bool Rocket = false;
-    public float RocketHeight = 5;
-    public float RocketPower = 600;
     public float RocketTime;
-    public float RocketTimeLeft;
-    public float RotationCoef;
     public float ScoreSpeed;
-    public bool Shield = false;
     public float ShieldTime;
-    public float ShieldTimeLeft;
-    public Material Skybox;
-    public Vector3 Speed = Vector3.back * 10;
-    public bool Started;
-    public int StartSpeed = -6;
-    Vector3 CurrentSpeed;
-    CurvedWorld_Controller curvController;
+    public static bool Started { get; private set; }
     float points;
     bool setRun = false;
-    private float SkyboxRotation = 0f;
-    public static string DuelsHash { get; set; }
-    public static string FriendsHash { get; set; }
     public static string PersistentDataPath { get; private set; }
-    public static string ShopHash { get; set; }
-    public static string SuitsHash { get; set; }
-    public static string TradesHash { get; set; }
     public float RocketDistance
     {
         get
         {
-            return Mathf.Abs(RocketTime * Speed.z);
+            return Mathf.Abs(RocketTime * SpeedController.Speed.z);
         }
     }
 
-    public static void SetHash(string name, string value)
+    public static void OnHit()
     {
-        PlayerPrefs.SetString(name, value);
-        LoadHashes();
-    }
-
-    public static void TurnFreezeOff()
-    {
-        Instance.Deceleration = false;
-        PlayerController.TurnOffEffect(EffectType.Freeze);
-        Canvaser.Instance.GamePanel.Decelerator.Activate(false);
-    }
-
-    public static void TurnFreezeOn()
-    {
-        Instance.Deceleration = true;
-        AudioManager.PlayFreezeStartEffect();
-        PlayerController.TurnOnEffect(EffectType.Freeze);
-        Canvaser.Instance.GamePanel.Decelerator.Activate(true);
+        TurnOffAllBonuses();
+        Started = false;
     }
 
     public static void TurnOffAllBonuses()
     {
         Collector.Instance.ResetMagnet();
         Canvaser.Instance.GamePanel.TurdOffBonuses();
-        TurnRocketOff();
-        TurnFreezeOff();
-        PlayerController.TurnShieldOff();
-        Instance.NormalSpeed = true;
-    }
-
-    public static void TurnRocketOff()
-    {
-        PlayerController.TurnOffEffect(EffectType.Rocket);
-        Instance.Rocket = false;
-        Instance.BlockMoving = false;
-        PlayerController.Instance.rb.useGravity = true;
-        PlayerController.Instance.col.enabled = true;
-        Canvaser.Instance.GamePanel.Rocket.Activate(false);
-        PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, false);
-        PlayerController.Instance.animator.ResetTrigger("RocketTrigger");
-        PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
-        AudioManager.StopEffectsSound();
-    }
-
-    public static void TurnRocketOn()
-    {
-        PlayerController.Instance.rb.constraints = PlayerController.FreezeExceptJump;
-        PlayerController.TurnOnEffect(EffectType.Rocket);
-        Instance.Rocket = true;
-        Instance.BlockMoving = true;
-        PlayerController.Instance.rb.useGravity = false;
-        PlayerController.Instance.col.enabled = false;
-        PlayerController.Instance.Collisions.Clear();
-        PlayerController.Instance.OnGround = false;
-        Canvaser.Instance.GamePanel.Rocket.Activate(true);
-        PlayerController.Instance.animator.SetBool(PlayerController.RocketHash, true);
-        PlayerController.Instance.animator.SetTrigger("RocketTrigger");
+        PlayerRocket.TurnRocketOff();
+        SpeedController.TurnFreezeOff();
+        PlayerShield.ResetShield();
     }
 
     public void AddBox()
@@ -134,40 +58,8 @@ public class GameController : Singleton<GameController>
     {
         Canvaser.Instance.AddCoin();
         CurrentCoins++;
-        PlayerController.PickIceCream();
+        EffectsManager.PlayIceCreamPicked();
         AchievementsManager.Instance.CheckAchievements(TasksTypes.CollectIceCream);
-    }
-
-    public void ApplyDeceleration()
-    {
-        DecelerationTimeLeft = DecelerationTime;
-
-        if (!Deceleration)
-        {
-            if (NormalSpeed)
-            {
-                CurrentSpeed = Speed;
-                Speed = Speed * 0.7f;
-            }
-            else
-            {
-                Speed = CurrentSpeed * 0.7f;
-                NormalSpeed = true;
-            }
-            SpeedMultiplyer = Speed.z / StartSpeed;
-
-            StartCoroutine(ReturnSpeed());
-        }
-    }
-
-    public void ApplyRocket()
-    {
-        RocketTimeLeft = RocketTime;
-
-        if (!Rocket)
-        {
-            StartCoroutine(UseRocket());
-        }
     }
 
     public void ContinueGame()
@@ -182,15 +74,16 @@ public class GameController : Singleton<GameController>
         Continued = true;
         Started = true;
         StartCoroutine(GameStarted());
+        SpeedController.Continue();
         Canvaser.Instance.Countdown.SetActive(true);
-        CameraFollow.Instance.offset.z = CameraFollow.Instance.ZOffset;
+        CameraFollow.ResetOffset();
     }
 
     public void FinishGame()
     {
         Time.timeScale = 0;
 
-        if (!Continued && !InDuel)
+        if (!Continued && !DuelManager.InDuel)
         {
             Canvaser.Instance.ContinueForMoney.OpenContinuePanel();
         }
@@ -237,26 +130,27 @@ public class GameController : Singleton<GameController>
         Canvaser.Instance.PausePanel.SetActive(true);
     }
 
+    public void ContinueAfterCountdown()
+    {
+        Time.timeScale = 1;
+        Paused = false;
+    }
+
     public void ResetScores()
     {
-        Rocket = false;
-        Deceleration = false;
-        Shield = false;
         Time.timeScale = 1;
         Started = true;
         Continued = false;
-        Speed.z = StartSpeed;
-        SpeedMultiplyer = 1;
         CurrentCoins = 0;
         CurrentBoxes = 0;
         CurrentPoints = 0;
-        CurrentSpeed = Speed;
-        PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, true);
-        PlayerController.Instance.animator.ResetTrigger("Reset");
+        PlayerAnimator.Started(true);
         TasksManager.Instance.CheckTasks(TasksTypes.Play);
+        SpeedController.ResetSpeed();
+        RoadBend.Instance.StartBending();
+        PlayerShield.ResetShield();
+        PlayerRocket.ResetRocket();
         StopAllCoroutines();
-        StartCoroutine(IncreaseSpeed());
-        StartCoroutine(ChangeDirection());
         StartCoroutine(GameStarted());
     }
     public void SetBonusesTime(List<BonusUpgrade> upgrades)
@@ -274,29 +168,18 @@ public class GameController : Singleton<GameController>
     {
         Canvaser.Instance.SetGameOverPanel();
         IceCreamRotator.SetRotator(false);
-        Speed.z = 0;
-        SpeedMultiplyer = 0;
+        SpeedController.Stop();
         Started = false;
         Paused = false;
         CanUseCurrentBonus = true;
         CameraFollow.Instance.ChangeCamera();
-        PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
-        PlayerController.Instance.animator.SetBool(PlayerController.StartedHash, false);
+        PlayerAnimator.Started(false);
         Time.timeScale = 1;
         AchievementsManager.Instance.CheckAchievements(TasksTypes.Loose);
         ScoreManager.Instance.SubmitScoreAsync((int)CurrentPoints, CurrentCoins, CurrentBoxes);
         TouchReader.ClearInputs();
-        if (InDuel)
-        {
-            DuelManager.Instance.SubmitDuelResultAsync(DuelID, (int)CurrentPoints);
-            InDuel = false;
-        }
-
-        Canvaser.Instance.PausePanel.SetActive(false);
-        Canvaser.Instance.GamePanel.gameObject.SetActive(false);
-        Canvaser.Instance.Coins.text = "0";
-        Canvaser.Instance.Score.text = "0";
-
+        DuelManager.Instance.SubmitDuelResultAsync((int)CurrentPoints);
+        Canvaser.ResetCanvas();
         AchievementsManager.Instance.SubmitAllAchievements(true);
         TasksManager.Instance.SubmitAllTasks(true);
         TurnOffAllBonuses();
@@ -306,66 +189,15 @@ public class GameController : Singleton<GameController>
     }
     public void UseBonus()
     {
-        if (CurrentBonus == null || CurrentBonus.Amount < 1) return;
-
+        if (CurrentBonus == null || !CurrentBonus.UseBonus()) return;
         CanUseCurrentBonus = false;
-
-        switch (CurrentBonus.Name.Name)
-        {
-            case "Shield":
-                PlayerController.Instance.ApplyShield();
-                break;
-            case "Magnet":
-                Collector.Instance.UseMagnet();
-                break;
-            case "Freeze":
-                ApplyDeceleration();
-                break;
-        }
-
-        CurrentBonus.Amount -= 1;
-        if (!LoginManager.LocalUser)
-        {
-            ScoreManager.Instance.UseBonusAsync(CurrentBonus.Id);
-        }
-        else
-        {
-            Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
-
-            Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
-        }
-    }
-
-    private static void LoadHashes()
-    {
-        FriendsHash = PlayerPrefs.GetString("FriendsHash");
-        DuelsHash = PlayerPrefs.GetString("DuelsHash");
-        SuitsHash = PlayerPrefs.GetString("SuitsHash");
-        ShopHash = PlayerPrefs.GetString("ShopHash");
-        TradesHash = PlayerPrefs.GetString("TradesHash");
-    }
-
-    IEnumerator ChangeDirection()
-    {
-        while (true)
-        {
-            int rand = Random.Range(10, 21);
-            yield return new WaitForSeconds(rand);
-            float direction = (rand - 15) / 2;
-
-            while (Mathf.Abs(curvController._V_CW_Bend_Y - direction) > 0.01f && Time.timeScale > 0 && Started)
-            {
-                yield return null;
-                curvController._V_CW_Bend_Y -= Mathf.Sign(curvController._V_CW_Bend_Y - direction) * 0.005f;
-            }
-        }
     }
 
     IEnumerator GameStarted()
     {
         while (Started)
         {
-            CurrentPoints -= Speed.z * ScoreSpeed * Time.deltaTime;
+            CurrentPoints -= SpeedController.Speed.z * ScoreSpeed * Time.deltaTime;
 
             points = Mathf.Round(CurrentPoints);
             Canvaser.Instance.SetScore((int)points);
@@ -387,7 +219,7 @@ public class GameController : Singleton<GameController>
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.R))
             {
-                ApplyRocket();
+                PlayerRocket.Instance.ApplyRocket();
             }
             if (Input.GetKeyDown(KeyCode.M))
             {
@@ -395,31 +227,13 @@ public class GameController : Singleton<GameController>
             }
             if (Input.GetKeyDown(KeyCode.S))
             {
-                PlayerController.Instance.ApplyShield();
+                PlayerShield.Instance.ApplyShield();
             }
 #endif
 
-            SkyboxRotation = (SkyboxRotation + CurvedWorld_Controller.get._V_CW_Bend_Y * RotationCoef * Time.deltaTime) % 360;
-            Skybox.SetFloat("_Rotation", SkyboxRotation);
+            SkyboxRotator.Rotate();
 
             yield return null;
-        }
-    }
-
-    IEnumerator IncreaseSpeed()
-    {
-        while (Speed.z > MaxSpeed && Started)
-        {
-            yield return new WaitForSeconds(IncreaseTimeStep);
-            if (Started && !Paused)
-            {
-                if (!Deceleration && !Rocket)
-                {
-                    CurrentSpeed.z -= IncreaseValue;
-                    Speed = CurrentSpeed;
-                    SpeedMultiplyer = Speed.z / StartSpeed;
-                }
-            }
         }
     }
 
@@ -430,47 +244,11 @@ public class GameController : Singleton<GameController>
             PauseGame();
         }
     }
-    IEnumerator ReturnSpeed()
-    {
-        TurnFreezeOn();
-
-        while (DecelerationTimeLeft > 0 && Deceleration)
-        {
-            yield return CoroutineManager.Frame;
-            DecelerationTimeLeft -= Time.deltaTime;
-
-            Canvaser.Instance.GamePanel.Decelerator.SetTimer(DecelerationTimeLeft);
-        }
-
-        if (!Deceleration)
-        {
-            yield break;
-        }
-
-        TurnFreezeOff();
-        Canvaser.Instance.GamePanel.DeceleratorCD.OpenCooldownPanel();
-        NormalSpeed = false;
-        AudioManager.PlayEffectEnd();
-
-        var increaseValue = (CurrentSpeed.z - Speed.z) / (returnTime * 10);
-
-        while (Speed.z > CurrentSpeed.z && !NormalSpeed)
-        {
-            yield return new WaitForSeconds(0.1f);
-
-            Speed.z += increaseValue;
-            SpeedMultiplyer = Speed.z / StartSpeed;
-        }
-
-        NormalSpeed = true;
-    }
 
     private void Start()
     {
-        curvController = FindObjectOfType<CurvedWorld_Controller>();
-
-        LoadHashes();
         PersistentDataPath = Application.persistentDataPath;
+        Paused = false;
     }
     private void Update()
     {
@@ -487,51 +265,8 @@ public class GameController : Singleton<GameController>
 
         if (Input.GetKeyDown(KeyCode.D))
         {
-            ApplyDeceleration();
+            SpeedController.Instance.ApplyDeceleration();
         }
 #endif
-    }
-    IEnumerator UseRocket()
-    {
-        StartCoroutine(CoinGenerator.Instance.StartGeneration());
-
-        TurnRocketOn();
-        PlayerController.Instance.rb.velocity += Vector3.up * (RocketPower - PlayerController.Instance.rb.velocity.y);
-
-        yield return new WaitUntil(() =>
-        {
-            RocketTimeLeft -= Time.deltaTime;
-            Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
-            return PlayerController.Instance.transform.position.y >= RocketHeight || !Rocket;
-        });
-
-        if (!Rocket)
-        {
-            yield break;
-        }
-
-        AudioManager.PlayRocketEffect();
-        PlayerController.Instance.transform.position = new Vector3(PlayerController.Instance.transform.position.x, RocketHeight, PlayerController.Instance.transform.position.z);
-        PlayerController.Instance.col.enabled = true;
-        PlayerController.Instance.rb.velocity = Vector3.zero;
-        PlayerController.Instance.rb.constraints = RigidbodyConstraints.FreezeAll;
-        BlockMoving = false;
-
-
-        while (RocketTimeLeft > 0 && Rocket)
-        {
-            RocketTimeLeft -= Time.deltaTime;
-            Canvaser.Instance.GamePanel.Rocket.SetTimer(RocketTimeLeft);
-            yield return CoroutineManager.Frame;
-        }
-
-        if (!Rocket)
-        {
-            yield break;
-        }
-        TurnRocketOff();
-        AudioManager.PlayEffectEnd();
-
-        Canvaser.Instance.GamePanel.RocketCD.OpenCooldownPanel();
     }
 }

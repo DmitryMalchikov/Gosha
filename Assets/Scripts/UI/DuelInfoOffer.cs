@@ -2,7 +2,6 @@
 
 public class DuelInfoOffer : DuelInfo
 {
-
     public GameObject WaitText;
     public GameObject AcceptButton;
     public GameObject ResultButton;

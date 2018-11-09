@@ -30,9 +30,9 @@ public class Car : MonoBehaviour {
 
     void Update ()
     {
-        if (Speed > 0 && GameController.Instance.Started)
+        if (Speed > 0 && GameController.Started)
         {
-            transform.Translate(Vector3.forward * Speed * (-GameController.Instance.Speed.z) * Time.deltaTime);
+            transform.Translate(Vector3.forward * Speed * (-SpeedController.Speed.z) * Time.deltaTime);
         }
 	}
 }

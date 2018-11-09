@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Rocket : MonoBehaviour, IPickable {
+public class Rocket : MonoBehaviour, IPickable
+{
     public void PickUp()
     {
-        GameController.Instance.ApplyRocket();
+        PlayerRocket.Instance.ApplyRocket();
         gameObject.SetActive(false);
         AudioManager.PlayEffectPickup();
     }

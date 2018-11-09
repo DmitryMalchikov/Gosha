@@ -63,7 +63,7 @@ public class TradeDetails : MonoBehaviour {
         }
         if (model.OfferItem.Name.Contains("Card"))
         {
-            FirstUserItemImg.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.OfferItem.Name));
+            FirstUserItemImg.sprite = Resources.Load<Sprite>(model.OfferItem.Name.AddBrackets());
         }
         else
         {
@@ -71,7 +71,7 @@ public class TradeDetails : MonoBehaviour {
         }
         if (model.RequestItem.Name.Contains("Card"))
         {
-            SecondUserItemImg.sprite = Resources.Load<Sprite>(Canvaser.Instance.AddBrackets(model.RequestItem.Name));
+            SecondUserItemImg.sprite = Resources.Load<Sprite>(model.RequestItem.Name.AddBrackets());
         }
         else
         {

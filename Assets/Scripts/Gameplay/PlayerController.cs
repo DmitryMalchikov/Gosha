@@ -1,76 +1,31 @@
 ﻿using System.Collections;
 using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
 
 public class PlayerController : Singleton<PlayerController>
 {
-    #region Constants
-    public const RigidbodyConstraints FreezeExceptJump = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
-    #endregion
-
-    #region Hashes
-    static int CrouchHash = Animator.StringToHash("Crouch");
-    static int JumpHash = Animator.StringToHash("Jump");
-    static int DeathHash = Animator.StringToHash("Death");
-    static int HitLeft = Animator.StringToHash("HitLeft");
-    static int HitRight = Animator.StringToHash("HitRight");
-    static int Left = Animator.StringToHash("Left");
-    static int Right = Animator.StringToHash("Right");
-    static int OnGroundHash = Animator.StringToHash("OnGround");
-    public static int StartedHash = Animator.StringToHash("Started");
-    public static int RocketHash = Animator.StringToHash("Rocket");
-    #endregion
-    
     public float Step = 2;
     [Range(0, 1)]
     public float GravityOnPercent = .75f;
-    public float LowDelta = 1.5f;
-    public float CurrentX = 0;
-    public float dir;
-    public float moveSpeed = 1;
-    public float JumpSpeed = 1;
-    public float CrouchPower = 1;
-    public bool isJumping;
-    public bool isCrouching = false;
+    public float LowDelta = 1.5f; 
+    public float moveSpeed = 1;   
     public bool isMoving;
-    public List<CollisionInfo> Collisions = new List<CollisionInfo>();
-    public float GroundNearDistance = 0.5f;
-
-    public Transform AnimatorRoot;
-    public Animator animator;
-    public CapsuleCollider col;
     public float MaxCollisionAngle;
     public float MinCollisionAngle;
     public int MaxHitsCount = 2;
-
-    [Header("Effects")]
-    public Effect IceEffect;
-    public Effect MagnetEffect;
-    public Effect ShieldEffect;
-    public Effect RocketEffect;
-    public ParticleSystem IceCreamPicked;
-    public ParticleSystem ObstaclesEffect;
-
-
-    private Vector3 moveDir;
-    private float FallDistance;
-
-    [Space(20)]
-    public Rigidbody rb;
-
-    public bool OnRamp = false;
     public Vector3 StartPos = new Vector3(0f, 0.5f, -4f);
-
-    public Vector3 ColliderStand = new Vector3();
-    public Vector3 ColliderCrouch = new Vector3(0, -0.5f, 0);
 
     [HideInInspector]
     public Tile LastTile;
 
-    private float minY = 0;
-    private int DefaultLayer;
-    private int GroundLayer;
+    [Header("Effects")]
+    public ParticleSystem ObstaclesEffect;
+
+    private Vector3 _moveDir;
+    private float _fallDistance;
+    private float _dir;    
+    private float _minY = 0;
+    private float _currentX = 0;
+    private bool _isJumping = false;
 
     public bool OnGround
     {
@@ -78,33 +33,27 @@ public class PlayerController : Singleton<PlayerController>
         set
         {
             _onGround = value;
-            animator.SetBool(OnGroundHash, _onGround);
+            PlayerAnimator.SetOnGround(_onGround);
         }
     }
     bool _onGround = true;
-
-    int environmentMask;
+    
     public float LastGroundY = 0;
-    public Animator PlayerAnimator;
+    public Animator CurrentAnimator;
 
     private Collider lastHit;
-    private Vector3 velocityBeforePhysics;
     private byte hitsCount;
-    private SuitInfo[] _suitsItems;
 
     public void ResetSas()
     {
         StopAllCoroutines();
-        StandUp();
-        col.enabled = true;
-        rb.useGravity = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-        Collisions.RemoveAll(col => col.Object.name != "Ground");
+        PlayerCollider.ResetCollider();
+        PlayerRigidbody.ResetRigidbody();
+        CurrentAnimator.SetTrigger("Change");
+        PlayerCollisions.ClearCollisionsExceptGround();
         transform.position = StartPos;
-        animator.transform.rotation = Quaternion.identity;
-        animator.SetTrigger("Reset");
         OnGround = true;
-        CurrentX = 0;
+        _currentX = 0;
         hitsCount = 0;
     }
 
@@ -113,88 +62,74 @@ public class PlayerController : Singleton<PlayerController>
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
 
-        FallDistance = Step * (1f - GravityOnPercent);
-        environmentMask = LayerMask.GetMask("Ground", "Default");
-        rb = GetComponent<Rigidbody>();
-        col = GetComponent<CapsuleCollider>();
-        PlayerAnimator = GetComponent<Animator>();
-        _suitsItems = GetComponentsInChildren<SuitInfo>();
-        DefaultLayer = LayerMask.NameToLayer("Default");
-        GroundLayer = LayerMask.NameToLayer("Ground");
-        PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+        _fallDistance = Step * (1f - GravityOnPercent);
+        CurrentAnimator = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        if ((OnGround && tempOnGround) || GameController.Instance.Rocket)
+        if ((OnGround && tempOnGround) || PlayerRocket.RocketInProgress)
         {
             LastGroundY = transform.position.y;
         }
-        else if (LastGroundY > transform.position.y && rb.velocity.y < 0)
+        else if (LastGroundY > transform.position.y && PlayerRigidbody.Velocity.y < 0)
         {
-            if (transform.position.y >= minY)
+            if (transform.position.y >= _minY)
             {
                 LastGroundY = transform.position.y;
             }
         }
 
-        if (!GameController.Instance.Started)
+        if (!GameController.Started)
             return;
 
-        if ((!OnGround && rb.velocity.y > 0 && !isMoving) && !OnRamp)
+        if ((!OnGround && PlayerRigidbody.Velocity.y > 0 && !isMoving) && !Ramp.PlayerOnRamp)
         {
             StickToGround();
         }
 
         if (isMoving)
         {
-            bool back = false;
-            back = dir == -1 ? transform.position.x < CurrentX : transform.position.x > CurrentX;
+            bool back = _dir == -1 ? transform.position.x < _currentX : transform.position.x > _currentX;
+            float movedDistance = Mathf.Abs(transform.position.x - _currentX);
 
-            if (!rb.useGravity && Mathf.Abs(transform.position.x - CurrentX) < FallDistance && !GameController.Instance.Rocket)
+            if (!PlayerRigidbody.UseGravity && movedDistance < _fallDistance && !PlayerRocket.RocketInProgress)
             {
-                if (Collisions.Count == 0)
+                if (!PlayerCollisions.AnyCollisions)
                 {
-                    rb.useGravity = true;
-                    rb.constraints = FreezeExceptJump;
+                    PlayerRigidbody.SetInAir();
                 }
             }
 
-            if (Mathf.Abs(transform.position.x - CurrentX) < 0.01f || back)
+            if (movedDistance < 0.01f || back)
             {
-                moveDir = Vector3.zero;
-                rb.constraints = FreezeExceptJump;
+                _moveDir = Vector3.zero;
+                PlayerRigidbody.FreezeExceptJump();
                 isMoving = false;
-                FixPos(CurrentX);
+                FixPos(_currentX);
                 StartCoroutine(SetOnGround());
             }
             else
             {
-                transform.Translate(moveDir * moveSpeed * Time.deltaTime);
+                transform.Translate(_moveDir * moveSpeed * Time.deltaTime);
             }
         }
     }
 
-    void FixedUpdate()
-    {
-        velocityBeforePhysics = rb.velocity;
-    }
-
     void LateUpdate()
     {
-        if (OnRamp)
-            StickToGround();
+        Ramp.StickPlayerToGround();
     }
 
     public void StickToGround()
     {
-        if (!isJumping && !GameController.Instance.Rocket)
+        if (!_isJumping && !PlayerRocket.RocketInProgress)
         {
             RaycastHit hit;
-            if (Physics.Raycast(new Ray(transform.position + Vector3.up, Vector3.down), out hit, 1.5f, environmentMask))
+            if (Physics.Raycast(new Ray(transform.position + Vector3.up, Vector3.down), out hit, 1.5f, Masks.EnvironmentMask))
             {
                 transform.position = hit.point + Vector3.up * .4f;
-                rb.velocity += Vector3.down * rb.velocity.y;
+                PlayerRigidbody.ResetVelocity();
                 tempOnGround = true;
                 OnGround = true;
             }
@@ -203,46 +138,38 @@ public class PlayerController : Singleton<PlayerController>
 
     public void Move(bool right)
     {
-        if (GameController.Instance.BlockMoving) return;
+        if (PlayerRocket.BlockMoving) return;
 
-        dir = right ? 1 : -1;
-        if (CurrentX != dir * Step)
+        _dir = right ? 1 : -1;
+        if (_currentX != _dir * Step)
         {
-            if (GameController.Instance.Rocket || OnGround)
+            if (PlayerRocket.RocketInProgress || OnGround)
             {
-                if (right)
-                {
-                    animator.SetTrigger(Right);
-                }
-                else
-                {
-                    animator.SetTrigger(Left);
-                }
+                PlayerAnimator.SetTurnTrigger(right);
             }
 
             if (OnGround)
             {
-                rb.constraints = RigidbodyConstraints.FreezeAll;
+                PlayerRigidbody.FreezeAll();
             }
 
-            if (!GameController.Instance.Rocket)
+            if (!PlayerRocket.RocketInProgress)
             {
                 AudioManager.PlaySideMove();
             }
 
             SetPositionBeforeMove();
 
-            CurrentX += dir * Step;
-            moveDir = Vector3.right * dir;
-            StandUp();
+            _currentX += _dir * Step;
+            _moveDir = Vector3.right * _dir;
+            PlayerCollider.StandUp();
             isMoving = true;
-            isCrouching = false;
         }
     }
 
     public void Jump()
     {
-        if (GameController.Instance.Rocket)
+        if (PlayerRocket.RocketInProgress)
             return;
 
         StartCoroutine(StartJump());
@@ -252,17 +179,14 @@ public class PlayerController : Singleton<PlayerController>
     {
         yield return new WaitUntil(() => isMoving == false && tempOnGround == true);
 
-        if (isCrouching)
-            StandUp();
+        if (PlayerCollider.IsCrouch)
+            PlayerCollider.StandUp();
 
         if (OnGround)
         {
-            animator.SetTrigger(JumpHash);
-            Vector3 jumpDir = Vector3.up * JumpSpeed;
-            rb.AddForce(jumpDir, ForceMode.VelocityChange);
-            rb.useGravity = true;
-            rb.constraints = FreezeExceptJump;
-            isJumping = true;
+            PlayerAnimator.SetJumpTrigger();
+            PlayerRigidbody.Jump();
+            _isJumping = true;
             tempOnGround = false;
 
             AudioManager.PlayJump();
@@ -271,64 +195,32 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
 
-    private void GroundNear()
-    {
-        if (Physics.Raycast(new Ray(transform.position, Vector3.down), GroundNearDistance, environmentMask))
-        {
-            animator.SetBool("GroundNear", true);
-        }
-        else
-        {
-            animator.SetBool("GroundNear", false);
-        }
-    }
-
     public void Crouch()
     {
-
-        if (GameController.Instance.Rocket || !GameController.Instance.Started || isCrouching)
+        if (PlayerRocket.RocketInProgress || !GameController.Started || PlayerCollider.IsCrouch)
             return;
 
-        if (!OnGround)
-        {
-            rb.AddForce(Vector3.down * CrouchPower, ForceMode.Acceleration);
-            GroundNear();
-        }
-        else
-        {
-            rb.velocity = Vector3.zero;
-        }
-
-        isCrouching = true;
-        col.center = ColliderCrouch;
-        col.height = 0.35f;
-
-        animator.SetTrigger(CrouchHash);
+        PlayerRigidbody.MoveToGround(OnGround);        
+        PlayerCollider.Crouch();
+        PlayerAnimator.SetCrouchTrigger();
 
         StartCoroutine(WaitForCrouch());
     }
 
     private void OnSideHit(Vector3 normal, Collision collision)
     {
-        dir = Mathf.Sign(normal.x);
+        _dir = Mathf.Sign(normal.x);
         if (OnGround)
         {
-            if (dir == 1)
-            {
-                animator.SetTrigger(HitLeft);
-            }
-            else
-            {
-                animator.SetTrigger(HitRight);
-            }
+            PlayerAnimator.SetSideHitTrigger(_dir);
         }
-        if (CurrentX != dir * Step)
+        if (_currentX != _dir * Step)
         {
-            CurrentX += dir * Step;
+            _currentX += _dir * Step;
         }
 
-        moveDir = Vector3.right * dir;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
+        _moveDir = Vector3.right * _dir;
+        PlayerRigidbody.FreezeAll();
         isMoving = true;
 
         hitsCount++;
@@ -338,61 +230,41 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnHit(Collision collision)
     {
-        animator.transform.rotation = Quaternion.Euler(0, AnimatorRoot.rotation.eulerAngles.y - 90, 0);
         lastHit = collision.collider;
         lastHit.enabled = false;
-        animator.SetTrigger(DeathHash);
-        GameController.Instance.Started = false;
-        animator.SetBool(StartedHash, false);
-        StartCoroutine(WaitDeath());
-        rb.useGravity = true;
-        rb.velocity += Vector3.left * rb.velocity.x + Vector3.down * rb.velocity.y;
-        rb.constraints = FreezeExceptJump;
-        ResetTriggers();
-        CameraFollow.Instance.offset.z = -3.2f;
+        PlayerAnimator.SetDeath();
+        PlayerRigidbody.OnHit();
+        CameraFollow.OnHit();
         Canvaser.Instance.GamePanel.TurdOffBonuses();
-        GameController.TurnOffAllBonuses();
+        GameController.OnHit();
         AudioManager.PlayHit();
-    }
-
-    private void ResetTriggers()
-    {
-        animator.ResetTrigger(HitLeft);
-        animator.ResetTrigger(HitRight);
-        animator.ResetTrigger(Left);
-        animator.ResetTrigger(Right);
-        animator.ResetTrigger(CrouchHash);
-        animator.ResetTrigger("Reset");
-        animator.ResetTrigger(JumpHash);
+        StartCoroutine(WaitDeath());
     }
 
     private void OnGrounded(Collision collision)
     {
-        if (minY == 0)
+        if (_minY == 0)
         {
-            minY = transform.position.y;
+            _minY = transform.position.y;
         }
 
-        if (!Collisions.Any(col => col.Object == collision.gameObject))
-        {
-            Collisions.Add(new CollisionInfo() { Ground = true, Object = collision.gameObject });
-        }
+        PlayerCollisions.AddCollision(collision.gameObject);
         OnGround = true;
         tempOnGround = true;
-        isJumping = false;
-        rb.useGravity = false;
+        _isJumping = false;
+        PlayerRigidbody.UseGravity = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer)
+        if (collision.gameObject.layer != Masks.DefaultLayer && collision.gameObject.layer != Masks.GroundLayer)
         {
             return;
         }
 
         if (collision.gameObject.CompareTag("HardObstacle"))
         {
-            if (GameController.Instance.Shield)
+            if (PlayerShield.ShieldIsOn)
             {
                 ShieldHit();
             }
@@ -413,7 +285,7 @@ public class PlayerController : Singleton<PlayerController>
         }
         else if (normal2 != Vector2.zero && angleForward <= MaxCollisionAngle && angleForward >= MinCollisionAngle && hitsCount < MaxHitsCount)
         {
-            if (GameController.Instance.Shield)
+            if (PlayerShield.ShieldIsOn)
             {
                 ShieldHit();
             }
@@ -425,11 +297,10 @@ public class PlayerController : Singleton<PlayerController>
             {
                 OnGrounded(collision);
             }
-            //side hit
         }
         else
         {
-            if (GameController.Instance.Shield)
+            if (PlayerShield.ShieldIsOn)
             {
                 ShieldHit();
             }
@@ -442,12 +313,12 @@ public class PlayerController : Singleton<PlayerController>
 
     IEnumerator WaitDeath()
     {
-        TurnOffEffects();
+        EffectsManager.TurnOffEffects();
         yield return new WaitForSeconds(1.8f);
 
         lastHit.enabled = true;
-        col.enabled = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
+        PlayerCollider.ColliderEnabled = false;
+        PlayerRigidbody.FreezeAll();
         GameController.Instance.FinishGame();
     }
 
@@ -455,41 +326,30 @@ public class PlayerController : Singleton<PlayerController>
 
     private void ShieldHit()
     {
-        GameController.Instance.Shield = false;
+        PlayerShield.OnHit();
         RemoveObstcles();
-        rb.velocity = velocityBeforePhysics;
-        AudioManager.PlayShieldHitEffect();
-    }
-
-    private void MoveToPosition(Vector3 position)
-    {
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.layer != DefaultLayer && collision.gameObject.layer != GroundLayer)
+        if (collision.gameObject.layer != Masks.DefaultLayer && collision.gameObject.layer != Masks.GroundLayer)
         {
             return;
         }
 
-        var toRemove = Collisions.FindAll(col => col.Object == collision.gameObject);
-        if (toRemove != null && toRemove.Count > 0)
+        if (PlayerCollisions.RemoveCollision(collision.gameObject))
         {
             tempOnGround = false;
-            for (int i = 0; i < toRemove.Count; i++)
-            {
-                Collisions.Remove(toRemove[i]);
-            }
             StartCoroutine(SetOnGround());
         }
     }
 
     private void SetPositionBeforeMove()
     {
-        if (GameController.Instance.Rocket || Collisions.Count > 0)
+        if (PlayerRocket.RocketInProgress || PlayerCollisions.AnyCollisions)
             return;
 
-        if (!isJumping)
+        if (!_isJumping)
         {
             transform.position -= Vector3.up * 0.17f;
         }
@@ -502,40 +362,28 @@ public class PlayerController : Singleton<PlayerController>
 
         if (!tempOnGround)
         {
-            if (Collisions.Count == 0)
+            if (!PlayerCollisions.AnyCollisions)
             {
                 OnGround = false;
                 tempOnGround = true;
 
-                if (!GameController.Instance.Rocket)
+                if (!PlayerRocket.RocketInProgress)
                 {
-                    rb.useGravity = true;
-                    rb.constraints = FreezeExceptJump;
+                    PlayerRigidbody.SetInAir();
                 }
             }
             else
             {
-                rb.useGravity = false;
-                rb.constraints = RigidbodyConstraints.FreezeAll;
+                PlayerRigidbody.ResetRigidbody();
             }
         }
-
     }
 
     IEnumerator WaitForCrouch()
     {
         yield return new WaitUntil(() => OnGround == true);
-
-
         yield return new WaitForSeconds(0.8f);
-        StandUp();
-    }
-
-    void StandUp()
-    {
-        col.height = .7f;
-        col.center = ColliderStand;
-        isCrouching = false;
+        PlayerCollider.StandUp();
     }
 
     public void FixPos(float posX)
@@ -543,166 +391,31 @@ public class PlayerController : Singleton<PlayerController>
         transform.position = new Vector3(posX, transform.position.y, transform.position.z);
     }
 
-    public void PickUp(Collision other)
-    {
-        other.transform.GetComponent<IPickable>().PickUp();
-    }
-
-
-    public void ApplyShield()
-    {
-        GameController.Instance.ShieldTimeLeft = GameController.Instance.ShieldTime;
-
-        if (!GameController.Instance.Shield)
-        {
-            StartCoroutine(RemoveShield());
-        }
-    }
-
-    public static void TurnShieldOn()
-    {
-        GameController.Instance.Shield = true;
-        TurnOnEffect(EffectType.Shield);
-        Canvaser.Instance.GamePanel.Shield.Activate(true);
-    }
-
-    public static void TurnShieldOff()
-    {
-        GameController.Instance.Shield = false;
-        TurnOffEffect(EffectType.Shield);
-        Canvaser.Instance.GamePanel.Shield.Activate(false);
-    }
-
-    IEnumerator RemoveShield()
-    {
-        TurnShieldOn();
-
-        while (GameController.Instance.ShieldTimeLeft > 0 && GameController.Instance.Shield)
-        {
-            yield return CoroutineManager.Frame;
-            GameController.Instance.ShieldTimeLeft -= Time.deltaTime;
-            Canvaser.Instance.GamePanel.Shield.SetTimer(GameController.Instance.ShieldTimeLeft);
-        }
-
-        Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
-        TurnShieldOff();
-
-        if (GameController.Instance.ShieldTimeLeft <= 0)
-        {
-            AudioManager.PlayEffectEnd();
-        }
-    }
-
     public void RemoveObstcles()
     {
         ObstaclesEffect.Play();
-
-        //var speed = GameController.Instance.Speed;
-        //GameController.Instance.Speed = Vector3.zero;
-
         StartCoroutine(WaitEffect());
     }
 
     public static void ResetPositionForContinue()
     {
-        Instance.animator.SetBool(StartedHash, true);
-        Instance.animator.SetTrigger("Reset");
-        Instance.animator.transform.rotation = new Quaternion();
-        Instance.transform.position += Vector3.right * (Instance.CurrentX - Instance.transform.position.x);
+        PlayerAnimator.Continue(true);
+        Instance.transform.position += Vector3.right * (Instance._currentX - Instance.transform.position.x);
     }
 
     IEnumerator WaitEffect()
     {
-
         yield return CoroutineManager.Frame;
 
-        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 8.5f), Quaternion.identity, LayerMask.GetMask("Default", "Pickable"));
+        var obstacles = Physics.OverlapBox(transform.position + Vector3.forward * 7f, new Vector3(4f, 3f, 8.5f), Quaternion.identity, Masks.ObstaclesAndPickables);
         for (int i = 0; i < obstacles.Length; i++)
         {
             obstacles[i].transform.parent.gameObject.SetActive(false);
         }
         ResetPositionForContinue();
-        rb.constraints = FreezeExceptJump;
-        col.enabled = true;
+        PlayerRigidbody.FreezeExceptJump();
+        PlayerCollider.ColliderEnabled = true;
     }
-
-    public void PutOnSuit(string suitName)
-    {
-        for (int i = 0; i < _suitsItems.Length; i++)
-        {
-            _suitsItems[i].gameObject.SetActive(_suitsItems[i].SuitName == suitName);
-        }
-    }
-
-    public void TakeOffSuits()
-    {
-        for (int i = 0; i < _suitsItems.Length; i++)
-        {
-            _suitsItems[i].gameObject.SetActive(false);
-        }
-    }
-
-    public static void TurnOnEffect(EffectType type)
-    {
-        switch (type)
-        {
-            case EffectType.Freeze:
-                Instance.IceEffect.Play();
-                break;
-            case EffectType.Magnet:
-                Instance.MagnetEffect.Play();
-                break;
-            case EffectType.Rocket:
-                Instance.RocketEffect.Play();
-                break;
-            case EffectType.Shield:
-                Instance.ShieldEffect.Play();
-                break;
-        }
-    }
-
-    public static void TurnOffEffect(EffectType type)
-    {
-        switch (type)
-        {
-            case EffectType.Freeze:
-                Instance.IceEffect.Stop();
-                break;
-            case EffectType.Magnet:
-                Instance.MagnetEffect.Stop();
-                break;
-            case EffectType.Rocket:
-                Instance.RocketEffect.Stop(true);
-                break;
-            case EffectType.Shield:
-                Instance.ShieldEffect.Stop(true);
-                break;
-        }
-    }
-
-    public static void TurnOffEffects()
-    {
-        Instance.IceEffect.Stop();
-        Instance.MagnetEffect.Stop();
-        Instance.RocketEffect.Stop(true);
-        Instance.ShieldEffect.Stop(true);
-    }
-
-    public static void PickIceCream()
-    {
-        Instance.IceCreamPicked.Emit(1);
-    }
-}
-
-public enum EffectType
-{
-    Shield, Freeze, Magnet, Rocket
-}
-
-public class CollisionInfo
-{
-    public bool Ground { get; set; }
-    public GameObject Object { get; set; }
 }
 
 

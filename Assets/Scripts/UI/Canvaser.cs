@@ -76,9 +76,9 @@ public class Canvaser : Singleton<Canvaser>
     public WeeklyTasksPanel WeeklyTasks;
     public Button WeeklyTasksBtn;
     private static Stack<BackButton> _backButtons = new Stack<BackButton>();
-    int cases;
-    int coins;
-    int score;
+    private int cases;
+    private int coins;
+    private int score;
 
     public static void AddButton(BackButton btn)
     {
@@ -112,16 +112,6 @@ public class Canvaser : Singleton<Canvaser>
         _backButtons.Pop();
     }
 
-    public string AddBrackets(string input)
-    {
-        int index = input.LastIndexOf(" ");
-        input = input.Insert(index + 1, "(");
-        input += ")";
-        input = input.Replace(" Card", "");
-        input = input.Replace(" Suit", "");
-        return input;
-    }
-
     public void AddCase()
     {
         cases++;
@@ -146,7 +136,6 @@ public class Canvaser : Singleton<Canvaser>
 
     public void CloseLoading()
     {
-        //LoadingPanel.GetComponent<Animator>().SetBool("Loaded", true);
         StartCoroutine(LoadingClosing());
     }
 
@@ -163,7 +152,6 @@ public class Canvaser : Singleton<Canvaser>
         DoubleIcecreamClicked = true;
         DoubleScoreButton.SetActive(false);
         ADSPanel.transform.SetAsLastSibling();
-        //LoadingPanel.transform.SetAsLastSibling();
         ADSPanel.DoubleScore();
         coins = GameOverIceCream.CurrentCount;
         ScoreManager.Instance.SubmitScoreAsync(0, coins, 0);
@@ -190,6 +178,7 @@ public class Canvaser : Singleton<Canvaser>
             }
         }
     }
+
     public void OpenShopPanel()
     {
         Shop.Open();
@@ -213,9 +202,6 @@ public class Canvaser : Singleton<Canvaser>
     {
         Avatar = sprt;
         SettingsAvatar.sprite = sprt;
-        //SettingsAvatar.SetNativeSize();
-        //GameAvatar.sprite = sprt;
-        //GameAvatar.SetNativeSize();
     }
 
     public void SetEffectsVolume(float volume)
@@ -230,7 +216,6 @@ public class Canvaser : Singleton<Canvaser>
         GameOverCases.text = string.Format("x{0}", GameController.Instance.CurrentBoxes);
         GameOverDistance.text = score + LocalizationManager.GetLocalizedValue("meter");
         GameOverIceCream.SetIceCream(coins);
-        //GameOverAllIceCream.text = 
         coins = 0;
         GamePanel.gameObject.SetActive(false);
         GameOverPanel.SetActive(true);
@@ -249,17 +234,13 @@ public class Canvaser : Singleton<Canvaser>
         TradesNotification.SetCount(info.IncomingTrades);
         DuelsNotification.SetCount(info.IncomingDuels);
         CasesNotification.SetCount(info.Cases);
-        CasesCount.text = ": " + info.Cases;
+        CasesCount.text = ": " + info.Cases.ToString();
     }
 
     public void SetScore(int points)
     {
-        //        if(!string.IsNullOrEmpty(LoginManager.Instance.User.Nickname) && points > LoginManager.Instance.User.HighScore)
-        //        {
-        //            HighScore.text = points + LocalizationManager.GetLocalizedValue("meter");
-        //        }
         score = points;
-        Score.text = points + LocalizationManager.GetLocalizedValue("meter");
+        Score.text = points.ToString() + LocalizationManager.GetLocalizedValue("meter");
     }
 
     public void SetTradeItems(TradeItemsModel items)
@@ -278,7 +259,7 @@ public class Canvaser : Singleton<Canvaser>
     {
         MainMenu.SetActive(false);
         CameraFollow.Instance.ChangeCamera();
-        PlayerController.Instance.PlayerAnimator.SetTrigger("Change");
+        PlayerController.Instance.CurrentAnimator.SetTrigger("Change");
     }
 
     public void TradeOffered()
@@ -337,8 +318,16 @@ public class Canvaser : Singleton<Canvaser>
         EffectsVolumeSlider.value = effectsVolume;
 
         Application.runInBackground = true;
-        offer = new TradeOfferModel();
+        ClearOffer();
         StartCoroutine(ErrorCheck());
+    }
+
+    public static void ResetCanvas()
+    {
+        Instance.PausePanel.SetActive(false);
+        Instance.GamePanel.gameObject.SetActive(false);
+        Instance.Coins.text = "0";
+        Instance.Score.text = "0";
     }
 }
 

@@ -39,7 +39,7 @@ public class BoxPrize : MonoBehaviour {
                 ActiveObj = Magnet;
                 break;
             default:
-                Card.SetCard(Canvaser.Instance.AddBrackets(name));
+                Card.SetCard(name.AddBrackets());
                 ActiveObj = Card.gameObject;
                 break;
         }

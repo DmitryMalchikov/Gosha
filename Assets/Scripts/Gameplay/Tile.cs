@@ -31,14 +31,14 @@ public class Tile : MonoBehaviour
 
     private void Update()
     {
-        if (!GameController.Instance.Started) return;
+        if (!GameController.Started) return;
 
-        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+        transform.Translate(SpeedController.Speed * Time.deltaTime);
     }
 
     private void FixedUpdate()
     {
-        if (!GameController.Instance.Started) return;
+        if (!GameController.Started) return;
 
         counter = (byte)((counter + 1) % 3);
 

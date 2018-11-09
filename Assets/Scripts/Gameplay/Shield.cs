@@ -4,7 +4,7 @@ public class Shield : MonoBehaviour, IPickable
 {
     public void PickUp()
     {
-        PlayerController.Instance.ApplyShield();
+        PlayerShield.Instance.ApplyShield();
         gameObject.SetActive(false);
         AudioManager.PlayEffectPickup();
     }

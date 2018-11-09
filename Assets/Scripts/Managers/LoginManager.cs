@@ -386,7 +386,7 @@ public class LoginManager : Singleton<LoginManager>
         PlayerPrefs.DeleteKey("CurrentSuit");
         PlayerPrefs.DeleteKey("token_gosha");
         PlayerPrefs.DeleteKey("token_expires_in_gosha");
-        PlayerController.Instance.TakeOffSuits();
+        SuitsManager.TakeOffSuits();
         OneSignal.SetSubscription(false);
         FB.LogOut();
         if (OK.IsInitialized)

@@ -38,7 +38,7 @@ public class Coin : MonoBehaviour, IPickable
         while (true)
         {
             yield return CoroutineManager.Frame;
-            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, GameController.Instance.CoinSpeed * GameController.SpeedMultiplyer * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, GameController.Instance.CoinSpeed * SpeedController.SpeedMultiplier * Time.deltaTime);
         }
     }
 }

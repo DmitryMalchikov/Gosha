@@ -113,6 +113,11 @@ public class LocalizationManager : Singleton<LocalizationManager>
             texts[i].SetText();
             yield return null;
         }
+
+        if (LoginManager.User != null)
+        {
+            Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
+        }
     }
 
     public static string GetLocalizedValue(string key)

@@ -21,7 +21,7 @@ public class StepsController : MonoBehaviour
         while (true)
         {
             yield return null;
-            if (GameController.Instance.Started && PlayerController.Instance.OnGround && !PlayerController.Instance.isCrouching)
+            if (GameController.Started && PlayerController.Instance.OnGround && !PlayerCollider.IsCrouch)
             {
                 _source.PlayOneShot(Step, VolumeScale);
                 yield return new WaitForSeconds(Step.length);

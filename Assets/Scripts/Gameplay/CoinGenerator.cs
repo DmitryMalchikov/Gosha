@@ -45,15 +45,15 @@ public class CoinGenerator : Singleton<CoinGenerator>
 
     public void BeginGeneration(float startTime)
     {        
-        _deltaTime = Mathf.Abs(CoinDistance / GameController.Instance.Speed.z);
+        _deltaTime = Mathf.Abs(CoinDistance / SpeedController.Speed.z);
         _playerDistance = Mathf.Abs(Generator.position.z - PlayerController.Instance.transform.position.z);        
 
-        float totalTime = GameController.Instance.RocketTime - (Mathf.Abs(_playerDistance / GameController.Instance.Speed.z) + (Time.time - startTime));
+        float totalTime = GameController.Instance.RocketTime - (Mathf.Abs(_playerDistance / SpeedController.Speed.z) + (Time.time - startTime));
 
 
 		if (totalTime > 0) {
 			_totalCoins = 0;
-			_coinsNumber = (int)(-totalTime * GameController.Instance.Speed.z/ CoinDistance);
+			_coinsNumber = (int)(-totalTime * SpeedController.Speed.z/ CoinDistance);
 			_generationStarted = true;
 			StartCoroutine (Generation ());
 			StartCoroutine (Stop (totalTime));
@@ -67,12 +67,12 @@ public class CoinGenerator : Singleton<CoinGenerator>
 
 	private bool EnoughTime(float endTime){
 		return 		(Generator.position.z - PlayerController.Instance.transform.position.z) <=
-		-GameController.Instance.Speed.z * (endTime - Time.time);
+		-SpeedController.Speed.z * (endTime - Time.time);
 	}
 
     public IEnumerator StartGeneration()
     {
-        Generator.position = new Vector3(Generator.position.x, Generator.position.y, PlayerController.Instance.transform.position.z - GameController.Instance.Speed.z * 1.5f);
+        Generator.position = new Vector3(Generator.position.x, Generator.position.y, PlayerController.Instance.transform.position.z - SpeedController.Speed.z * 1.5f);
 
         float startTime = Time.time;
 		float endTime = startTime + GameController.Instance.RocketTime;

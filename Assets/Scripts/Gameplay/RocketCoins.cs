@@ -8,12 +8,12 @@ public class RocketCoins : MonoBehaviour
     
     void Update()
     {
-        transform.Translate(GameController.Instance.Speed * Time.deltaTime);
+        transform.Translate(SpeedController.Speed * Time.deltaTime);
     }
 
     public void Activate()
     {
-        transform.position = new Vector3(StartPosition.x, StartPosition.y, StartPosition.z * (GameController.Instance.Speed.z / -10f));
+        transform.position = new Vector3(StartPosition.x, StartPosition.y, StartPosition.z * (SpeedController.Speed.z / -10f));
         gameObject.SetActive(true);
         StartCoroutine(TurnOffCoins());
     }

@@ -81,7 +81,7 @@ public class TasksManager : APIManager<TasksManager>
 
     private void OnApplicationPause(bool pause)
     {
-        if (pause && GameController.Instance.Started)
+        if (pause && GameController.Started)
         {
             SubmitAllTasks(false);
         }

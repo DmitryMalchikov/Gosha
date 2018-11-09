@@ -23,7 +23,7 @@ public class InventoryManager : APIManager<InventoryManager>
         CoroutineManager.SendRequest(GetSuitsUrl, null, (SuitsModel upgrades) =>
        {
            Debug.Log("OK");
-           GameController.SetHash("SuitsHash", upgrades.SuitsHash);
+           HashManager.SetSuitsHash(upgrades.SuitsHash);
            Canvaser.Instance.Suits.SetCostumes(upgrades.Costumes);
        },
         type: DataType.Suits,

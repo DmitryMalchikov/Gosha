@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TouchReader : MonoBehaviour
 {
-
     public bool sas;
     public PlayerController PC;
     bool wasMove = false;
@@ -40,7 +39,7 @@ public class TouchReader : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!Canvaser.Instance.MainMenu.activeInHierarchy && GameController.Instance.Started && Time.timeScale > 0)
+        if (!Canvaser.Instance.MainMenu.activeInHierarchy && GameController.Started && Time.timeScale > 0)
         {
             pos = Input.mousePosition;
             sas = true;
@@ -63,7 +62,7 @@ public class TouchReader : MonoBehaviour
     void OnMouseDrag()
     {
 
-        if (GameController.Instance.Started && sas && Time.timeScale > 0)
+        if (GameController.Started && sas && Time.timeScale > 0)
         {
             if (DistanceAbsX > sqrMag || DistanceAbsY > sqrMag)
             {
@@ -115,7 +114,7 @@ public class TouchReader : MonoBehaviour
 
     void Update()
     {
-        if (!GameController.Instance.Started)
+        if (!GameController.Started)
             return;
 
         if (_moveInputs.Count > 0 && (!PC.isMoving || _lastInput != _moveInputs.Peek()))

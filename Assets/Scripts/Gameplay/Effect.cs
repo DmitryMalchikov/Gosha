@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Effect : MonoBehaviour {
 
@@ -10,13 +8,25 @@ public class Effect : MonoBehaviour {
 		_effects = GetComponentsInChildren<ParticleSystem> ();
 	}
 
+    public void Show(bool toShow, bool stopImmediately = false)
+    {
+        if (toShow)
+        {
+            Play();
+        }
+        else
+        {
+            Stop(stopImmediately);
+        }
+    }
+
 	public void Play(){
 		for (int i = 0; i < _effects.Length; i++) {
 			_effects [i].Play ();
 		}
 	}
 
-	public void Stop(bool stopImmediately = false){
+	public void Stop(bool stopImmediately){
 		for (int i = 0; i < _effects.Length; i++) {
 			if (stopImmediately) {
 				_effects [i].Clear ();
