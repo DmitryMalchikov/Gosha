@@ -39,6 +39,11 @@ public class EffectsManager : Singleton<EffectsManager>
         Instance._iceCreamPicked.Emit(1);
     }
 
+    public static void PlayObstacleEffect()
+    {
+        Instance._obstaclesEffect.Play();
+    }
+
     public static void TurnOffEffects()
     {
         PlayIceEffect(false);

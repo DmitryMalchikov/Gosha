@@ -84,7 +84,7 @@ public class Tile : MonoBehaviour
         {
             Bonus.GetChild(i).gameObject.SetActive(false);
         }
-        if (Random.Range(0, 100) <= GameController.Instance.BonusChance)
+        if (BonusChanceGenerator.GenerateBonus())
         {
             int rand = Random.Range(0, Bonus.childCount);
 
@@ -95,7 +95,7 @@ public class Tile : MonoBehaviour
 
     public void GenerateBox()
     {
-        if (Random.Range(0, 100) <= GameController.Instance.BoxChance)
+        if (BonusChanceGenerator.GenerateBox())
         {
             Box.SetActive(true);
         }

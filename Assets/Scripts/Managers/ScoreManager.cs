@@ -115,23 +115,4 @@ public class ScoreManager : APIManager<ScoreManager>
             uses[bonusInvId] += 1;
         }
     }
-
-    public void ContinueForMoney()
-    {
-        StartCoroutine(ContinueForMoneyAsync());
-    }
-
-    System.Collections.IEnumerator ContinueForMoneyAsync()
-    {
-        yield return CoroutineManager.SendRequest(ContinueForMoneyUrl, null,
-            () =>
-            {
-                ContinuePanel.Instance.gameObject.SetActive(false);
-                GameController.Instance.ContinueGameForMoney();
-            },
-            (response) =>
-            {
-                //TODO: add warning (no money, error...)
-            });
-    }
 }

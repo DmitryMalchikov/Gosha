@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 
-public class Effect : MonoBehaviour {
+public class Effect : MonoBehaviour
+{
+    private ParticleSystem[] _effects;
 
-	private ParticleSystem[] _effects;
-
-	void Start () {
-		_effects = GetComponentsInChildren<ParticleSystem> ();
-	}
+    void Start()
+    {
+        _effects = GetComponentsInChildren<ParticleSystem>();
+    }
 
     public void Show(bool toShow, bool stopImmediately = false)
     {
@@ -20,18 +21,23 @@ public class Effect : MonoBehaviour {
         }
     }
 
-	public void Play(){
-		for (int i = 0; i < _effects.Length; i++) {
-			_effects [i].Play ();
-		}
-	}
+    public void Play()
+    {
+        for (int i = 0; i < _effects.Length; i++)
+        {
+            _effects[i].Play();
+        }
+    }
 
-	public void Stop(bool stopImmediately){
-		for (int i = 0; i < _effects.Length; i++) {
-			if (stopImmediately) {
-				_effects [i].Clear ();
-			}
-			_effects [i].Stop ();
-		}
-	}
+    public void Stop(bool stopImmediately)
+    {
+        for (int i = 0; i < _effects.Length; i++)
+        {
+            if (stopImmediately)
+            {
+                _effects[i].Clear();
+            }
+            _effects[i].Stop();
+        }
+    }
 }

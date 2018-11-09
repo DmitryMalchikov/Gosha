@@ -6,26 +6,27 @@ public class PlayerController : Singleton<PlayerController>
     public float Step = 2;
     [Range(0, 1)]
     public float GravityOnPercent = .75f;
-    public float LowDelta = 1.5f; 
-    public float moveSpeed = 1;   
+    public float LowDelta = 1.5f;
+    public float moveSpeed = 1;
     public bool isMoving;
     public float MaxCollisionAngle;
     public float MinCollisionAngle;
     public int MaxHitsCount = 2;
     public Vector3 StartPos = new Vector3(0f, 0.5f, -4f);
-
+    public float LastGroundY = 0;
+    public Animator CurrentAnimator;
     [HideInInspector]
     public Tile LastTile;
 
-    [Header("Effects")]
-    public ParticleSystem ObstaclesEffect;
-
     private Vector3 _moveDir;
     private float _fallDistance;
-    private float _dir;    
+    private float _dir;
     private float _minY = 0;
     private float _currentX = 0;
     private bool _isJumping = false;
+    private bool _onGround = true;
+    private Collider lastHit;
+    private byte hitsCount;
 
     public bool OnGround
     {
@@ -36,13 +37,6 @@ public class PlayerController : Singleton<PlayerController>
             PlayerAnimator.SetOnGround(_onGround);
         }
     }
-    bool _onGround = true;
-    
-    public float LastGroundY = 0;
-    public Animator CurrentAnimator;
-
-    private Collider lastHit;
-    private byte hitsCount;
 
     public void ResetSas()
     {
@@ -200,7 +194,7 @@ public class PlayerController : Singleton<PlayerController>
         if (PlayerRocket.RocketInProgress || !GameController.Started || PlayerCollider.IsCrouch)
             return;
 
-        PlayerRigidbody.MoveToGround(OnGround);        
+        PlayerRigidbody.MoveToGround(OnGround);
         PlayerCollider.Crouch();
         PlayerAnimator.SetCrouchTrigger();
 
@@ -393,14 +387,8 @@ public class PlayerController : Singleton<PlayerController>
 
     public void RemoveObstcles()
     {
-        ObstaclesEffect.Play();
+        EffectsManager.PlayObstacleEffect();
         StartCoroutine(WaitEffect());
-    }
-
-    public static void ResetPositionForContinue()
-    {
-        PlayerAnimator.Continue(true);
-        Instance.transform.position += Vector3.right * (Instance._currentX - Instance.transform.position.x);
     }
 
     IEnumerator WaitEffect()
@@ -415,6 +403,12 @@ public class PlayerController : Singleton<PlayerController>
         ResetPositionForContinue();
         PlayerRigidbody.FreezeExceptJump();
         PlayerCollider.ColliderEnabled = true;
+    }
+
+    public static void ResetPositionForContinue()
+    {
+        PlayerAnimator.Continue(true);
+        Instance.transform.position += Vector3.right * (Instance._currentX - Instance.transform.position.x);
     }
 }
 

@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController : Singleton<GameController>
 {
     public static bool Paused { get; private set; }
-    public int BonusChance;
-    public int BoxChance = 1;
     public string CancelBtn = "Cancel";
     public bool CanUseCurrentBonus = true;
     public float CoinSpeed = 10;
@@ -229,8 +226,11 @@ public class GameController : Singleton<GameController>
             {
                 PlayerShield.Instance.ApplyShield();
             }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                SpeedController.Instance.ApplyDeceleration();
+            }
 #endif
-
             SkyboxRotator.Rotate();
 
             yield return null;
@@ -256,17 +256,5 @@ public class GameController : Singleton<GameController>
         {
             Canvaser.PressBack();
         }
-
-#if UNITY_EDITOR
-        if (!Started)
-        {
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            SpeedController.Instance.ApplyDeceleration();
-        }
-#endif
     }
 }
