@@ -5,19 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
 
-public class TournamentPanel : MonoBehaviour
+public class TournamentPanel : TimeCheck
 {
-
     public Text TournamentText;
     public Text TournamentName;
     public Text Region;
-
     public Text Goal;
-    public Text TimeToEnd;
     public Text FirstPlacePrize;
     public Text SecondPlacePrize;
     public Text ThirdPlacePrize;
-
     public Transform StatisticsContent;
     public GameObject TournamentPlayer;
     public ScrollRect ContentScroll;
@@ -25,16 +21,22 @@ public class TournamentPanel : MonoBehaviour
 
     public List<FriendObject> Participants;
 
-    public TournamentModel info;
+    private TournamentModel _info;
 
-    protected WaitForSeconds minute = new WaitForSeconds(60);
+    public override IExpirable Info
+    {
+        get
+        {
+            return _info;
+        }
+    }
 
     public void SetTournamentInfo(TournamentModel model)
     {
         if (!string.IsNullOrEmpty(model.Name))
         {
             Canvaser.Instance.TournamentBtn.interactable = true;
-            info = model;
+            _info = model;
             TournamentName.text = model.Name;
             Region.text = LocalizationManager.GetLocalizedValue("region") + LocalizationManager.GetLocalizedValue(LoginManager.User.Region);
             string[] prizes = new string[3];
@@ -85,11 +87,6 @@ public class TournamentPanel : MonoBehaviour
         GoalPanel.SetActive(true);
     }
 
-    private void OnEnable()
-    {
-        StartCoroutine(CheckTime());
-    }
-
     public void ClearContent()
     {
         foreach (Transform item in StatisticsContent)
@@ -97,31 +94,6 @@ public class TournamentPanel : MonoBehaviour
             Destroy(item.gameObject);
         }
         Participants.Clear();
-    }
-
-    protected IEnumerator CheckTime()
-    {
-        while (true)
-        {
-            var time = (info.ExpireDate - DateTime.Now.ToUniversalTime());
-
-            StringBuilder timeLeft = new StringBuilder();
-
-            if (time.Days > 0)
-            {
-                timeLeft.AppendFormat("{0:00} {1} ", time.Days, LocalizationManager.GetLocalizedValue("days"));
-            }
-            if (time.Hours > 0)
-            {
-                timeLeft.AppendFormat("{0:00} {1} ", time.Hours, LocalizationManager.GetLocalizedValue("hours"));
-            }
-
-            timeLeft.AppendFormat("{0:00} {1}", time.Minutes, LocalizationManager.GetLocalizedValue("minutes"));
-
-            TimeToEnd.text = timeLeft.ToString();
-
-            yield return minute;
-        }
     }
 
     public void OpenTournament()

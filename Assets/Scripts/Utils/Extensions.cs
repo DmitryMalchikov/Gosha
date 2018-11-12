@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
@@ -136,6 +137,27 @@ public static class Extensions
         input = input.Replace(" Card", "");
         input = input.Replace(" Suit", "");
         return input;
+    }
+
+    public static string TimeSpanToLocalizedString(this TimeSpan time)
+    {
+        time = time.Duration();
+        StringBuilder timeLeft = new StringBuilder();
+
+        if (time.Days > 0)
+        {
+            timeLeft.AppendFormat("{0:00} {1} ", time.Days, LocalizationManager.GetLocalizedValue("days"));
+        }
+        if (time.Hours > 0)
+        {
+            timeLeft.AppendFormat("{0:00} {1} ", time.Hours, LocalizationManager.GetLocalizedValue("hours"));
+        }
+        if (time.Minutes > 0)
+        {
+            timeLeft.AppendFormat("{0:00} {1}", time.Minutes, LocalizationManager.GetLocalizedValue("minutes"));
+        }
+
+        return timeLeft.ToString();
     }
 }
 

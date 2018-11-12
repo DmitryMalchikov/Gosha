@@ -43,7 +43,7 @@ public class Canvaser : Singleton<Canvaser>
     public CanvasGroup LoadingPanelCanvasGroup;
     public GameObject LoginPanel;
     public GameObject LoginWarning;
-    public MainMenuPanel MainMenu;
+    public GameObject MainMenu;
     public Transform MainPanel;
     public AudioMixer MusicMixer;
     public Slider MusicVolumeSlider;

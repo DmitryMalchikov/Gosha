@@ -53,7 +53,6 @@ public class FriendsManager : APIManager<FriendsManager>
         CoroutineManager.SendRequest(OfferFriendshipUrl, input, () =>
        {
            Debug.Log("OK");
-            //show info
         });
     }
 
@@ -64,7 +63,6 @@ public class FriendsManager : APIManager<FriendsManager>
         CoroutineManager.SendRequest(AcceptFriendshipUrl, input, () =>
        {
            Debug.Log("OK");
-            //show info
         });
     }
 
@@ -82,20 +80,7 @@ public class FriendsManager : APIManager<FriendsManager>
     public void Search()
     {
         SearchPlayersAsync("@");
-    }
-
-    //public void SearchFriendsAsync(string searchString, int page, int itemsPerPage)
-    //{
-    //    PlayerSearchModel search = new PlayerSearchModel() { SearchString = searchString, Page = page, ItemsPerPage = itemsPerPage };
-
-    //    StartCoroutine(NetworkHelper.SendRequest(SearchFriendsUrl, search,  (response) =>
-    //    {
-    //        Debug.Log("OK");
-    //        Debug.Log("OK");
-    //        FriendsSearchModel result = JsonConvert.DeserializeObject<FriendsSearchModel>(response.Text);
-    //        //show info
-    //    }));
-    //}
+    }    
 
     public void SearchPlayersAsync(string searchString)
     {
@@ -108,14 +93,11 @@ public class FriendsManager : APIManager<FriendsManager>
            if (result.Id != 0)
            {
                Canvaser.Instance.FriendsPanel.PlayerSearchResult.SetPlayerObject(result);
-               //Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(true);
            }
            else
            {
                Canvaser.Instance.FriendsPanel.PlayerSearchResult.Warning.SetActive(true);
-               //Canvaser.Instance.FriendsPanel.PlayerSearchResult.gameObject.SetActive(false);
            }
-            //show info
         });
     }
 }

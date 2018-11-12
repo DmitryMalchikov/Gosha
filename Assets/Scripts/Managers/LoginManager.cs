@@ -10,7 +10,7 @@ using System.Linq;
 
 public delegate void ResultCallback();
 
-public class LoginManager : Singleton<LoginManager>
+public class LoginManager : Singleton<LoginManager>, IAvatarSprite
 {
     public static AccessToken userToken;
     public static string LoginProvider;
@@ -213,8 +213,9 @@ public class LoginManager : Singleton<LoginManager>
         GetUserInfoAsync();
     }
 
-    public void GetUserInfoAsync(ResultCallback callback = null)
+    public CustomTask GetUserInfoAsync(ResultCallback callback = null)
     {
+        CustomTask task = new CustomTask();
         CoroutineManager.SendRequest(UserInfoUrl, null, (UserInfoModel info) =>
         {
             if (info == null)
@@ -241,7 +242,8 @@ public class LoginManager : Singleton<LoginManager>
                 {
                     Canvaser.Instance.DailyBonus.gameObject.SetActive(true);
                 }
-                GetAvatarImage();
+                GetUserImage();
+                //GetAvatarImage();
 
                 //NotificationsManager.Register(User.Id);
 
@@ -254,7 +256,10 @@ public class LoginManager : Singleton<LoginManager>
             {
                 callback();
             }
+            task.Ready = true;
         }, type: DataType.UserInfo);
+
+        return task;
     }
 
     public void RegisterAsync(RegisterBindingModel model)
@@ -368,7 +373,7 @@ public class LoginManager : Singleton<LoginManager>
         }
 
         CoroutineManager.SendRequest(ExternalRegisterUrl, model, () =>
-       {
+        {
            OpenExternalLogin(LoginProvider);
            Canvaser.Instance.RegistrationPanel.PageNum = 1;
            Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
@@ -380,12 +385,7 @@ public class LoginManager : Singleton<LoginManager>
 
     public void LogOut()
     {
-        PlayerPrefs.DeleteKey("refresh_token_gosha");
-        PlayerPrefs.DeleteKey("refresh_expires_in_gosha");
-        PlayerPrefs.DeleteKey("provider_gosha");
-        PlayerPrefs.DeleteKey("CurrentSuit");
-        PlayerPrefs.DeleteKey("token_gosha");
-        PlayerPrefs.DeleteKey("token_expires_in_gosha");
+        ClearSavedData();
         SuitsManager.TakeOffSuits();
         OneSignal.SetSubscription(false);
         FB.LogOut();
@@ -404,69 +404,69 @@ public class LoginManager : Singleton<LoginManager>
         Canvaser.Instance.SBonuses.ResetStartBonuses();
     }
 
+    private void ClearSavedData()
+    {
+        PlayerPrefs.DeleteKey("refresh_token_gosha");
+        PlayerPrefs.DeleteKey("refresh_expires_in_gosha");
+        PlayerPrefs.DeleteKey("provider_gosha");
+        PlayerPrefs.DeleteKey("CurrentSuit");
+        PlayerPrefs.DeleteKey("token_gosha");
+        PlayerPrefs.DeleteKey("token_expires_in_gosha");
+    }
+
     public void SendImage(string path)
     {
-        Debug.Log("Send Image: " + path);
         StartCoroutine(NetworkHelper.SendImage(path, ImageUploadUrl));
     }
 
-    public void GetUserImage(int userId, Image img)
+    public void GetUserImage(IAvatarSprite spriteSetter = null, int userId = 0)
     {
-        StartCoroutine(DownloadImage(userId, img));
+        if (userId == 0)
+        {
+            userId = User.Id;
+        }
+
+        if (spriteSetter == null)
+        {
+            spriteSetter = this;
+        }
+
+        StartCoroutine(DownloadImage(userId, spriteSetter));
     }
 
-    IEnumerator DownloadImage(int userId, Image img)
+    IEnumerator DownloadImage(int userId, IAvatarSprite spriteSetter)
     {
         string url = ProfileImageUrl + userId;
 
-        var headers = Headers.ToDictionary(h => h.Name, h => h.Value);// new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
+        var headers = Headers.ToDictionary(h => h.Name, h => h.Value);
 
         WWW www = new WWW(url);
 
         yield return www;
 
-        if (img != null)
+        if (spriteSetter != null)
         {
             if (www.error == null)
             {
-                img.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f);
+                spriteSetter.SetSprite(Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f));
             }
             else
             {
-                img.sprite = Resources.Load<Sprite>("iTunesArtwork");
+                spriteSetter.SetSprite(Resources.Load<Sprite>("iTunesArtwork"));
             }
-        }
-    }
-
-    public void GetAvatarImage()
-    {
-        StartCoroutine(DownloadImage());
-    }
-
-    IEnumerator DownloadImage()
-    {
-        string url = ProfileImageUrl + User.Id;
-
-        var headers = new Dictionary<string, string>() { { Headers[0].Name, Headers[0].Value } };
-
-        WWW www = new WWW(url, null, headers);
-
-        yield return www;
-        if (www.error == null)
-        {
-            Canvaser.Instance.SetAvatar(Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f));
-        }
-        else
-        {
-            Canvaser.Instance.SetAvatar(Resources.Load<Sprite>("iTunesArtwork"));
         }
     }
 
     public void GetRegions()
     {
         CoroutineManager.SendRequest(GetRegionsUrl, null, (List<RegionModel> regions) =>
-       {
+        {
            Canvaser.Instance.RegistrationPanel.SetRegions(regions);
        });
+    }
+
+    public void SetSprite(Sprite sprite)
+    {
+        Canvaser.Instance.SetAvatar(sprite);
     }
 }

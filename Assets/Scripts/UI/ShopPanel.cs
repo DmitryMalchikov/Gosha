@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using uTasks;
 
 public class ShopPanel : MonoBehaviour
 {
@@ -25,15 +27,16 @@ public class ShopPanel : MonoBehaviour
     public Toggle BonusesTgl;
     public Toggle CasesTgl;
 
+    private List<CustomTask> _currentTasks = new List<CustomTask>();
+
     public void Open()
     {
-        Synchroniser.NewSync(2);
-
-        Synchroniser.OnActionsReady += CheckBuyBtns;
-        //Synchroniser.OnActionsReady += () => gameObject.SetActive(true);
+        _currentTasks.Clear();
         gameObject.SetActive(true);
-        LoginManager.Instance.GetUserInfoAsync(() => Synchroniser.SetReady(0));
-        ShopManager.Instance.GetShopItemsAsync(() => Synchroniser.SetReady(1));
+        _currentTasks.Add(LoginManager.Instance.GetUserInfoAsync());
+        _currentTasks.Add(ShopManager.Instance.GetShopItemsAsync());
+        StartCoroutine(WaitTasks(CheckBuyBtns));
+
         if (LoginManager.LocalUser)
         {
             BonusesTgl.isOn = true;
@@ -52,7 +55,7 @@ public class ShopPanel : MonoBehaviour
 
         if (date.HasValue && date > DateTime.Now)
         {
-            PromosTxt.text = LocalizationManager.GetLocalizedValue("promocodebanned") + " " + (date.Value - DateTime.Now).IntervalToString();
+            PromosTxt.text = LocalizationManager.GetLocalizedValue("promocodebanned") + " " + (date.Value - DateTime.Now).TimeSpanToLocalizedString();
             PromosBtn.interactable = false;
         }
         else
@@ -201,5 +204,12 @@ public class ShopPanel : MonoBehaviour
     {
         CleanContent(CaseContent);
         Cases.Clear();
+    }
+
+    private IEnumerator WaitTasks(Action successAction)
+    {
+        yield return  new WaitUntil(() => CustomTask.TasksReady(_currentTasks));
+        successAction();
+        _currentTasks.Clear();
     }
 }

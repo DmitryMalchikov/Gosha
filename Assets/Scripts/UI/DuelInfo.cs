@@ -1,41 +1,40 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DuelInfo : MonoBehaviour {
-
-    protected WaitForSeconds minute = new WaitForSeconds(60);
-
+public class DuelInfo : TimeCheck, IAvatarSprite
+{
     public Text Name;
     public Text Bet;
-    public Text Time;
     public Image Avatar;
 
-    public DuelModel info;
+    protected DuelModel _info;
+
+    public override IExpirable Info
+    {
+        get
+        {
+            return _info;
+        }
+    }
 
     public virtual void SetDuelPanel(DuelModel model)
     {
-        info = model;
-        Name.text = info.Nickname;
-        Bet.text = info.Bet.ToString();
-        LoginManager.Instance.GetUserImage(info.UserId, Avatar);        
+        _info = model;
+        Name.text = _info.Nickname;
+        Bet.text = _info.Bet.ToString();
+        LoginManager.Instance.GetUserImage(this, _info.UserId);        
     }
-
-	void OnEnable(){
-		StartCoroutine (CheckTime ());
-	}
 
     public void AcceptDuel(bool accept)
     {
         if (accept)
         {
-            DuelManager.Instance.AcceptDuelAsync(info.Id);
+            DuelManager.Instance.AcceptDuelAsync(_info.Id);
             Run();
         }
         else
         {
-            DuelManager.Instance.DeclineDuelAsync(info.Id);
+            DuelManager.Instance.DeclineDuelAsync(_info.Id);
         }
     }
 
@@ -45,17 +44,8 @@ public class DuelInfo : MonoBehaviour {
         Canvaser.Instance.StartRun();
     }
 
-    protected IEnumerator CheckTime()
+    public void SetSprite(Sprite sprite)
     {
-		yield return new WaitUntil (() => info != null);
-
-        while (true)
-        {
-            var time = (info.ExpireDate - DateTime.Now.ToUniversalTime());
-
-            Time.text = string.Format("{0:00}ч {1:00}мин", time.Hours, time.Minutes);
-
-            yield return minute;
-        }
+        Avatar.sprite = sprite;
     }
 }

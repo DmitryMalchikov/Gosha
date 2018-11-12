@@ -19,24 +19,6 @@ public class TouchReader : MonoBehaviour
     private static Queue<bool> _moveInputs = new Queue<bool>();
     private bool _lastInput = false;
 
-    void Start()
-    {
-        col = GetComponent<Collider>();
-
-        if (!PC)
-        {
-            StartCoroutine(GetPC());
-        }
-
-    }
-
-    IEnumerator GetPC()
-    {
-        yield return new WaitUntil(() => PlayerController.Instance != null);
-
-        PC = PlayerController.Instance;
-    }
-
     void OnMouseDown()
     {
         if (!Canvaser.Instance.MainMenu.activeInHierarchy && GameController.Started && Time.timeScale > 0)
@@ -61,7 +43,6 @@ public class TouchReader : MonoBehaviour
 
     void OnMouseDrag()
     {
-
         if (GameController.Started && sas && Time.timeScale > 0)
         {
             if (DistanceAbsX > sqrMag || DistanceAbsY > sqrMag)

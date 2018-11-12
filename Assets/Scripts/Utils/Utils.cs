@@ -8,24 +8,6 @@ public static class Utils
 {
     private static string shluha = "supershluha2";
 
-    public static string IntervalToString(this TimeSpan time)
-    {
-        StringBuilder res = new StringBuilder();
-
-        if (time.Days > 0)
-        {
-            res.Append(time.Days + LocalizationManager.GetLocalizedValue("day"));
-        }
-        if (time.Hours > 0)
-        {
-            res.Append(time.Hours + LocalizationManager.GetLocalizedValue("hour"));
-        }
-
-        res.Append(time.Minutes + LocalizationManager.GetLocalizedValue("minute"));
-
-        return res.ToString();
-    }
-
     public static string CalculateMD5Hash(string input)
 
     {

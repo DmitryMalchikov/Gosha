@@ -55,8 +55,9 @@ public class ShopManager : APIManager<ShopManager>
         });
     }
 
-    public void GetShopItemsAsync(ResultCallback callback = null)
+    public CustomTask GetShopItemsAsync()
     {
+        CustomTask task = new CustomTask();
         CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
        {
            CurrentShop = model;
@@ -64,11 +65,10 @@ public class ShopManager : APIManager<ShopManager>
 
            SetShopItems(model);
 
-           if (callback != null)
-           {
-               callback();
-           }
+           task.Ready = true;
        }, type: DataType.Shop, loadingPanelsKey: "shop");
+
+        return task;
     }
 
     public void GetSuitAsync(int suitID)

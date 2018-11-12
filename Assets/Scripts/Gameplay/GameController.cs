@@ -150,16 +150,6 @@ public class GameController : Singleton<GameController>
         StopAllCoroutines();
         StartCoroutine(GameStarted());
     }
-    public void SetBonusesTime(List<BonusUpgrade> upgrades)
-    {
-        if (upgrades.Count > 0)
-        {
-            RocketTime = upgrades.Find(x => x.BonusName == "Rocket").BonusTime;
-            MagnetTime = upgrades.Find(x => x.BonusName == "Magnet").BonusTime;
-            DecelerationTime = upgrades.Find(x => x.BonusName == "Freeze").BonusTime;
-            ShieldTime = upgrades.Find(x => x.BonusName == "Shield").BonusTime;
-        }
-    }
 
     public void SuperFinish()
     {

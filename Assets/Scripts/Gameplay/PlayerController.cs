@@ -57,7 +57,6 @@ public class PlayerController : Singleton<PlayerController>
         QualitySettings.vSyncCount = 0;
 
         _fallDistance = Step * (1f - GravityOnPercent);
-        CurrentAnimator = GetComponent<Animator>();
     }
 
     private void Update()

@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class FriendObject : MonoBehaviour
+public class FriendObject : MonoBehaviour, IAvatarSprite
 {
-
     public FriendModel Info;
 
     public FriendOfferModel OfferInfo;
@@ -27,13 +24,20 @@ public class FriendObject : MonoBehaviour
     public GameObject YouPanel;
     public Color YourColor = Color.green;
 
+    public Sprite AvatarSprite
+    {
+        set
+        {
+            Avatar.sprite = value;
+        }
+    }
+
     public void AcceptFriend(bool isAccepted)
     {
         if (isAccepted)
         {
             FriendsManager.Instance.AcceptFriendshipAsync(Info.Id);
             Canvaser.Instance.FriendsPanel.AddFriendToFriends(Info);
-            //add to friends list
         }
         else
         {
@@ -41,7 +45,6 @@ public class FriendObject : MonoBehaviour
         }
 
         Destroy(gameObject);
-        //remove from requests
     }
 
     public void AcceptOffer(bool isAccepted)
@@ -50,7 +53,6 @@ public class FriendObject : MonoBehaviour
         {
             FriendsManager.Instance.AcceptFriendshipAsync(OfferInfo.Id);
             Canvaser.Instance.FriendsPanel.AddOfferToFriends(OfferInfo);
-            //add to friends list
         }
         else
         {
@@ -58,14 +60,7 @@ public class FriendObject : MonoBehaviour
         }
 
         Destroy(gameObject);
-        //remove from requests
     }
-
-    public void RequestDuel()
-    {
-
-    }
-
 
     public void ShowPlayerInfo()
     {
@@ -112,7 +107,7 @@ public class FriendObject : MonoBehaviour
         Name.text = friend.Nickname;
         if (isFriend)
             Record.text = friend.Highscore + LocalizationManager.GetLocalizedValue("meter");
-        LoginManager.Instance.GetUserImage(friend.Id, Avatar);
+        LoginManager.Instance.GetUserImage(this, friend.Id);
     }
 
     public void SetDuelPlayerObject(PlayerDuelModel friend)
@@ -120,7 +115,7 @@ public class FriendObject : MonoBehaviour
         Name.text = friend.Nickname;
         if (isFriend)
             Record.text = friend.Result + LocalizationManager.GetLocalizedValue("meter");
-        LoginManager.Instance.GetUserImage(friend.Id, Avatar);
+        LoginManager.Instance.GetUserImage(this, friend.Id);
     }
 
     public void SetPlayerObject(FriendOfferModel friendOffer)
@@ -134,7 +129,7 @@ public class FriendObject : MonoBehaviour
         if (Position)
             Position.text = friendOffer.Place.ToString();
         Name.text = friendOffer.Nickname;
-        LoginManager.Instance.GetUserImage(friendOffer.Id, Avatar);
+        LoginManager.Instance.GetUserImage(this, friendOffer.Id);
     }
 
     public void YourPanel(int position)
@@ -150,11 +145,11 @@ public class FriendObject : MonoBehaviour
         Destroy(gameObject.GetComponent<Button>());
     }
 
-    public void YourPanelTournament(FriendOfferModel friend, int place)
+    public void YourPanelTournament(FriendOfferStatisticsModel friend, int place)
     {
         OfferInfo = friend;
         Name.text = string.Format("{0}. {1}", place + 1, LocalizationManager.GetLocalizedValue("you"));
-        Record.text = (friend as FriendOfferStatisticsModel).Points + LocalizationManager.GetLocalizedValue("meter");
+        Record.text = friend.Points + LocalizationManager.GetLocalizedValue("meter");
         GetComponent<Image>().color = YourColor;
         Name.color = Color.white;
         Record.color = Color.white;
@@ -183,6 +178,11 @@ public class FriendObject : MonoBehaviour
         OfferInfo = friend;
         Name.text = string.Format("{0}. {1}", place + 1, friend.Nickname);
         Record.text = (friend as FriendOfferStatisticsModel).Points + LocalizationManager.GetLocalizedValue("meter");
-        LoginManager.Instance.GetUserImage(friend.Id, Avatar);
+        LoginManager.Instance.GetUserImage(this, friend.Id);
+    }
+
+    public void SetSprite(Sprite sprite)
+    {
+        Avatar.sprite = sprite;
     }
 }

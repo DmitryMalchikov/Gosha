@@ -49,14 +49,14 @@ public class DuelInfoOffer : DuelInfo
 
     public void StartRun()
     {
-        DuelManager.Instance.StartRunAsync(info.Id);
+        DuelManager.Instance.StartRunAsync(_info.Id);
         Run();
     }
 
     public void GetResults()
     {
-        DuelManager.Instance.GetDuelResultAsync(info.Id);
-        Canvaser.Instance.Duels.UpdatePanel(info);
+        DuelManager.Instance.GetDuelResultAsync(_info.Id);
+        Canvaser.Instance.Duels.UpdatePanel(_info);
         gameObject.SetActive(false);
     }
 }
