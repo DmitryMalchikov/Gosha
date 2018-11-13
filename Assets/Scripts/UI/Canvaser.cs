@@ -17,7 +17,7 @@ public class Canvaser : Singleton<Canvaser>
     public Text Cases;
     public Text CasesCount;
     public Notification CasesNotification;
-    public SuitsPanel CasesPanel;
+    public CasesPanel CasesPanel;
     public Text Coins;
     public ContinuePanel ContinueForMoney;
     public GameObject Countdown;

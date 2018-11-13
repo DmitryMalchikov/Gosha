@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using uTasks;
 
 public class ShopPanel : MonoBehaviour
 {
@@ -31,11 +30,9 @@ public class ShopPanel : MonoBehaviour
 
     public void Open()
     {
-        _currentTasks.Clear();
         gameObject.SetActive(true);
-        _currentTasks.Add(LoginManager.Instance.GetUserInfoAsync());
-        _currentTasks.Add(ShopManager.Instance.GetShopItemsAsync());
-        StartCoroutine(WaitTasks(CheckBuyBtns));
+
+        RequestShopData();
 
         if (LoginManager.LocalUser)
         {
@@ -47,6 +44,14 @@ public class ShopPanel : MonoBehaviour
         }
         CardsTgl.interactable = !LoginManager.LocalUser;
         CasesTgl.interactable = !LoginManager.LocalUser;
+    }
+
+    public void RequestShopData()
+    {
+        _currentTasks.Clear();
+        _currentTasks.Add(LoginManager.Instance.GetUserInfoAsync());
+        _currentTasks.Add(ShopManager.Instance.GetShopItemsAsync());
+        StartCoroutine(WaitTasks(CheckBuyBtns));
     }
 
     public void SetPromoBtn()

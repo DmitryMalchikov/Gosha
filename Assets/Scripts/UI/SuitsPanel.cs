@@ -1,105 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SuitsPanel : MonoBehaviour
 {
-
     public SnapScrolling SuitsScroll;
-
-    public GameObject CaseCamera;
     public GameObject SuitCamera;
-
     public Image CurrentSuitImage;
     public RawImage SuitImage;
-    public RawImage CaseImage;
-
     public GameObject SuitPanel;
     public GameObject CardsPanel;
-
     public List<Image> Cards;
-
     public Button GetSuitBtn;
     public Button BuyCards;
     public Button ShowSuitsCards;
     public Button Share;
     public Button TakeOffSuitBtn;
-
-    public Text PrizeText;
-    public GameObject PrizePanel;
-
     public Text Warning;
     public Text SuitName;
-
-    public Animator Case;
-    public GameObject Idle;
-    public GameObject PreopenCase;
-    public GameObject OpenCaseParticle;
-
     public Button PutOnSuitBtn;
-
-    public GameObject GetPrizePnl;
-    public GameObject GetPrizeBtn;
-    public Text PrizeAmountTxt;
-
-    public BoxPrize BoxPrizeObj;
-
     public NewCardsPanel NewCards;
 
     private string _currentSuitName;
-
-    public void SetPrize(Bonus bonus)
-    {
-        //PrizeText.text = string.Format("{0} {1}", bonus.Amount, bonus.Name);
-        PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + LocalizationManager.GetValue(bonus.Name.NameRu, bonus.Name.Name);
-        if (bonus.Amount > 1)
-        {
-            PrizeAmountTxt.text += "(" + bonus.Amount.ToString() + ")";
-        }
-        BoxPrizeObj.SetPrize(bonus.Name.Name);
-        StartCoroutine(WaitForOpen());
-    }
-
-    IEnumerator WaitForOpen()
-    {
-        yield return new WaitForSeconds(3f);
-        Case.SetBool("Open", true);
-        PreopenCase.SetActive(false);
-        OpenCaseParticle.SetActive(true);
-        GetPrizeBtn.SetActive(true);
-        if (!string.IsNullOrEmpty(PrizeAmountTxt.text))
-        {
-            PrizeAmountTxt.gameObject.SetActive(true);
-        }
-        BoxPrizeObj.PrizeOut(true);
-    }
-
-    public void TakePrize(bool toClose)
-    {
-        Case.SetBool("Open", false);
-        OpenCaseParticle.SetActive(false);
-        Idle.SetActive(true);
-        PrizeAmountTxt.text = "";
-        if (PrizeAmountTxt.gameObject.activeInHierarchy)
-        {
-            PrizeAmountTxt.gameObject.SetActive(false);
-        }
-        BoxPrizeObj.PrizeOut(false);
-        BoxPrizeObj.TurnOffPrizes();
-        GetPrizePnl.SetActive(false);
-        GetPrizeBtn.SetActive(false);
-        LoginManager.User.Cases--;
-        Canvaser.Instance.CasesCount.text = ": " + LoginManager.User.Cases;
-
-        LoginManager.Instance.GetUserInfoAsync(() =>
-        {
-            if (!toClose)
-            {
-                InventoryManager.Instance.GetMyCasesAsync();
-            }
-        });
-    }
 
     public void SetCurrentCostume(Costume suit)
     {
@@ -129,7 +51,6 @@ public class SuitsPanel : MonoBehaviour
             ShowSuitsCards.gameObject.SetActive(true);
             UpdateCards();
         }
-        //CurrentSuitImage.sprite = selected.sprite;
         SuitsManager.PutOnSuit(suit.Name);
         SuitName.text = Name;
         _currentSuitName = suit.Name;
@@ -145,11 +66,6 @@ public class SuitsPanel : MonoBehaviour
     {
         SuitsScroll.PutOnSuit(false);
         PlayerPrefs.SetString("CurrentSuit", "");
-    }
-
-    public void SetCurrentCase(Image selected)
-    {
-        //CurrentSuitImage.texture = selected.sprite.texture;
     }
 
     public void Open()
@@ -190,8 +106,7 @@ public class SuitsPanel : MonoBehaviour
             SuitImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
-
-        //SuitsScroll.SetCostumes(costumes);
+        
         SuitsScroll.gameObject.SetActive(true);
         SuitsScroll.SetCostumes(costumes);
     }
@@ -222,7 +137,6 @@ public class SuitsPanel : MonoBehaviour
 
     public void SetCard(InventoryCard card, string SuitName)
     {
-        //set card image by costume ID
         Cards[card.Position - 1].gameObject.SetActive(card.Amount > 0);
         Cards[card.Position - 1].GetComponent<Image>().sprite = Resources.Load<Sprite>(SuitName + " (" + card.Position + ")");
     }
@@ -257,55 +171,15 @@ public class SuitsPanel : MonoBehaviour
         SuitPanel.SetActive(true);
     }
 
-
     public void ClosePanel()
     {
-        if (Canvaser.Instance.CasesPanel.gameObject.activeInHierarchy)
-        {
-            CaseCamera.SetActive(false);
-        }
-        else
-        {
-            SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
-            SuitCamera.SetActive(false);
-        }
+        SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+        SuitCamera.SetActive(false);
         gameObject.SetActive(false);
     }
 
     public void GetSuit()
     {
         ShopManager.Instance.GetSuitAsync(SuitsScroll.Costumes[SuitsScroll.selectedPanID].CostumeId);
-    }
-
-    public void SetCases(List<InventoryItem> cases)
-    {
-        if (cases.Count < 1 || cases[0].Amount < 1)
-        {
-            CaseImage.gameObject.SetActive(false);
-            Warning.text = LocalizationManager.GetLocalizedValue("nocases");
-            Warning.gameObject.SetActive(true);
-        }
-        else
-        {
-            CaseCamera.SetActive(true);
-            CaseImage.gameObject.SetActive(true);
-            Warning.gameObject.SetActive(false);
-        }
-        //SuitsScroll.SetCases(cases);
-        gameObject.SetActive(true);
-    }
-    public void OpenCase()
-    {
-        if (LoginManager.User.Cases < 1)
-        {
-            return;
-        }
-
-        GetPrizePnl.SetActive(true);
-        //LootManager.Instance.OpenCaseAsync(SuitsScroll.Cases[SuitsScroll.selectedPanID].Id);
-        PreopenCase.SetActive(true);
-        Idle.SetActive(false);
-        LootManager.Instance.OpenCaseAsync(LoginManager.User.CaseId);
-        AudioManager.PlayCaseOpen();
     }
 }
