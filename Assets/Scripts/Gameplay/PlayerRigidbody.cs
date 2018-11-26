@@ -77,9 +77,9 @@ public class PlayerRigidbody : Singleton<PlayerRigidbody>
 
     public static void TurnOnRocket(float rocketPower)
     {
-        Velocity += Vector3.up * (rocketPower - Velocity.y);
-        UseGravity = false;
         FreezeExceptJump();
+        Velocity += Vector3.up * (rocketPower - Velocity.y);
+        UseGravity = false;        
     }
 
     public static void OnRocket()

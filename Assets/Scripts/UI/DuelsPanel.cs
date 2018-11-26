@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DuelsPanel : MonoBehaviour {
-
+public class DuelsPanel : MonoBehaviour
+{
     public Transform RequestsContent;
     public Transform DuelsContent;
 
@@ -45,20 +44,20 @@ public class DuelsPanel : MonoBehaviour {
         gameObject.SetActive(true);
         RequestsToggle.isOn = true;
     }
-    public void SetDuels(List<DuelModel> duels)
+    public void SetDuels(DuelModel[] duels)
     {
-        NoDuelsMsg.SetActive(duels.Count == 0);
+        NoDuelsMsg.SetActive(duels.Length == 0);
         CurrentDuels.AddRange(duels);
-        SetContent(DuelsContent, DuelObject, duels, Duels);        
+        SetContent(DuelsContent, DuelObject, duels, Duels);
     }
 
-    public void SetRequests(List<DuelModel> requests)
+    public void SetRequests(DuelModel[] requests)
     {
-        NoRequestsMsg.SetActive(requests.Count == 0);
+        NoRequestsMsg.SetActive(requests.Length == 0);
         SetContent(RequestsContent, RequestObject, requests, Requests);
     }
 
-    public void SetContent(Transform content, GameObject obj,  List<DuelModel> models, List<DuelInfo> infos)
+    public void SetContent(Transform content, GameObject obj, DuelModel[] models, List<DuelInfo> infos)
     {
         foreach (DuelModel item in models)
         {

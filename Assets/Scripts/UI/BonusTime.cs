@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class BonusTime : MonoBehaviour {
-
+public class BonusTime : MonoBehaviour
+{
     public Text Timer;
     public GameObject panel;
 
@@ -11,7 +11,7 @@ public class BonusTime : MonoBehaviour {
         panel.SetActive(toActivate);
     }
 
-	public void SetTimer(float timeLeft)
+    public void SetTimer(float timeLeft)
     {
         Timer.text = timeLeft.ToString("0.0");
     }

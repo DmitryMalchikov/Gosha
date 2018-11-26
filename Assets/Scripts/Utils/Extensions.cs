@@ -159,6 +159,14 @@ public static class Extensions
 
         return timeLeft.ToString();
     }
+
+    public static void ClearContent(this Transform transform)
+    {
+        foreach (Transform item in transform)
+        {
+            UnityEngine.Object.Destroy(item.gameObject);
+        }
+    }
 }
 
 public enum DataType

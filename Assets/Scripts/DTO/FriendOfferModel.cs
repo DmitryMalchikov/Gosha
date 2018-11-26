@@ -7,5 +7,5 @@
     public int DuelWins { get; set; }
     public int IceCream { get; set; }
     public string Region { get; set; }
-    public int FriendshipStatus { get; set; }
+    public FriendshipStatus FriendshipStatus { get; set; }
 }

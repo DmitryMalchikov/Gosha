@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ public class ShopPanel : MonoBehaviour
     public Transform CardContent;
     public GameObject CardSetObject;
     public List<CardSetItem> CardSets;
-    public List<ItemInfo> Items;
+    public ItemInfo[] Items;
 
     public Transform CaseContent;
     public GameObject CaseObject;
@@ -95,11 +96,12 @@ public class ShopPanel : MonoBehaviour
         EnterPromoPanel.SetActive(false);
     }
 
-    public void SetUpgrades(List<ShopItem> upgrades)
+    public void SetUpgrades(ShopItem[] upgrades)
     {
-        foreach (ShopItem item in upgrades)
+        for (int i = 0; i < upgrades.Length; i++)
         {
-            ItemInfo current = Items.Find(x => x.ItemName == item.Name);
+            var item = upgrades[i];
+            ItemInfo current = Items.FirstOrDefault(x => x.ItemName == item.Name);
             if (LoginManager.LocalUser)
             {
                 var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
@@ -134,19 +136,19 @@ public class ShopPanel : MonoBehaviour
         }
     }
 
-    public void SetBonuses(List<ShopItem> upgrades)
+    public void SetBonuses(ShopItem[] upgrades)
     {
-        foreach (ShopItem item in upgrades)
+        for (int i = 0; i < upgrades.Length; i++)
         {
-            ItemInfo current = Items.Find(x => x.ItemName == item.Name);
-            current.PriceText.text = item.Cost.ToString();
-            current.ItemID = item.Id;
+            ItemInfo current = Items.FirstOrDefault(x => x.ItemName == upgrades[i].Name);
+            current.PriceText.text = upgrades[i].Cost.ToString();
+            current.ItemID = upgrades[i].Id;
         }
     }
 
     public void CheckBuyBtns()
     {
-        for (int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < Items.Length; i++)
         {
             Items[i].BuyButton.interactable = Items[i].PriceText.text != "Max" && int.Parse(Items[i].PriceText.text) <= LoginManager.User.IceCream;
         }
@@ -156,39 +158,39 @@ public class ShopPanel : MonoBehaviour
         }
         for (int i = 0; i < CardSets.Count; i++)
         {
-            for (int j = 0; j < CardSets[i].Cards.Count; j++)
+            for (int j = 0; j < CardSets[i].Cards.Length; j++)
             {
                 CardSets[i].Cards[j].BuyButton.interactable = int.Parse(CardSets[i].Cards[j].PriceText.text) <= LoginManager.User.IceCream;
             }
         }
     }
 
-    public void SetCards(List<ShopCard> upgrades)
+    public void SetCards(ShopCard[] cards)
     {
         ClearCards();
         CardSetItem set;
-        foreach (ShopCard item in upgrades)
+        for (int i = 0; i < cards.Length; i++)
         {
-            set = CardSets.Find(x => x.SuitID == item.SuitId);
+            set = CardSets.Find(x => x.SuitID == cards[i].SuitId);
             if (set != null)
             {
-                set.SetCard(item);
+                set.SetCard(cards[i]);
             }
             else
             {
                 CardSetItem newSet = Instantiate(CardSetObject, CardContent).GetComponent<CardSetItem>();
-                newSet.SetCardSet(item);
+                newSet.SetCardSet(cards[i]);
                 CardSets.Add(newSet);
             }
         }
     }
-    public void SetCases(List<ShopItem> upgrades)
+    public void SetCases(ShopItem[] cases)
     {
         ClearCases();
-        foreach (ShopItem item in upgrades)
+        for (int i = 0; i < cases.Length; i++)
         {
             ItemInfo newCase = Instantiate(CaseObject, CaseContent).GetComponent<ItemInfo>();
-            newCase.SetCase(item);
+            newCase.SetCase(cases[i]);
             Cases.Add(newCase);
         }
     }

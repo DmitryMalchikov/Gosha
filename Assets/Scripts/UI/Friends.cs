@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Friends : MonoBehaviour
 {
-
     public Transform RequestsContent;
     public Transform FriendsContent;
     public Transform FriendOffersContent;
@@ -36,8 +35,8 @@ public class Friends : MonoBehaviour
 
     public FriendModel TraderFriend;
 
-    public List<FriendObject> FriendObjects;
-    public List<FriendObject> FriendRequestsObjects;
+    public FriendObject[] FriendObjects;
+    public FriendObject[] FriendRequestsObjects;
 
     public GameObject NoFriendsMsg;
     public GameObject NoRequestsMsg;
@@ -49,14 +48,14 @@ public class Friends : MonoBehaviour
 
     public bool IsFriend(int id)
     {
-        return FriendObjects.Find(x => x.Info.Id == id) != null;
+        return FriendObjects.Any(x => x.Info.Id == id);
     }
 
     public void OpenDirectlyRequests()
     {
-        CleanContent(FriendsContent);
-        CleanContent(RequestsContent);
-        
+        FriendsContent.ClearContent();
+        RequestsContent.ClearContent();
+
         FriendsManager.Instance.GetFriendsAsync(() => OpenRequests());
     }
 
@@ -71,25 +70,25 @@ public class Friends : MonoBehaviour
         if (Canvaser.Instance.IsLoggedIn())
         {
             gameObject.SetActive(true);
-            CleanContent(FriendsContent);
-            CleanContent(RequestsContent);
+            FriendsContent.ClearContent();
+            RequestsContent.ClearContent();
 
             FriendsManager.Instance.GetFriendsAsync();
         }
     }
 
-    public void SetFriendRequests(List<FriendModel> requests)
+    public void SetFriendRequests(FriendModel[] requests)
     {
-        NoRequestsMsg.SetActive(requests.Count == 0);
+        NoRequestsMsg.SetActive(requests.Length == 0);
         SetContentWith(requests, RequestsContent, RequestObject);
-        FriendRequestsObjects = new List<FriendObject>(FriendsContent.GetComponentsInChildren<FriendObject>());
+        FriendRequestsObjects = FriendsContent.GetComponentsInChildren<FriendObject>();
     }
 
-    public void SetFriends(List<FriendModel> friends)
+    public void SetFriends(FriendModel[] friends)
     {
-        NoFriendsMsg.SetActive(friends.Count == 0);
+        NoFriendsMsg.SetActive(friends.Length == 0);
         SetContentWith(friends, FriendsContent, FriendObject);
-        FriendObjects = new List<FriendObject>(FriendsContent.GetComponentsInChildren<FriendObject>());
+        FriendObjects = FriendsContent.GetComponentsInChildren<FriendObject>();
         FriendNotFoundMsg.SetActive(false);
         FriendSearchInput.text = "";
     }
@@ -117,19 +116,19 @@ public class Friends : MonoBehaviour
 
     public void RemoveFromFriends(int id)
     {
-        var toDelete = FriendObjects.Find(fo => fo.OfferInfo.Id == id);
+        var toDelete = FriendObjects.FirstOrDefault(fo => fo.OfferInfo.Id == id);
         Destroy(toDelete.gameObject);
     }
 
     public void RemoveFromFriendRequests(int id)
     {
-        var toDelete = FriendRequestsObjects.Find(fo => fo.OfferInfo.Id == id);
+        var toDelete = FriendRequestsObjects.FirstOrDefault(fo => fo.OfferInfo.Id == id);
         Destroy(toDelete.gameObject);
     }
 
-    public void SetContentWith(List<FriendModel> friends, Transform content, GameObject item)
+    public void SetContentWith(FriendModel[] friends, Transform content, GameObject item)
     {
-        for (int i = 0; i < friends.Count; i++)
+        for (int i = 0; i < friends.Length; i++)
         {
             AddFriendTo(friends[i], content, item);
         }
@@ -160,26 +159,18 @@ public class Friends : MonoBehaviour
 
     public void OpenFriendOffersPanel()
     {
-        CleanContent(FriendOffersContent);
+        FriendOffersContent.ClearContent();
         FriendsManager.Instance.GetFriendsOffersAsync();
         PlayerSearchInput.text = "";
         PlayerSearchResult.gameObject.SetActive(false);
         SearchPlayer.SetActive(true);
     }
 
-    public void CleanContent(Transform content)
-    {
-        foreach (Transform item in content)
-        {
-            Destroy(item.gameObject);
-        }
-    }
-
     public void SearchFriend(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
-            for (int i = 0; i < FriendObjects.Count; i++)
+            for (int i = 0; i < FriendObjects.Length; i++)
             {
                 FriendObjects[i].gameObject.SetActive(true);
             }
@@ -188,16 +179,16 @@ public class Friends : MonoBehaviour
         else
         {
             bool found = false;
-            for (int i = 0; i < FriendObjects.Count; i++)
+            for (int i = 0; i < FriendObjects.Length; i++)
             {
-                if (!FriendObjects[i].Info.Nickname.ToLower().Contains(name.ToLower()))
-                {
-                    FriendObjects[i].gameObject.SetActive(false);
-                }
-                else
+                if (FriendObjects[i].Info.Nickname.IndexOf( name, System.StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     found = true;
                     FriendObjects[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    FriendObjects[i].gameObject.SetActive(false);
                 }
             }
             FriendNotFoundMsg.SetActive(!found);
@@ -233,8 +224,8 @@ public class Friends : MonoBehaviour
         if (!string.IsNullOrEmpty(DuelBet.text))
         {
             DuelManager.Instance.OfferDuelAsync(PlayerForDuelID, int.Parse(DuelBet.text));
-            DuelBet.text = "";
-            DuelBetPlaceholder.text = "";
+            DuelBet.text = string.Empty;
+            DuelBetPlaceholder.text = string.Empty;
         }
         else
         {

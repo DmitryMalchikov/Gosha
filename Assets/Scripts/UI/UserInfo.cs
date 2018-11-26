@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UserInfo : MonoBehaviour
 {
     public FriendObject info;
-
     public Text Name;
     public Text Region;
     public Text Record;
@@ -17,7 +14,6 @@ public class UserInfo : MonoBehaviour
     public Image Avatar;
     public Button TradeBtn;
 
-
     public void SetInfo(FriendObject user, bool isFriend = true)
     {
         info = user;
@@ -27,7 +23,6 @@ public class UserInfo : MonoBehaviour
         Duels.text = LocalizationManager.GetLocalizedValue("duelwins") + user.Info.DuelWins.ToString();
         IceCreamCount.text = user.Info.IceCream.ToString();
         Avatar.sprite = user.Avatar.sprite;
-        //Avatar.SetNativeSize();
         if (isFriend)
         {
             TradeBtn.interactable = LoginManager.User.CanOfferTrade;
@@ -67,8 +62,8 @@ public class UserInfo : MonoBehaviour
     {
         if (Canvaser.Instance.IsLoggedIn())
         {
-            int newStatus = info.OfferOrAddfriend();
-            if (newStatus == 3)
+            FriendshipStatus newStatus = info.OfferOrAddfriend();
+            if (newStatus == FriendshipStatus.OutgoingRequest)
             {
                 SetAddToFriendsButton(true);
             }

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +9,8 @@ public class ContinuePanel : MonoBehaviour {
     public Button ContinueButton;
     public Text CountDown;
 	public Text ContinueCostText;
-    public int time;
-    public int ContinueCost = 500;
+    public byte time;
+    public short ContinueCost = 500;
 
     private void Awake()
     {

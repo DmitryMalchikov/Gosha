@@ -4,23 +4,15 @@ using UnityEngine.UI;
 public class FriendObject : MonoBehaviour, IAvatarSprite
 {
     public FriendModel Info;
-
     public FriendOfferModel OfferInfo;
-
     public Text Name;
     public Text Record;
-
     public Text Position;
-
     public bool isFriend;
-
     public GameObject Warning;
-
     public GameObject OpenText;
     public GameObject InfoButton;
-
     public Image Avatar;
-
     public GameObject YouPanel;
     public Color YourColor = Color.green;
 
@@ -64,9 +56,9 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
 
     public void ShowPlayerInfo()
     {
-        if (OfferInfo.FriendshipStatus != 1)
+        if (OfferInfo.FriendshipStatus != FriendshipStatus.AreFriends)
         {
-            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == 3);
+            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == FriendshipStatus.OutgoingRequest);
         }
         else
         {
@@ -74,17 +66,17 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         }
     }
 
-    public int OfferOrAddfriend()
+    public FriendshipStatus OfferOrAddfriend()
     {
-        if (OfferInfo.FriendshipStatus == 2)
+        if (OfferInfo.FriendshipStatus == FriendshipStatus.NotFriends)
         {
             FriendsManager.Instance.OfferFriendshipAsync(OfferInfo.Id);
-            OfferInfo.FriendshipStatus = 3; // status - request sent
+            OfferInfo.FriendshipStatus = FriendshipStatus.OutgoingRequest;
         }
         else
         {
             FriendsManager.Instance.AcceptFriendshipAsync(OfferInfo.Id);
-            OfferInfo.FriendshipStatus = 1;
+            OfferInfo.FriendshipStatus = FriendshipStatus.AreFriends;
         }
 
         return OfferInfo.FriendshipStatus;
@@ -169,7 +161,7 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         }
         else
         {
-            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == 3);
+            Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == FriendshipStatus.OutgoingRequest);
         }
     }
 
@@ -177,12 +169,20 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
     {
         OfferInfo = friend;
         Name.text = string.Format("{0}. {1}", place + 1, friend.Nickname);
-        Record.text = (friend as FriendOfferStatisticsModel).Points + LocalizationManager.GetLocalizedValue("meter");
+        Record.text = (friend as FriendOfferStatisticsModel).Points.ToString() + LocalizationManager.GetLocalizedValue("meter");
+    }
+
+    public void SetStatisticsObject(FriendOfferModel friend, int place)
+    {
+        SetTournamentObject(friend, place);
         LoginManager.Instance.GetUserImage(this, friend.Id);
     }
 
     public void SetSprite(Sprite sprite)
     {
-        Avatar.sprite = sprite;
+        if (Avatar)
+        {
+            Avatar.sprite = sprite;
+        }
     }
 }

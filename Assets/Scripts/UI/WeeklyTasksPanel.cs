@@ -1,29 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WeeklyTasksPanel : MonoBehaviour {
-
+public class WeeklyTasksPanel : MonoBehaviour
+{
     public Transform Content;
     public GameObject TaskObject;
-    public List<PlayerTaskModel> Tasks;
 
-    public void SetTasks(List<PlayerTaskModel> models)
+    public void SetTasks(PlayerTaskModel[] models)
     {
         ClearContent();
-        Tasks = models;
-        
-        for (int i = 0; i < models.Count; i++)
+
+        for (int i = 0; i < models.Length; i++)
         {
             WeeklyTask newTask = Instantiate(TaskObject, Content).GetComponent<WeeklyTask>();
             newTask.SetTask(i + 1, models[i]);
-        }  
+        }
     }
     public void ClearContent()
     {
-        foreach (Transform item in Content)
-        {
-            Destroy(item.gameObject);
-        }
+        Content.ClearContent();
     }
 }

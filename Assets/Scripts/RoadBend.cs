@@ -17,7 +17,7 @@ public class RoadBend : Singleton<RoadBend>
     {
         while (true)
         {
-            int rand = Random.Range(10, 21);
+            byte rand = (byte)Random.Range(10, 21);
             yield return new WaitForSeconds(rand);
             float direction = (rand - 15) / 2;
 

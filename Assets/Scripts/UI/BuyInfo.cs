@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,7 +45,7 @@ public class BuyInfo : MonoBehaviour
                     bonusUpgrade.UpgradeAmount++;
                 }
 
-                ShopManager.CurrentShop.BonusUpgrades.Find(bu => bu.Id == ItemID).Amount++;
+                ShopManager.CurrentShop.BonusUpgrades.FirstOrDefault(bu => bu.Id == ItemID).Amount++;
                 ShopManager.UpdateShopItems();
                 LoginManager.User.IceCream -= price;
                 GameController.Instance.LoadBonusesTime(LoginManager.User.BonusUpgrades);

@@ -3,9 +3,9 @@
 public class BonusChanceGenerator : Singleton<BonusChanceGenerator>
 {
     [SerializeField]
-    public int _bonusChance;
+    public byte _bonusChance;
     [SerializeField]
-    public int _boxChance = 1;
+    public byte _boxChance = 1;
 
     public static bool GenerateBox()
     {

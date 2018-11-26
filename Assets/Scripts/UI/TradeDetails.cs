@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class TradeDetails : MonoBehaviour {
-
+public class TradeDetails : MonoBehaviour
+{
     public TradeOfferModel info;
 
     public Text Title;
@@ -13,7 +11,7 @@ public class TradeDetails : MonoBehaviour {
 
     public Text FirstUserName;
     public Text SecondUserName;
-    
+
     public Image FirstUserItemImg;
     public Image SecondUserItemImg;
 
@@ -36,7 +34,7 @@ public class TradeDetails : MonoBehaviour {
     {
         info = model;
 
-        if(model.UserId == LoginManager.User.Id)
+        if (model.UserId == LoginManager.User.Id)
         {
             Title.text = LocalizationManager.GetLocalizedValue("yourtradeoffer") + model.Nickname;
             FirstUserName.text = LoginManager.User.Nickname;
@@ -50,14 +48,14 @@ public class TradeDetails : MonoBehaviour {
             SecondUserName.text = LoginManager.User.Nickname;
             AcceptBtn.gameObject.SetActive(true);
         }
-        
+
         FirstUserItemName.text = model.OfferItem.Name;
-        if(model.OfferItem.Name == "Ice cream")
+        if (model.OfferItem.Name == "Ice cream")
         {
             FirstUserItemName.text += ": " + model.OfferItem.Amount;
         }
         SecondUserItemName.text = model.RequestItem.Name;
-        if(model.RequestItem.Name == "Ice cream")
+        if (model.RequestItem.Name == "Ice cream")
         {
             SecondUserItemName.text += ": " + model.RequestItem.Amount;
         }

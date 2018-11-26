@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class StartBonuses : MonoBehaviour
 {
-    public List<BonusPanel> BPanels;
+    public BonusPanel[] BPanels;
 
     public void SetStartBonuses(List<Bonus> bonuses)
     {
@@ -11,7 +11,7 @@ public class StartBonuses : MonoBehaviour
         {
             return;
         }
-        for (int i = 0; i < BPanels.Count; i++)
+        for (int i = 0; i < BPanels.Length; i++)
         {
             var bonus = bonuses.Find(p => p.Name.Name == BPanels[i].Name);
             BPanels[i].SetInfo(bonus);
@@ -20,7 +20,7 @@ public class StartBonuses : MonoBehaviour
 
     public void ResetStartBonuses()
     {
-        for (int i = 0; i < BPanels.Count; i++)
+        for (int i = 0; i < BPanels.Length; i++)
         {
             BPanels[i].Active.isOn = false;
             var bonus = BPanels[i].Bonus;

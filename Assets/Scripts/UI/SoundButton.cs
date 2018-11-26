@@ -1,22 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class SoundButton : MonoBehaviour
+public class SoundButton : MonoBehaviour, IPointerClickHandler
 {
-    //private Button _button;
-
-    private IEnumerator Start()
+    public void OnPointerClick(PointerEventData eventData)
     {
-        yield return new WaitUntil(() => AudioManager.Instance);
-
-        if (GetComponent<Button>())
-        {
-            GetComponent<Button>().onClick.AddListener(() => AudioManager.PlayBtnTapSound());
-        }
-        else if(GetComponent<Toggle>())
-        {
-            GetComponent<Toggle>().onValueChanged.AddListener((value) => AudioManager.PlayBtnTapSound());
-        }
+        AudioManager.PlayBtnTapSound();
     }
 }

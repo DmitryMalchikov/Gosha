@@ -2,6 +2,11 @@
 {
     public static IBonus CreateUserBonus(Bonus bonus)
     {
+        if (bonus == null)
+        {
+            return null;
+        }
+
         IBonus result = null;
 
         switch (bonus.Name.Name)

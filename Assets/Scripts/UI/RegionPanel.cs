@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class RegionPanel : MonoBehaviour {
-
+public class RegionPanel : MonoBehaviour
+{
     public RegionModel info;
     public LocalizedText RegionName;
     public Toggle ToggleBox;
-	public Image Flag;
+    public Image Flag;
 
     public void ChooseRegion(bool isChosen)
     {
-        if(isChosen)
+        if (isChosen)
         {
             Canvaser.Instance.RegistrationPanel.Region = info;
-			Canvaser.Instance.RegistrationPanel.Phone.placeholder.GetComponent<Text>().text = info.PhonePlaceholder;
+            Canvaser.Instance.RegistrationPanel.Phone.placeholder.GetComponent<Text>().text = info.PhonePlaceholder;
         }
     }
 
@@ -23,15 +21,6 @@ public class RegionPanel : MonoBehaviour {
     {
         info = model;
         RegionName.Key = info.Name;
-		Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
+        Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
     }
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

@@ -420,8 +420,9 @@ public class WebViewObject : MonoBehaviour
         if (webView == null)
             return string.Empty;
         return webView.Get<string>("getURL");
+#else
+         return string.Empty;
 #endif
-        return string.Empty;
     }
 
     public void LoadHTML(string html, string baseUrl)

@@ -18,11 +18,10 @@ public class SnapScrolling : MonoBehaviour
     private GameObject[] instPans;
     private Vector2[] pansPos;
     private Vector2[] pansScale;
-    private List<Image> pansImage;
     private bool initialized = false;
 
     public List<SuitIcon> SuitIcons;
-    public List<Costume> Costumes = new List<Costume>();
+    public Costume[] Costumes;
 
     public Color blocked;
     public Color normal;
@@ -66,17 +65,16 @@ instPans[i].transform.localPosition.y);
         }
     }
 
-    public void SetCostumes(List<Costume> suits)
+    public void SetCostumes(Costume[] suits)
     {
         CleanContent(transform);
         Costumes = suits;
-        panCount = Costumes.Count;
+        panCount = Costumes.Length;
 
         initialized = false;
         instPans = new GameObject[panCount];
         pansPos = new Vector2[panCount];
         pansScale = new Vector2[panCount];
-        pansImage = new List<Image>();
         SuitIcons = new List<SuitIcon>();
         group.alpha = 0;
 
@@ -97,7 +95,6 @@ instPans[i].transform.localPosition.y);
             }
 
             SuitIcons.Add(newIcon);
-            pansImage.Add(newIcon.Icon);
         }
 
         StartCoroutine(SetIconsPosition());
@@ -105,8 +102,18 @@ instPans[i].transform.localPosition.y);
 
     public void PutOnSuit(bool toSwitchOn = true)
     {
+        if (!AnySuits())
+        {
+            return;
+        }
+
         SuitIcons[selectedPanID].IsOn.isOn = toSwitchOn;
         Canvaser.Instance.Suits.TakeOffSuitBtn.gameObject.SetActive(toSwitchOn);
+    }
+
+    public bool AnySuits()
+    {
+        return SuitIcons != null && SuitIcons.Count > 0;
     }
 
     void Update()

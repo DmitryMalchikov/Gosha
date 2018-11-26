@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-public class Car : MonoBehaviour {
-
+public class Car : MonoBehaviour
+{
     public float Speed;
     Vector3 defaultPos;
     bool firstEnable = true;
@@ -14,7 +14,7 @@ public class Car : MonoBehaviour {
             if (firstEnable)
             {
                 defaultPos = transform.localPosition;
-                firstEnable = false;                
+                firstEnable = false;
             }
             else
             {
@@ -28,11 +28,11 @@ public class Car : MonoBehaviour {
         transform.localPosition = defaultPos;
     }
 
-    void Update ()
+    void Update()
     {
         if (Speed > 0 && GameController.Started)
         {
             transform.Translate(Vector3.forward * Speed * (-SpeedController.Speed.z) * Time.deltaTime);
         }
-	}
+    }
 }

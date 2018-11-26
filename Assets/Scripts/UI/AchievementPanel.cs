@@ -40,14 +40,8 @@ public class AchievementPanel : MonoBehaviour {
 
     public void ClearContent()
     {
-        foreach(Transform item in AchievementsContent)
-        {
-            Destroy(item.gameObject);
-        }
-        foreach (Transform item in DoneAchievementsContent)
-        {
-            Destroy(item.gameObject);
-        }
+        AchievementsContent.ClearContent();
+        DoneAchievementsContent.ClearContent();
         Achievements.Clear();
     }
 }

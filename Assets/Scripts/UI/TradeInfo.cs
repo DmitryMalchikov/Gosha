@@ -1,19 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class TradeInfo : MonoBehaviour {
-
+public class TradeInfo : MonoBehaviour
+{
     public Text Title;
     public Image Item1;
     public Image Item2;
-
     public TradeOfferModel info;
-    
 
     public void SetTrade(TradeOfferModel model)
     {
         info = model;
-        if(model.UserId == LoginManager.User.Id)
+        if (model.UserId == LoginManager.User.Id)
         {
             Title.text = string.Format(LocalizationManager.GetLocalizedValue("youoffered"), model.Nickname);
         }
@@ -39,7 +37,7 @@ public class TradeInfo : MonoBehaviour {
         }
     }
 
-	public void ShowTradeDetails()
+    public void ShowTradeDetails()
     {
         Canvaser.Instance.TradePanel.Details.SetDetails(info);
     }

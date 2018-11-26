@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsPanel : MonoBehaviour {
-    
+public class SettingsPanel : MonoBehaviour
+{
     public Button LogOutBtn;
     public Button LogInBtn;
     public Button ResetPassBtn;

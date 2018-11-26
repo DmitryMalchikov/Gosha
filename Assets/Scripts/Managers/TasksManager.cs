@@ -16,9 +16,9 @@ public class TasksManager : APIManager<TasksManager>
         ServerInfo.SetUrl(ref GetTasksUrl);
     }
 
-    public void LoadTasks(List<PlayerTasks> tasks)
+    public void LoadTasks(PlayerTasks[] tasks)
     {
-        for (int i = 0; i < tasks.Count; i++)
+        for (int i = 0; i < tasks.Length; i++)
         {
             tasks[i].PlayerStartProgress = tasks[i].PlayerProgress;
 
@@ -126,7 +126,7 @@ public class TasksManager : APIManager<TasksManager>
 
     public void GetAllTasksAsync()
     {
-        CoroutineManager.SendRequest(GetTasksUrl, null, (List<PlayerTaskModel> tasks) =>
+        CoroutineManager.SendRequest(GetTasksUrl, null, (PlayerTaskModel[] tasks) =>
         {
             Canvaser.Instance.WeeklyTasks.SetTasks(tasks);
         }, loadingPanelsKey: "weeklytasks");

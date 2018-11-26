@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class ForgotPasswordPanel : MonoBehaviour
 {
-
     public GameObject EmailPanel;
     public GameObject PasswordPanel;
     public GameObject ResetFinishPanel;

@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PrizeCard : MonoBehaviour {
-
+public class PrizeCard : MonoBehaviour
+{
     public Material mat;
 
     public void SetCard(string name = "")

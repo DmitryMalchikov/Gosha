@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IceCreamChanger : MonoBehaviour {
-
+public class IceCreamChanger : MonoBehaviour
+{
     public Text IceCream;
     public int CurrentCount;
     public float Duration = 2;
@@ -38,7 +37,7 @@ public class IceCreamChanger : MonoBehaviour {
     IEnumerator Transition(int endVal)
     {
         float lerp = Time.deltaTime / Duration;
-        while (Mathf.Abs(endVal - CurrentCount)>0)
+        while (Mathf.Abs(endVal - CurrentCount) > 0)
         {
             yield return new WaitForSeconds(Time.deltaTime);
             lerp += Time.deltaTime / Duration;
@@ -52,7 +51,5 @@ public class IceCreamChanger : MonoBehaviour {
             }
             IceCream.text = CurrentCount.ToString();
         }
-        //CurrentCount++;
-        //IceCream.text = CurrentCount.ToString();
     }
 }

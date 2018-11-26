@@ -1,23 +1,19 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class HouseSetter : MonoBehaviour
 {
-    void Start()
+    private void Start()
     {
-        var house = GetComponent<House>();
-        house.RoofsParent = transform.Find("Roof");
-        List<GameObject> roofs = new List<GameObject>();
-        for (int i = 0; i < house.RoofsParent .childCount; i++)
-        {
-            roofs.Add(house.RoofsParent.GetChild(i).gameObject);
-            if (house.Objects.Contains(house.RoofsParent.GetChild(i).gameObject))
-            {
-                house.Objects.Remove(house.RoofsParent.GetChild(i).gameObject);
-            }
-        }
-        house.Roofs = roofs;
+        //Tile tile = GetComponent<Tile>();
+        //List<GameObject> tempIceCreams = new List<GameObject>();
+        //for (int i = 0; i < tile.IceCreamTrucks.Length; i++)
+        //{
+        //    tempIceCreams.AddRange(tile.IceCreamTrucks[i].GetComponentsInChildren<Coin>().Select(c => c.gameObject));
+        //}
+        //tile.TruckIceCreams = tempIceCreams.ToArray();
     }
 }

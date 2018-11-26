@@ -268,8 +268,8 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
         {
             model.IceCream = User.IceCream;
             model.Cases = User.Cases;
-            model.Bonuses = User.Bonuses;
-            model.BonusUpgrades = User.BonusUpgrades;
+            model.Bonuses = User.Bonuses.ToArray();
+            model.BonusUpgrades = User.BonusUpgrades.ToArray();
             Extensions.RemoveJsonData(DataType.UserInfo);
         }
 
@@ -277,7 +277,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
        {
            GetTokenAsync(model.Email, model.Password);
            Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
-           Canvaser.Instance.RegistrationPanel.PageNum = 1;
+           Canvaser.Instance.RegistrationPanel.PageNum = 0;
            Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
        });
     }
@@ -367,15 +367,15 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
         {
             model.IceCream = User.IceCream;
             model.Cases = User.Cases;
-            model.Bonuses = User.Bonuses;
-            model.BonusUpgrades = User.BonusUpgrades;
+            model.Bonuses = User.Bonuses.ToArray();
+            model.BonusUpgrades = User.BonusUpgrades.ToArray();
             Extensions.RemoveJsonData(DataType.UserInfo);
         }
 
         CoroutineManager.SendRequest(ExternalRegisterUrl, model, () =>
         {
            OpenExternalLogin(LoginProvider);
-           Canvaser.Instance.RegistrationPanel.PageNum = 1;
+           Canvaser.Instance.RegistrationPanel.PageNum = 0;
            Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
            Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
            Canvaser.Instance.LoginPanel.gameObject.SetActive(false);
@@ -437,8 +437,6 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
     IEnumerator DownloadImage(int userId, IAvatarSprite spriteSetter)
     {
         string url = ProfileImageUrl + userId;
-
-        var headers = Headers.ToDictionary(h => h.Name, h => h.Value);
 
         WWW www = new WWW(url);
 

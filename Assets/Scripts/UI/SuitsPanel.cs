@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class SuitsPanel : MonoBehaviour
     public RawImage SuitImage;
     public GameObject SuitPanel;
     public GameObject CardsPanel;
-    public List<Image> Cards;
+    public Image[] Cards;
     public Button GetSuitBtn;
     public Button BuyCards;
     public Button ShowSuitsCards;
@@ -31,7 +32,7 @@ public class SuitsPanel : MonoBehaviour
 
         TakeOffSuitBtn.gameObject.SetActive(PlayerPrefs.GetString("CurrentSuit") == suit.Name);
 
-        if (suit.Cards.Count == 0)
+        if (suit.Cards.Length == 0)
         {
             ShowSuitsCards.gameObject.SetActive(false);
             Share.gameObject.SetActive(!HasSuit);
@@ -91,10 +92,9 @@ public class SuitsPanel : MonoBehaviour
         InventoryManager.Instance.GetSuitsAsync(true);
     }
 
-    public void SetCostumes(List<Costume> costumes)
+    public void SetCostumes(Costume[] costumes)
     {
-        Debug.Log(costumes.Count);
-        if (costumes.Count == 0)
+        if (costumes.Length == 0)
         {
             SuitImage.gameObject.SetActive(false);
             Warning.text = LocalizationManager.GetLocalizedValue("nosuits");
@@ -129,7 +129,7 @@ public class SuitsPanel : MonoBehaviour
 
     public void TurnOffCards()
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (int i = 0; i < Cards.Length; i++)
         {
             Cards[i].gameObject.SetActive(false);
         }
@@ -144,7 +144,7 @@ public class SuitsPanel : MonoBehaviour
     public void UpdateCards()
     {
         TurnOffCards();
-        if (SuitsScroll.Costumes.Count > 0)
+        if (SuitsScroll.Costumes.Length > 0)
         {
             foreach (InventoryCard item in SuitsScroll.Costumes[SuitsScroll.selectedPanID].Cards)
             {
@@ -152,7 +152,7 @@ public class SuitsPanel : MonoBehaviour
             }
         }
 
-        if (Cards.FindAll(x => x.gameObject.activeInHierarchy).Count == 4)
+        if (Cards.Count(x => x.gameObject.activeInHierarchy) == 4)
         {
             BuyCards.gameObject.SetActive(false);
             GetSuitBtn.gameObject.SetActive(true);

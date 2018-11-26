@@ -6,6 +6,7 @@ public class Masks : MonoBehaviour
     public static int DefaultLayer { get; private set; }
     public static int GroundLayer { get; private set; }
     public static int ObstaclesAndPickables { get; private set; }
+    public static int PickableLayer { get; private set; }
 
     private void Awake()
     {
@@ -13,5 +14,6 @@ public class Masks : MonoBehaviour
         DefaultLayer = LayerMask.NameToLayer("Default");
         GroundLayer = LayerMask.NameToLayer("Ground");
         ObstaclesAndPickables = LayerMask.GetMask("Default", "Pickable");
+        PickableLayer = LayerMask.NameToLayer("Pickable");
     }
 }

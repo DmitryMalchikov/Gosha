@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatisticsPanel : MonoBehaviour {
-
+public class StatisticsPanel : MonoBehaviour
+{
     public GameObject Leader;
     public Transform AllTimeLeadersContent;
     public Transform LeadersContent;
@@ -41,40 +41,32 @@ public class StatisticsPanel : MonoBehaviour {
 
     public void SetAllTimeLeaders(List<FriendOfferStatisticsModel> leaders)
     {
-        for (int i = 0; i < leaders.Count; i++)
-        {
-            FriendObject newLeader = Instantiate(Leader, AllTimeLeadersContent).GetComponent<FriendObject>();
-            if (leaders[i].Id == LoginManager.User.Id)
-            {
-                newLeader.YourPanelTournament(leaders[i], i);
-            }
-            else
-            {
-                newLeader.SetTournamentObject(leaders[i], i);
-            }
-            AllTimeLeaders.Add(newLeader);
-        }
-        
+        SetStatisticsPanel(leaders, AllTimeLeaders, AllTimeLeadersContent);
     }
 
     public void SetLeaders(List<FriendOfferStatisticsModel> leaders)
     {
+        SetStatisticsPanel(leaders, Leaders, LeadersContent);
+    }
+
+    public void SetStatisticsPanel(List<FriendOfferStatisticsModel> leaders, List<FriendObject> friendList, Transform parentPanel)
+    {
         for (int i = 0; i < leaders.Count; i++)
         {
-            FriendObject newLeader = Instantiate(Leader, LeadersContent).GetComponent<FriendObject>();
+            FriendObject newLeader = Instantiate(Leader, parentPanel).GetComponent<FriendObject>();
             if (leaders[i].Id == LoginManager.User.Id)
             {
                 newLeader.YourPanelTournament(leaders[i], i);
             }
             else
             {
-                newLeader.SetTournamentObject(leaders[i], i);
+                newLeader.SetStatisticsObject(leaders[i], i);
             }
-            Leaders.Add(newLeader);
+            friendList.Add(newLeader);
         }
     }
 
-    public void ClearContent(Transform content,List<FriendObject> list)
+    public void ClearContent(Transform content, List<FriendObject> list)
     {
         bool loading = false;
         foreach (Transform item in content)

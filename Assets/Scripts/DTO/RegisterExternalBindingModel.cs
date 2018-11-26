@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public class RegisterExternalBindingModel
+﻿public class RegisterExternalBindingModel
 {
     public RegisterExternalBindingModel(RegisterBindingModel model)
     {
@@ -9,12 +7,14 @@ public class RegisterExternalBindingModel
         PhoneNumber = model.PhoneNumber;
         RegionId = model.RegionId;
     }
+    public RegisterExternalBindingModel() { }
+
     public string Email { get; set; }
     public string Nickname { get; set; }
     public string PhoneNumber { get; set; }
     public int RegionId { get; set; }
     public int IceCream { get; set; }
     public int Cases { get; set; }
-    public List<Bonus> Bonuses { get; set; }
-    public List<BonusUpgrade> BonusUpgrades { get; set; }
+    public Bonus[] Bonuses { get; set; }
+    public BonusUpgrade[] BonusUpgrades { get; set; }
 }

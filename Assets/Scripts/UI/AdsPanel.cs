@@ -22,8 +22,6 @@ public class AdsPanel : MonoBehaviour {
 
 	public void DoubleScore()
 	{
-		//Canvaser.Instance.LoadingPanel.SetActive(true);
-		//AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
 		AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
 		AdsManager.Instance.GetAds(txt, img);
 	}

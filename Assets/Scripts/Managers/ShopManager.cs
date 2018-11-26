@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Linq;
 using UnityEngine;
 
 public class ShopManager : APIManager<ShopManager>
@@ -23,7 +24,7 @@ public class ShopManager : APIManager<ShopManager>
                string data = Extensions.LoadJsonData(DataType.Shop);
                ShopModel model = JsonConvert.DeserializeObject<ShopModel>(data);
 
-               model.BonusUpgrades.Find(bu => bu.Id == itemId).Amount++;
+               model.BonusUpgrades.FirstOrDefault(bu => bu.Id == itemId).Amount++;
                SetShopItems(model);
                Extensions.SaveJsonDataAsync(DataType.Shop, JsonConvert.SerializeObject(model));
            }

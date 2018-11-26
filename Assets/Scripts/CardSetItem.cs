@@ -1,23 +1,22 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CardSetItem : MonoBehaviour {
-
+public class CardSetItem : MonoBehaviour
+{
     public int SuitID;
     public Text Title;
-    public List<ItemInfo> Cards;
-	public Image SuitImage;
+    public ItemInfo[] Cards;
+    public Image SuitImage;
 
     public void SetCardSet(ShopCard card)
     {
         SuitID = card.SuitId;
         Title.text = LocalizationManager.GetLocalizedValue("suitcards") + LocalizationManager.GetValue(card.SuitNameRu, card.SuitName);
-		SuitImage.sprite = Resources.Load<Sprite> (card.SuitName);
+        SuitImage.sprite = Resources.Load<Sprite>(card.SuitName);
         SetCard(card);
     }
     public void SetCard(ShopCard card)
     {
-        Cards[card.Position -1].SetCard(card);
+        Cards[card.Position - 1].SetCard(card);
     }
 }

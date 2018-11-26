@@ -23,7 +23,7 @@ public class Effect : MonoBehaviour
 
     public void Play()
     {
-        for (int i = 0; i < _effects.Length; i++)
+        for (byte i = 0; i < _effects.Length; i++)
         {
             _effects[i].Play();
         }
@@ -31,7 +31,7 @@ public class Effect : MonoBehaviour
 
     public void Stop(bool stopImmediately)
     {
-        for (int i = 0; i < _effects.Length; i++)
+        for (byte i = 0; i < _effects.Length; i++)
         {
             if (stopImmediately)
             {

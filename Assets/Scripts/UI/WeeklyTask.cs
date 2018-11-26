@@ -5,7 +5,6 @@ public class WeeklyTask : TimeCheck
 {
     public Text Task;
     public GameObject IsLocked;
-
     private PlayerTaskModel _info;
 
     public override IExpirable Info

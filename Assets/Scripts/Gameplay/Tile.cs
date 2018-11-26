@@ -9,25 +9,21 @@ public class Tile : MonoBehaviour
     public bool StartTile = false;
 
     public Transform IceCreams;
-
     public Transform Bonus;
     public CarObstacles Obstacles;
     public GameObject Box;
 
-    public List<Tile> CanGoAfter = new List<Tile>();
+    public Tile[] CanGoAfter;
 
-    public List<Tile> InactiveTiles { get { return CanGoAfter.Where(t => t.gameObject.activeInHierarchy == false).ToList(); } }
+    public Tile[] InactiveTiles { get { return CanGoAfter.Where(t => t.gameObject.activeInHierarchy == false).ToArray(); } }
 
     byte counter = 0;
 
     public bool CarsStarted = false;
 
-    public List<Transform> IceCreamTrucks;
-
-    bool BonusLastTile;
-
-    [HideInInspector]
-    public List<Collider> DisabledColliders = new List<Collider>();
+    public GameObject[] TruckIceCreams;
+    private List<Collider> _disabledColliders = new List<Collider>();
+    private bool _bonusLastTile;
 
     private void Update()
     {
@@ -80,16 +76,24 @@ public class Tile : MonoBehaviour
 
     public void GenerateBonus()
     {
+        if (_bonusLastTile)
+        {
+            _bonusLastTile = false;
+            return;
+        }
+
         for (int i = 0; i < Bonus.childCount; i++)
         {
             Bonus.GetChild(i).gameObject.SetActive(false);
         }
+
         if (BonusChanceGenerator.GenerateBonus())
         {
             int rand = Random.Range(0, Bonus.childCount);
 
             Bonus.gameObject.SetActive(true);
             Bonus.GetChild(rand).gameObject.SetActive(true);
+            _bonusLastTile = true;
         }
     }
 
@@ -111,7 +115,7 @@ public class Tile : MonoBehaviour
 
     public void DisableCollider(Collider col)
     {
-        DisabledColliders.Add(col);
+        _disabledColliders.Add(col);
         col.enabled = false;
     }
 
@@ -131,32 +135,21 @@ public class Tile : MonoBehaviour
         {
             IceCreams.GetChild(i).gameObject.SetActive(true);
         }
-        if (BonusLastTile)
+
+        for (int i = 0; i < TruckIceCreams.Length; i++)
         {
-            BonusLastTile = false;
-        }
-        else
-        {
-            for (int i = 0; i < IceCreamTrucks.Count; i++)
-            {
-                Coin[] TruckCoins = IceCreamTrucks[i].GetComponentsInChildren<Coin>();
-                for (int j = 0; j < TruckCoins.Length; j++)
-                {
-                    TruckCoins[j].gameObject.SetActive(true);
-                }
-            }
-            BonusLastTile = true;
+            TruckIceCreams[i].SetActive(true);
         }
     }
 
     void EnableColliders()
     {
-        for (int i = 0; i < DisabledColliders.Count; i++)
+        for (int i = 0; i < _disabledColliders.Count; i++)
         {
-            DisabledColliders[i].enabled = true;
+            _disabledColliders[i].enabled = true;
         }
 
-        DisabledColliders.Clear();
+        _disabledColliders.Clear();
     }
 }
 

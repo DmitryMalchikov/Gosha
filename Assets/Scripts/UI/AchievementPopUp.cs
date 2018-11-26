@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +9,6 @@ public class AchievementPopUp : MonoBehaviour {
     public Text Description;
     public Color AchievementColor;
     public Color TaskColor;
-
 
     public void ShowAchievement(PlayerTasksAnswer newModel)
     {

@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class AchievementInfo : MonoBehaviour {
-
+public class AchievementInfo : MonoBehaviour
+{
     public PlayerAchievementModel info;
 
     public Text Title;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-public class BoxPrize : MonoBehaviour {
-    
+public class BoxPrize : MonoBehaviour
+{
     public GameObject IceCream;
     public GameObject Freeze;
     public GameObject Magnet;
@@ -17,7 +17,7 @@ public class BoxPrize : MonoBehaviour {
     public void SetPrize(string name)
     {
         currentName = name;
-        switch(name)
+        switch (name)
         {
             case "IceCream":
             case null:
@@ -45,8 +45,8 @@ public class BoxPrize : MonoBehaviour {
 
     public void PrizeOut(bool toOut)
     {
-        anim.SetBool("Out",toOut);
-        if(toOut && !string.IsNullOrEmpty(currentName) && currentName.Contains("Card"))
+        anim.SetBool("Out", toOut);
+        if (toOut && !string.IsNullOrEmpty(currentName) && currentName.Contains("Card"))
         {
             AudioManager.PlayCardGet();
         }
@@ -54,7 +54,7 @@ public class BoxPrize : MonoBehaviour {
 
     public void TurnOffPrizes()
     {
-        if(ActiveObj)
-        ActiveObj.SetActive(false);
+        if (ActiveObj)
+            ActiveObj.SetActive(false);
     }
 }

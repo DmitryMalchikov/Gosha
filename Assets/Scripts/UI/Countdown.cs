@@ -6,8 +6,6 @@ public class Countdown : MonoBehaviour
 {
     public Text SecondsLeft;
 
-    private WaitForSeconds second = new WaitForSeconds(1);
-
     private void OnEnable()
     {
         StartCoroutine(StartCountdown());

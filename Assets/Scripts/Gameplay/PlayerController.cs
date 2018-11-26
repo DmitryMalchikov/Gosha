@@ -11,7 +11,7 @@ public class PlayerController : Singleton<PlayerController>
     public bool isMoving;
     public float MaxCollisionAngle;
     public float MinCollisionAngle;
-    public int MaxHitsCount = 2;
+    public byte MaxHitsCount = 2;
     public Vector3 StartPos = new Vector3(0f, 0.5f, -4f);
     public float LastGroundY = 0;
     public Animator CurrentAnimator;
@@ -83,30 +83,41 @@ public class PlayerController : Singleton<PlayerController>
 
         if (isMoving)
         {
-            bool back = _dir == -1 ? transform.position.x < _currentX : transform.position.x > _currentX;
-            float movedDistance = Mathf.Abs(transform.position.x - _currentX);
+            PlayerMove();
+        }
+    }
 
-            if (!PlayerRigidbody.UseGravity && movedDistance < _fallDistance && !PlayerRocket.RocketInProgress)
-            {
-                if (!PlayerCollisions.AnyCollisions)
-                {
-                    PlayerRigidbody.SetInAir();
-                }
-            }
+    private void PlayerMove()
+    {   
+        float movedDistance = Mathf.Abs(transform.position.x - _currentX);
+        Vector3 moveVector = _moveDir * moveSpeed * Time.deltaTime;
+        bool stop = Mathf.Abs(moveVector.x) >= movedDistance;
 
-            if (movedDistance < 0.01f || back)
+        if (!PlayerRigidbody.UseGravity && movedDistance < _fallDistance && !PlayerRocket.RocketInProgress)
+        {
+            if (!PlayerCollisions.AnyCollisions)
             {
-                _moveDir = Vector3.zero;
-                PlayerRigidbody.FreezeExceptJump();
-                isMoving = false;
-                FixPos(_currentX);
-                StartCoroutine(SetOnGround());
-            }
-            else
-            {
-                transform.Translate(_moveDir * moveSpeed * Time.deltaTime);
+                PlayerRigidbody.SetInAir();
             }
         }
+
+        if (stop)
+        {
+            StopMoving();
+        }
+        else
+        {
+            transform.Translate(moveVector);
+        }
+    }
+
+    private void StopMoving()
+    {
+        _moveDir = Vector3.zero;
+        isMoving = false;
+        FixPos(_currentX);
+        PlayerRigidbody.FreezeExceptJump();
+        StartCoroutine(SetOnGround(null));
     }
 
     void LateUpdate()
@@ -136,7 +147,7 @@ public class PlayerController : Singleton<PlayerController>
         _dir = right ? 1 : -1;
         if (_currentX != _dir * Step)
         {
-            if (PlayerRocket.RocketInProgress || OnGround)
+            if ((PlayerRocket.RocketInProgress && !PlayerRocket.BlockMoving) || OnGround)
             {
                 PlayerAnimator.SetTurnTrigger(right);
             }
@@ -241,7 +252,11 @@ public class PlayerController : Singleton<PlayerController>
             _minY = transform.position.y;
         }
 
-        PlayerCollisions.AddCollision(collision.gameObject);
+        if (!PlayerCollisions.AddCollision(collision.gameObject))
+        {
+            return;
+        }
+
         OnGround = true;
         tempOnGround = true;
         _isJumping = false;
@@ -330,10 +345,10 @@ public class PlayerController : Singleton<PlayerController>
             return;
         }
 
-        if (PlayerCollisions.RemoveCollision(collision.gameObject))
+        if (PlayerCollisions.HaveCollision(collision.gameObject))
         {
             tempOnGround = false;
-            StartCoroutine(SetOnGround());
+            StartCoroutine(SetOnGround(collision.gameObject));
         }
     }
 
@@ -348,10 +363,15 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
 
-    IEnumerator SetOnGround()
+    IEnumerator SetOnGround(GameObject go)
     {
         yield return new WaitUntil(() => !isMoving);
         yield return new WaitForFixedUpdate();
+
+        if (go)
+        {
+            PlayerCollisions.RemoveCollision(go);
+        }
 
         if (!tempOnGround)
         {

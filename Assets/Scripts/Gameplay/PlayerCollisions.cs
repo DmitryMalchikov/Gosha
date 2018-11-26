@@ -23,9 +23,14 @@ public class PlayerCollisions : Singleton<PlayerCollisions>
         _collisions.RemoveWhere(col => col.name != "Ground");
     }
 
-    public static void AddCollision(GameObject collision)
+    public static bool AddCollision(GameObject collision)
     {
-        _collisions.Add(collision);
+        return _collisions.Add(collision);
+    }
+
+    public static bool HaveCollision(GameObject collision)
+    {
+        return _collisions.Contains(collision);
     }
 
     public static bool RemoveCollision(GameObject collision)

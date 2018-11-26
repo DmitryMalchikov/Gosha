@@ -5,7 +5,7 @@ public class MapGenerator : Singleton<MapGenerator>
 {
     public Tile StartTile;
     public float TileSize = 10;
-    public int StartTilesNumber = 10;
+    public byte StartTilesNumber = 10;
 
     Tile[] _tiles;
     List<Tile> _avaliableTiles;
@@ -49,9 +49,9 @@ public class MapGenerator : Singleton<MapGenerator>
             if (_lastTile)
             {
                 var inactiveTiles = _lastTile.InactiveTiles;
-                if (inactiveTiles.Count > 0)
+                if (inactiveTiles.Length > 0)
                 {
-                    var number = Random.Range(0, inactiveTiles.Count);
+                    var number = Random.Range(0, inactiveTiles.Length);
                     _currentNewTile = inactiveTiles[number];
                 }
             }
@@ -97,10 +97,10 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         if (_avaliableTiles.Count == 0) return;
 
-        if (_lastTile && _lastTile.CanGoAfter.Count > 0 && _lastTile.InactiveTiles.Count > 0)
+        if (_lastTile && _lastTile.CanGoAfter.Length > 0 && _lastTile.InactiveTiles.Length > 0)
         {
             var inactiveTiles = _lastTile.InactiveTiles;
-            int number = Random.Range(0, inactiveTiles.Count);
+            int number = Random.Range(0, inactiveTiles.Length);
 
             inactiveTiles[number].EnableObstcles();
             inactiveTiles[number].EnableIceCreams();

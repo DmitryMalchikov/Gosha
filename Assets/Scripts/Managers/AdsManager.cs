@@ -71,23 +71,6 @@ public class AdsManager : APIManager<AdsManager>
         StartCoroutine(DownloadImage(adsId, image));
     }
 
-    IEnumerator DownloadImage(int adsId, Image image)
-    {
-        string url = AdsImageUrl + adsId;
-
-        WWW www = new WWW(url);
-
-        yield return www;
-
-        image.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), Vector2.one * 0.5f);
-        if (OnAdsDownloaded != null)
-        {
-            OnAdsDownloaded();
-        }
-        OnAdsDownloaded = null;
-        TurnOffLoading();
-    }
-
     IEnumerator DownloadImage(int adsId, RawImage image)
     {
         string url = AdsImageUrl + adsId;

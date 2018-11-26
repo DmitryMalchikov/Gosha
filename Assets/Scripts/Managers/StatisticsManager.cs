@@ -14,7 +14,7 @@ public class StatisticsManager : APIManager<StatisticsManager>
     }
     public void GetTournamentLeadersAsync()
     {
-        CoroutineManager.SendRequest(GetTournamentLeadersUrl, null, (List<FriendOfferStatisticsModel> info) =>
+        CoroutineManager.SendRequest(GetTournamentLeadersUrl, null, (FriendOfferStatisticsModel[] info) =>
        {
            Canvaser.Instance.Tournament.SetTournamentTable(info);
        });

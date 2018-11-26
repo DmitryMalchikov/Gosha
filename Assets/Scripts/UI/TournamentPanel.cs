@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Text;
 
 public class TournamentPanel : TimeCheck
 {
@@ -54,11 +52,11 @@ public class TournamentPanel : TimeCheck
         Canvaser.Instance.WeeklyTasksBtn.interactable = model.AvaliableWeeklyTasks;
     }
 
-    public void SetTournamentTable(List<FriendOfferStatisticsModel> models)
+    public void SetTournamentTable(FriendOfferStatisticsModel[] models)
     {
         ClearContent();
 
-        for (int i = 0; i < models.Count; i++)
+        for (int i = 0; i < models.Length; i++)
         {
             FriendObject newParticipant = Instantiate(TournamentPlayer, StatisticsContent).GetComponent<FriendObject>();
             if (models[i].Id == LoginManager.User.Id)
@@ -78,7 +76,6 @@ public class TournamentPanel : TimeCheck
     {
         gameObject.SetActive(true);
         StartCoroutine(EnableGoal());
-        //ContentScroll.Rebuild(CanvasUpdate.PostLayout);
     }
 
     IEnumerator EnableGoal()
@@ -89,10 +86,7 @@ public class TournamentPanel : TimeCheck
 
     public void ClearContent()
     {
-        foreach (Transform item in StatisticsContent)
-        {
-            Destroy(item.gameObject);
-        }
+        StatisticsContent.ClearContent();
         Participants.Clear();
     }
 

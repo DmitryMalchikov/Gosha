@@ -6,7 +6,7 @@ public class LoadingManager : Singleton<LoadingManager>
 { 
     public static string PanelKeyToEnable = null; 
 
-    public List<LoadingPanel> LoadingPanels;
+    public LoadingPanel[] LoadingPanels;
 
     private void Update()
     {

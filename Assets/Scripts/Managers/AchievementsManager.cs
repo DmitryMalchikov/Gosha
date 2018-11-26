@@ -18,9 +18,9 @@ public class AchievementsManager : APIManager<AchievementsManager>
         ServerInfo.SetUrl(ref SubmitAchievementUrl);
     }
 
-    public void LoadAchievements(List<PlayerTasks> achievements)
+    public void LoadAchievements(PlayerTasks[] achievements)
     {
-        for (int i = 0; i < achievements.Count; i++)
+        for (int i = 0; i < achievements.Length; i++)
         {
             achievements[i].PlayerStartProgress = achievements[i].PlayerProgress;
 

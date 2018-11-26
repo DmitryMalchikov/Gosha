@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class NotificationPanel : MonoBehaviour {
-
+public class NotificationPanel : MonoBehaviour
+{
     public Text NotificationText;
 
     private NotificationType _currentType;
@@ -15,7 +13,7 @@ public class NotificationPanel : MonoBehaviour {
 
         string typeText = "friendrequests";
 
-        switch(type)
+        switch (type)
         {
             case NotificationType.DuelRequest:
                 typeText = "notificationduel";
@@ -35,7 +33,7 @@ public class NotificationPanel : MonoBehaviour {
 
     public void GoToNotifications()
     {
-        switch(_currentType)
+        switch (_currentType)
         {
             case NotificationType.DuelRequest:
                 Canvaser.Instance.Duels.OpenDirectlyRequests();

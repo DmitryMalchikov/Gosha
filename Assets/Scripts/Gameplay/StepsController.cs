@@ -1,18 +1,18 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StepsController : MonoBehaviour
 {
-
     public AudioClip Step;
     public float VolumeScale = 0.8f;
 
     private AudioSource _source;
+    private WaitForSeconds _stepWait;
 
     void Start()
     {
         _source = GetComponent<AudioSource>();
+        _stepWait = new WaitForSeconds(Step.length);
         StartCoroutine(PlayStep());
     }
 
@@ -24,7 +24,7 @@ public class StepsController : MonoBehaviour
             if (GameController.Started && PlayerController.Instance.OnGround && !PlayerCollider.IsCrouch)
             {
                 _source.PlayOneShot(Step, VolumeScale);
-                yield return new WaitForSeconds(Step.length);
+                yield return _stepWait;
             }
         }
     }

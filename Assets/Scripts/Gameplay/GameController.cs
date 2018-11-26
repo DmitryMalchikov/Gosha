@@ -23,13 +23,6 @@ public class GameController : Singleton<GameController>
     float points;
     bool setRun = false;
     public static string PersistentDataPath { get; private set; }
-    public float RocketDistance
-    {
-        get
-        {
-            return Mathf.Abs(RocketTime * SpeedController.Speed.z);
-        }
-    }
 
     public static void OnHit()
     {

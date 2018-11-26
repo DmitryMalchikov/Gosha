@@ -111,7 +111,7 @@ public class LocalizationManager : Singleton<LocalizationManager>
         for (int i = 0; i < texts.Length; i++)
         {
             texts[i].SetText();
-            yield return null;
+            //yield return null;
         }
 
         if (LoginManager.User != null)

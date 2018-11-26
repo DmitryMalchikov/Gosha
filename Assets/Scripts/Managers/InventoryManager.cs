@@ -22,7 +22,6 @@ public class InventoryManager : APIManager<InventoryManager>
     {
         CoroutineManager.SendRequest(GetSuitsUrl, null, (SuitsModel upgrades) =>
        {
-           Debug.Log("OK");
            HashManager.SetSuitsHash(upgrades.SuitsHash);
            Canvaser.Instance.Suits.SetCostumes(upgrades.Costumes);
        },

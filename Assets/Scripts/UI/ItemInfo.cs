@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public class ItemInfo : MonoBehaviour
 {
-
     public int ItemID;
     public string ItemName;
     public string Desc;

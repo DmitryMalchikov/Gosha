@@ -12,8 +12,6 @@ public class PlayerCollider : Singleton<PlayerCollider> {
     private float _colliderCrouchHeight = .35f;
     [SerializeField]
     private float _colliderStandHeight = .7f;
-    [SerializeField]
-    private float _groundNearDistance = 0.5f;
 
     private static bool _isCrouch = false;
 

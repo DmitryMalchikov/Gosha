@@ -1,23 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class House : MonoBehaviour {
 
-    public List<GameObject> Objects;
-    public List<GameObject> Roofs;
+    public GameObject[] Objects;
+    public GameObject[] Roofs;
     public Transform RoofsParent;
+	public GameObject[] Visors;
 
-	public MeshRenderer Visor;
-	public List<Material> VisorMaterials;
-
-	public List<MeshRenderer> Floors;
-	public List<Material> FloorMaterials;
+	public MeshRenderer[] Floors;
+	public Material[] FloorMaterials;
 
     public Vector3 SecondFloor = new Vector3(0, 60, 0);
     public Vector3 ThirdFloor = new Vector3(0, 88.9f, 0);
-
-	private List<Material> InstMaterials = new List<Material>();
 
     private void OnEnable()
     {
@@ -26,9 +20,14 @@ public class House : MonoBehaviour {
 
     public void SetHouse()
     {
-		Visor.material = VisorMaterials[Random.Range (0, VisorMaterials.Count)];
+        byte visorNumber = (byte)Random.Range(0, Visors.Length + 1);
 
-		int FloorColor = Random.Range (0, FloorMaterials.Count);
+        for (byte i = 0; i < Visors.Length; i++)
+        {
+            Visors[i].SetActive(i == visorNumber);
+        }
+
+		int FloorColor = Random.Range (0, FloorMaterials.Length);
 
         if (Random.Range(0,4) == 0)
         {
@@ -41,16 +40,16 @@ public class House : MonoBehaviour {
             RoofsParent.localPosition = ThirdFloor;
         }
 
-		for (int i = 0; i < Floors.Count; i++) 
+		for (int i = 0; i < Floors.Length; i++) 
 		{
 			var materials = Floors [i].sharedMaterials;
 			materials [materials.Length - 1] = FloorMaterials [FloorColor];
 			Floors [i].sharedMaterials = materials;
 		}
 
-        int roofNum = Random.Range(0, Roofs.Count);
+        int roofNum = Random.Range(0, Roofs.Length);
 
-        for (int i = 0; i < Roofs.Count; i++)
+        for (int i = 0; i < Roofs.Length; i++)
         {
             if (i == roofNum)
             {
@@ -62,9 +61,9 @@ public class House : MonoBehaviour {
             }
         }
 
-        int objectsCount = 0;
+        byte objectsCount = 0;
 
-        for (int i = 0; i < Objects.Count && objectsCount < 3; i++)
+        for (int i = 0; i < Objects.Length && objectsCount < 3; i++)
         {
             if (Random.Range(0, 4) == 0)
             {

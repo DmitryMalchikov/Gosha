@@ -12,10 +12,11 @@ public class SampleWebView : MonoBehaviour
     public static SampleWebView Instance { get; private set; }
 
     private static AndroidJavaObject unityActivityClass;
-
-	private WebViewObject webObj;
 	private string _ua = "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19";
-	private bool initialized = false;
+#if !UNITY_ANDROID
+    private WebViewObject webObj;
+    private bool initialized = false;
+#endif
 
     private void Awake()
     {
@@ -24,16 +25,16 @@ public class SampleWebView : MonoBehaviour
 
     public void OpenWindow(string url)
     {
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         unityActivityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         unityActivityClass.Call("openBrowser", url, _ua, "Logins.html#");
-		#else 
+#else
 		if (!webObj)
 		{
 		webObj = GetComponent<WebViewObject>();		
 		}
 		webObj.LoadURL(url);
-		#endif
+#endif
 		}
 
     public void CallOnLoaded(string msg)
@@ -63,13 +64,13 @@ public class SampleWebView : MonoBehaviour
 
     public void CloseWindow()
     {
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
         AndroidJavaClass webViewActivity = new AndroidJavaClass("com.goshaplugins.WebViewActivity");
         webViewActivity.CallStatic("closeBrowser");
-		#else
+#else
 		webObj.SetVisibility(false);
 		webObj.DestroyWebView();
 		initialized = false;
-		#endif
+#endif
     }
 }

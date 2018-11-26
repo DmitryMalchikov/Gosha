@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CarObstacles : MonoBehaviour
 {
     public float Speed = 4f;
-    public List<Car> Cars;
+    public Car[] Cars;
 
     public void Start()
     {
-        Cars = new List<Car>(GetComponentsInChildren<Car>());
+        Cars = GetComponentsInChildren<Car>();
         StopCars();
     }
 
@@ -23,7 +22,7 @@ public class CarObstacles : MonoBehaviour
 
     public void SetCarsSpeed(float speed)
     {
-        for (int i = 0; i < Cars.Count; i++)
+        for (int i = 0; i < Cars.Length; i++)
         {
             if (Cars[i].IsMoving)
             {

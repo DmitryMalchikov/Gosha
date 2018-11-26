@@ -21,8 +21,8 @@ public class UserInfoModel
     public DateTime? BunnedUntil { get; set; }
     public int Cases { get; set; }
     public int CaseId { get; set; }
-    public List<PlayerTasks> Achievements { get; set; }
-    public List<PlayerTasks> WeeklyTasks { get; set; }
+    public PlayerTasks[] Achievements { get; set; }
+    public PlayerTasks[] WeeklyTasks { get; set; }
     public List<BonusUpgrade> BonusUpgrades { get; set; }
     public List<Bonus> Bonuses { get; set; }
     public string ShopHash { get; set; }
@@ -33,8 +33,6 @@ public class UserInfoModel
 
     public UserInfoModel()
     {
-        Achievements = new List<PlayerTasks>();
-        WeeklyTasks = new List<PlayerTasks>();
         BonusUpgrades = new List<BonusUpgrade>();
         Bonuses = new List<Bonus>();
     }

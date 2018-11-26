@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LocalizedText : MonoBehaviour {
-
+public class LocalizedText : MonoBehaviour
+{
     public string Key;
     Text text;
 

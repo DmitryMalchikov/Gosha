@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TradePanel : MonoBehaviour {
-
+public class TradePanel : MonoBehaviour
+{
     public int SelectedItemID;
     public int IcecreamForTrade;
 
@@ -18,7 +18,7 @@ public class TradePanel : MonoBehaviour {
     public Text IceCream;
 
     public TradeItemsModel info;
-    
+
     public Text Title;
 
     public InputField IceCreamForTradeInput;
@@ -26,7 +26,6 @@ public class TradePanel : MonoBehaviour {
     public void SetContent(TradeItemsModel items)
     {
         ClearContent();
-        Debug.Log(items.Cards.Count);
         gameObject.SetActive(true);
         info = items;
         if (Title.text.Contains(LocalizationManager.GetLocalizedValue("tradewith")))
@@ -38,7 +37,7 @@ public class TradePanel : MonoBehaviour {
             newItem._TradePanel = this;
             newItem.GetComponent<Toggle>().group = Toggles;
         }
-        for (int i = 0; i < items.Bonuses.Count; i++)
+        for (int i = 0; i < items.Bonuses.Length; i++)
         {
             Bonuses.Find(x => x.ItemID == items.Bonuses[i].ItemId).SetBonus(items.Bonuses[i]);
         }
@@ -65,11 +64,9 @@ public class TradePanel : MonoBehaviour {
     }
     public void ClearContent()
     {
-        foreach (Transform item in CardsContent)
-        {
-            Destroy(item.gameObject);
-        }
+        CardsContent.ClearContent();
         Cards.Clear();
+
         foreach (ItemInfo item in Bonuses)
         {
             item.gameObject.SetActive(false);
