@@ -23,7 +23,7 @@ public class Tile : MonoBehaviour
 
     public GameObject[] TruckIceCreams;
     private List<Collider> _disabledColliders = new List<Collider>();
-    private bool _bonusLastTile;
+    private static bool _bonusLastTile;
 
     private void Update()
     {
@@ -72,6 +72,21 @@ public class Tile : MonoBehaviour
 
             MapGenerator.Instance.ResetTile(this, StartTile);
         }
+    }
+
+    public void SetUpStartTile()
+    {
+        EnableObstcles();
+        EnableIceCreams();
+        gameObject.SetActive(true);
+    }
+
+    public void SetUp()
+    {
+        SetUpStartTile();
+        GenerateBonus();
+        GenerateBox();
+
     }
 
     public void GenerateBonus()

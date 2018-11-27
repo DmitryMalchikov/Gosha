@@ -51,7 +51,10 @@ struct v2f
 
 	#ifdef V_CW_FOG
 		UNITY_FOG_COORDS(3)  
-	#endif					
+	#endif		
+
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+    UNITY_VERTEX_OUTPUT_STEREO
 };
 
 
@@ -62,8 +65,11 @@ struct v2f
 ////////////////////////////////////////////////////////////z////////////////
 v2f vert (appdata_full v) 
 {   
+	UNITY_SETUP_INSTANCE_ID(v);
 	v2f o;
 	UNITY_INITIALIZE_OUTPUT(v2f,o); 
+	UNITY_TRANSFER_INSTANCE_ID(v, o);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 	#ifdef V_CW_VERTEX_LIGHTMAP
 		V_CW_TransformPoint(v.vertex);

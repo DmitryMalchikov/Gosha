@@ -4,10 +4,6 @@
 // Functionality for Standard shader "meta" pass
 // (extracts albedo/emission for lightmapper etc.)
 
-// define meta pass before including other files; they have conditions
-// on that in some places
-#define UNITY_PASS_META 1
-
 #include "UnityCG.cginc"
 #include "../cginc/CurvedWorld_UnityStandardInput.cginc" 
 #include "UnityMetaPass.cginc"
@@ -19,7 +15,7 @@ struct v2f_meta
     float4 pos      : SV_POSITION;
 };
 
-v2f_meta vert_meta (VertexInput v)
+v2f_meta vert_meta (VertexInput v) 
 {
     v2f_meta o;
 

@@ -76,7 +76,7 @@ Shader "Hidden/VacuumShaders/Curved World/Unlit/Additive/Decal"
 			CGPROGRAM
 			#pragma vertex vert
 	    	#pragma fragment frag
-
+#pragma multi_compile_instancing
 
 
 			#pragma shader_feature V_CW_REFLECTIVE_OFF V_CW_REFLECTIVE V_CW_REFLECTIVE_FRESNEL

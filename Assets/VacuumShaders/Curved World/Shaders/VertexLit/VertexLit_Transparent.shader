@@ -53,7 +53,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Transparent"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				 
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR
@@ -80,7 +80,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Transparent"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR
@@ -107,7 +107,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Transparent"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR

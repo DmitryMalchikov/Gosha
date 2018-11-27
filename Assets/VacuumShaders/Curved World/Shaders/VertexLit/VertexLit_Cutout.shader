@@ -56,7 +56,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Cutout"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				 
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR
@@ -83,7 +83,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Cutout"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR
@@ -110,7 +110,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Cutout"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-
+#pragma multi_compile_instancing
 
 
 				#pragma shader_feature V_CW_VERTEX_COLOR_OFF V_CW_VERTEX_COLOR
@@ -138,6 +138,7 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Cutout"
 				CGPROGRAM
 				#pragma vertex vert   
 				#pragma fragment frag
+#pragma multi_compile_instancing
 				#pragma multi_compile_shadowcaster 
 				#include "UnityCG.cginc"
 				 
@@ -158,11 +159,14 @@ Shader "Hidden/VacuumShaders/Curved World/VertexLit/Cutout"
 				{ 
 					V2F_SHADOW_CASTER;
 					float2  uv : TEXCOORD1;
+					UNITY_VERTEX_OUTPUT_STEREO
 				};
 
 				v2f vert( appdata_base v )
 				{
 					v2f o;
+					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 					V_CW_TransformPoint(v.vertex);
 

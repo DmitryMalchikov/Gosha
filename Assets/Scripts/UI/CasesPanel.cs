@@ -20,7 +20,7 @@ public class CasesPanel : MonoBehaviour
     public GameObject GetPrizeBtn;
     public Text PrizeAmountTxt;
     public BoxPrize BoxPrizeObj;
-    public ParticleEmitter SparksAnimator;
+    public ParticleSystem Sparks;
 
     public void SetPrize(Bonus bonus)
     {
@@ -43,9 +43,8 @@ public class CasesPanel : MonoBehaviour
             PrizeAmountTxt.gameObject.SetActive(true);
         }
 
-        SparksAnimator.emit = true;
-        yield return new WaitForSeconds(0.5f);
-        SparksAnimator.emit = false;
+        yield return null;
+        Sparks.Emit(30);
     }
 
     public void TakePrize()

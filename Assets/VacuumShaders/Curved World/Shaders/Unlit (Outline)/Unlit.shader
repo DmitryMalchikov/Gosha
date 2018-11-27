@@ -41,7 +41,7 @@ Shader "VacuumShaders/Curved World/Outline/Unlit"
 		[HideInInspector] _V_CW_IBL_Contrast("", float) = 1 
 		[HideInInspector] _V_CW_IBL_Cube("", cube ) = ""{}  
 
-		[HideInInspector] _V_CW_IBL_Matcap ("", 2D) = "Gray" {}		
+		[HideInInspector] _V_CW_IBL_Matcap ("", 2D) = "Gray" {}		 
 
 		[HideInInspector] _V_CW_ReflectColor("", color) = (1, 1, 1, 1)
 		[HideInInspector] _V_CW_ReflectStrengthAlphaOffset("", Range(-1, 1)) = 0

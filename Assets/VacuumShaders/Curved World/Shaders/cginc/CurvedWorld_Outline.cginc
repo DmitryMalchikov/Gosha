@@ -15,6 +15,7 @@ struct vInput
 {
 	float4 vertex : POSITION;    
 	float3 normal : NORMAL;
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 struct vOutput
@@ -26,13 +27,19 @@ struct vOutput
 	#endif
 
 	fixed4 color : COLOR;
+
+	UNITY_VERTEX_INPUT_INSTANCE_ID
+    UNITY_VERTEX_OUTPUT_STEREO
 };
 
 //Vertex////////////////////////////////////////////////////////////////
 vOutput vert(vInput v)
 { 
+	UNITY_SETUP_INSTANCE_ID(v);
 	vOutput o;
-	UNITY_INITIALIZE_OUTPUT(vOutput,o); 
+	UNITY_INITIALIZE_OUTPUT(vOutput, o);
+	UNITY_TRANSFER_INSTANCE_ID(v, o);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 			
 	V_CW_TransformPoint(v.vertex);
 	

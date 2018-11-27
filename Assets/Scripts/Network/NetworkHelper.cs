@@ -122,7 +122,7 @@ public static class NetworkHelper
             yield return null;
         }
         string parms = string.Empty;
-        
+
         IEnumerator e = SerializeParameters(parameters);
         yield return e;
         parms = e.Current as string;
@@ -152,24 +152,24 @@ public static class NetworkHelper
 
     private static IEnumerator SendRequest(UnityWebRequest req)
     {
-#if UNITY_2017
+#if !UNITY_5
         yield return req.SendWebRequest();
-#elif UNITY_5
-             yield return req.Send();
+#else
+        yield return req.Send();
 #endif
     }
 
     private static void SetResponse(AnswerModel response, UnityWebRequest req)
     {
-#if UNITY_2017
+#if UNITY_5
+        if (req.isError)
+#else
         if (req.isHttpError)
-#elif UNITY_5
-                if (req.isError)
 #endif
         {
             response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
         }
-#if UNITY_2017
+#if !UNITY_5
         else if (req.isNetworkError)
         {
             response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
@@ -220,7 +220,7 @@ public static class NetworkHelper
 
             if (parameters is string)
             {
-                parms = parameters as string;                
+                parms = parameters as string;
             }
             else
             {
@@ -281,7 +281,7 @@ public static class NetworkHelper
         yield return localFile;
         if (localFile.error != null)
         {
-            yield break; 
+            yield break;
         }
 
         if (localFile.texture == null)

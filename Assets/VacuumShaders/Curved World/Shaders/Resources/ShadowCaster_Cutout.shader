@@ -24,6 +24,7 @@
 			CGPROGRAM
 			#pragma vertex vert   
 			#pragma fragment frag
+#pragma multi_compile_instancing
 			#pragma multi_compile_shadowcaster 
 			#include "UnityCG.cginc"
 				 
@@ -44,11 +45,14 @@
 			{ 
 				V2F_SHADOW_CASTER;
 				float2  uv : TEXCOORD1;
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			v2f vert( appdata_base v )
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 				V_CW_TransformPoint(v.vertex);
 

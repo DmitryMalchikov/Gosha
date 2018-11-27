@@ -79,7 +79,7 @@ Shader "VacuumShaders/Curved World/Outline/One Directional Light"
 		UsePass "Hidden/VacuumShaders/Curved World/Outline/OUTLINE"		  
 		  		
 	} //SubShader
-
+		 
 
 	Fallback "Hidden/VacuumShaders/Curved World/VertexLit/Diffuse" 
 	CustomEditor "CurvedWorld_Material_Editor"

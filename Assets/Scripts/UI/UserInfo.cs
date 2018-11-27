@@ -16,13 +16,7 @@ public class UserInfo : MonoBehaviour
 
     public void SetInfo(FriendObject user, bool isFriend = true)
     {
-        info = user;
-        Name.text = user.Info.Nickname;
-        Region.text = user.Info.Region;
-        Record.text = LocalizationManager.GetLocalizedValue("highscore") + user.Info.Highscore.ToString();
-        Duels.text = LocalizationManager.GetLocalizedValue("duelwins") + user.Info.DuelWins.ToString();
-        IceCreamCount.text = user.Info.IceCream.ToString();
-        Avatar.sprite = user.Avatar.sprite;
+        SetUserObject(user);
         if (isFriend)
         {
             TradeBtn.interactable = LoginManager.User.CanOfferTrade;
@@ -32,6 +26,15 @@ public class UserInfo : MonoBehaviour
 
     public void SetOfferInfo(FriendObject user, bool requestSent = false)
     {
+        SetUserObject(user);
+        SetAddToFriendsButton(requestSent);
+
+        gameObject.SetActive(true);
+    }
+
+    public void SetUserObject(FriendObject user)
+    {
+        SetAvatarDownloadedCallback(user);
         info = user;
         Name.text = user.OfferInfo.Nickname;
         Region.text = user.OfferInfo.Region;
@@ -39,9 +42,20 @@ public class UserInfo : MonoBehaviour
         Duels.text = LocalizationManager.GetLocalizedValue("duelwins") + user.OfferInfo.DuelWins.ToString();
         IceCreamCount.text = user.OfferInfo.IceCream.ToString();
         Avatar.sprite = user.Avatar.sprite;
-        SetAddToFriendsButton(requestSent);
+    }
 
-        gameObject.SetActive(true);
+    public void SetAvatarDownloadedCallback(FriendObject user)
+    {
+        if (info != null)
+        {
+            info.OnAvatarDownloaded -= SetSprite;
+        }
+        user.OnAvatarDownloaded += SetSprite;
+    }
+
+    public void SetSprite(Sprite sprite)
+    {
+        Avatar.sprite = sprite;
     }
 
     private void SetAddToFriendsButton(bool alreadySent)

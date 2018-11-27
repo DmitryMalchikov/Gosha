@@ -1,12 +1,14 @@
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
 #ifndef UNITY_STANDARD_SHADOW_INCLUDED
 #define UNITY_STANDARD_SHADOW_INCLUDED
-
 
 // NOTE: had to split shadow functions into separate file,
 // otherwise compiler gives trouble with LIGHTING_COORDS macro (in UnityStandardCore.cginc)
 
 
 #include "UnityCG.cginc"
+#include "UnityShaderVariables.cginc"
 #include "UnityStandardConfig.cginc"
 #include "UnityStandardUtils.cginc"
 
@@ -63,6 +65,15 @@ half MetallicSetup_ShadowGetOneMinusReflectivity(half2 uv)
     return OneMinusReflectivityFromMetallic(metallicity);
 }
 
+half RoughnessSetup_ShadowGetOneMinusReflectivity(half2 uv)
+{
+    half metallicity = _Metallic;
+#ifdef _METALLICGLOSSMAP
+    metallicity = tex2D(_MetallicGlossMap, uv).r;
+#endif
+    return OneMinusReflectivityFromMetallic(metallicity);
+}
+
 half SpecularSetup_ShadowGetOneMinusReflectivity(half2 uv)
 {
     half3 specColor = _SpecColor.rgb;
@@ -82,10 +93,10 @@ struct VertexInput
     float4 vertex   : POSITION;
     float3 normal   : NORMAL;
     float2 uv0      : TEXCOORD0;
-
+   
 	//Curved World
 	half4 tangent   : TANGENT;
-    
+
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -97,7 +108,7 @@ struct VertexOutputShadowCaster
         float2 tex : TEXCOORD1;
 
         #if defined(_PARALLAXMAP)
-            half4 tangentToWorldAndParallax[3]: TEXCOORD2;  // [3x3:tangentToWorld | 1x3:viewDirForParallax]
+            half3 viewDirForParallax : TEXCOORD2;
         #endif
     #endif
 };
@@ -115,22 +126,16 @@ struct VertexOutputStereoShadowCaster
 // some platforms, and then things don't go well.
 
 
-void vertShadowCaster (VertexInput v,
+void vertShadowCaster (VertexInput v
+    , out float4 opos : SV_POSITION
     #ifdef UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT
-    out VertexOutputShadowCaster o,
+    , out VertexOutputShadowCaster o
     #endif
     #ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
-    out VertexOutputStereoShadowCaster os,
+    , out VertexOutputStereoShadowCaster os
     #endif
-    out float4 opos : SV_POSITION)
+)
 {
-#ifdef UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT
-	o = (VertexOutputShadowCaster)0;
-#endif
-#ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
-	o = (VertexOutputStereoShadowCaster)0;
-#endif
-
     UNITY_SETUP_INSTANCE_ID(v);
     #ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
         UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(os);
@@ -145,33 +150,30 @@ void vertShadowCaster (VertexInput v,
 
         #ifdef _PARALLAXMAP
             TANGENT_SPACE_ROTATION;
-            half3 viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
-            o.tangentToWorldAndParallax[0].w = viewDirForParallax.x;
-            o.tangentToWorldAndParallax[1].w = viewDirForParallax.y;
-            o.tangentToWorldAndParallax[2].w = viewDirForParallax.z;
+            o.viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));
         #endif
     #endif
 }
 
-half4 fragShadowCaster (
+half4 fragShadowCaster (UNITY_POSITION(vpos)
 #ifdef UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT
-    VertexOutputShadowCaster i
+    , VertexOutputShadowCaster i
 #endif
-#ifdef UNITY_STANDARD_USE_DITHER_MASK
-    , UNITY_VPOS_TYPE vpos : VPOS
-#endif
-    ) : SV_Target
+) : SV_Target
 {
     #if defined(UNITY_STANDARD_USE_SHADOW_UVS)
         #if defined(_PARALLAXMAP) && (SHADER_TARGET >= 30)
-            //On d3d9 parallax can also be disabled on the fwd pass when too many    sampler are used. See EXCEEDS_D3D9_SM3_MAX_SAMPLER_COUNT. Ideally we should account for that here as well.
-            half3 viewDirForParallax = normalize( half3(i.tangentToWorldAndParallax[0].w,i.tangentToWorldAndParallax[1].w,i.tangentToWorldAndParallax[2].w) );
+            half3 viewDirForParallax = normalize(i.viewDirForParallax);
             fixed h = tex2D (_ParallaxMap, i.tex.xy).g;
             half2 offset = ParallaxOffset1Step (h, _Parallax, viewDirForParallax);
             i.tex.xy += offset;
         #endif
 
-        half alpha = tex2D(_MainTex, i.tex).a * _Color.a;
+        #if defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A)
+            half alpha = _Color.a;
+        #else
+            half alpha = tex2D(_MainTex, i.tex.xy).a * _Color.a;
+        #endif
         #if defined(_ALPHATEST_ON)
             clip (alpha - _Cutoff);
         #endif
@@ -184,6 +186,10 @@ half4 fragShadowCaster (
             #if defined(UNITY_STANDARD_USE_DITHER_MASK)
                 // Use dither mask for alpha blended shadows, based on pixel position xy
                 // and alpha level. Our dither texture is 4x4x16.
+                #ifdef LOD_FADE_CROSSFADE
+                    #define _LOD_FADE_ON_ALPHA
+                    alpha *= unity_LODFade.y;
+                #endif
                 half alphaRef = tex3D(_DitherMaskLOD, float3(vpos.xy*0.25,alpha*0.9375)).a;
                 clip (alphaRef - 0.01);
             #else
@@ -191,6 +197,14 @@ half4 fragShadowCaster (
             #endif
         #endif
     #endif // #if defined(UNITY_STANDARD_USE_SHADOW_UVS)
+
+    #ifdef LOD_FADE_CROSSFADE
+        #ifdef _LOD_FADE_ON_ALPHA
+            #undef _LOD_FADE_ON_ALPHA
+        #else
+            UnityApplyDitherCrossFade(vpos.xy);
+        #endif
+    #endif
 
     SHADOW_CASTER_FRAGMENT(i)
 }

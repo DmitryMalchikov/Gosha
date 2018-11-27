@@ -24,6 +24,7 @@ Shader "Hidden/VacuumShaders/Curved World/Outline"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag  
+#pragma multi_compile_instancing
 
 /*DO NOT DELETE - CURVED WORLD OUTLINE FIXED SIZE*/ 
 						 			   

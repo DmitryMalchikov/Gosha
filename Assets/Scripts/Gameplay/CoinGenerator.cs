@@ -88,7 +88,6 @@ public class CoinGenerator : Singleton<CoinGenerator>
 
             if (Generator.position.z < ZDistance && EnoughTime(endTime))
             {
-                Debug.LogError("ChangeLine");
                 yield return ChangeLine(true);
             }
         }
@@ -98,7 +97,6 @@ public class CoinGenerator : Singleton<CoinGenerator>
 
     public IEnumerator ChangeLine(bool move)
     {
-        Debug.LogError("ChangeLine");
         var prevLine = _currentLine;
         sbyte lineDelta = (sbyte)Mathf.Sign(Random.Range(-1, 1));
         _currentLine += lineDelta;

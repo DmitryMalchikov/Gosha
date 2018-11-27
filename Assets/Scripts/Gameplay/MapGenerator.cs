@@ -62,9 +62,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 _currentNewTile = _avaliableTiles[number];
             }
 
-            _currentNewTile.gameObject.SetActive(true);
-            _currentNewTile.EnableObstcles();
-            _currentNewTile.EnableIceCreams();
+            _currentNewTile.SetUpStartTile();
 
             if (_lastTile)
             {
@@ -83,10 +81,9 @@ public class MapGenerator : Singleton<MapGenerator>
                 tempLast = _lastTile;
             }
         }
-
-        StartTile.gameObject.SetActive(true);
+        
         StartTile.transform.position = _lastTile.transform.position - Vector3.forward * TileSize * transform.localScale.z;
-        StartTile.EnableObstcles();
+        StartTile.SetUpStartTile();
 
         _lastTile = tempLast;
 
@@ -101,34 +98,26 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             var inactiveTiles = _lastTile.InactiveTiles;
             int number = Random.Range(0, inactiveTiles.Length);
-
-            inactiveTiles[number].EnableObstcles();
-            inactiveTiles[number].EnableIceCreams();
-            inactiveTiles[number].gameObject.SetActive(true);
-            inactiveTiles[number].GenerateBonus();
-            inactiveTiles[number].GenerateBox();
-            inactiveTiles[number].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
-            _lastTile = inactiveTiles[number];
-            _avaliableTiles.Remove(_lastTile);
+            SetUpTile(inactiveTiles[number]);
         }
         else
         {
             var number = Random.Range(0, _avaliableTiles.Count);
-
-            _avaliableTiles[number].EnableObstcles();
-            _avaliableTiles[number].EnableIceCreams();
-            _avaliableTiles[number].gameObject.SetActive(true);
-            _avaliableTiles[number].GenerateBonus();
-            _avaliableTiles[number].GenerateBox();
-
-            if (_lastTile)
-            {
-                _avaliableTiles[number].transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
-            }
-
-            _lastTile = _avaliableTiles[number];
-            _avaliableTiles.RemoveAt(number);
+            SetUpTile(_avaliableTiles[number]);
         }
+    }
+
+    public void SetUpTile(Tile tile)
+    {
+        tile.SetUp();
+
+        if (_lastTile)
+        {
+         tile.transform.localPosition = _lastTile.transform.localPosition + Vector3.forward * TileSize;
+        }
+
+        _lastTile = tile;
+        _avaliableTiles.Remove(tile);
     }
 
     public void ResetTile(Tile tile, bool StartTile = false)

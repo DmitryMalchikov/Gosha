@@ -88,7 +88,7 @@ public class PlayerController : Singleton<PlayerController>
     }
 
     private void PlayerMove()
-    {   
+    {
         float movedDistance = Mathf.Abs(transform.position.x - _currentX);
         Vector3 moveVector = _moveDir * moveSpeed * Time.deltaTime;
         bool stop = Mathf.Abs(moveVector.x) >= movedDistance;
@@ -188,9 +188,9 @@ public class PlayerController : Singleton<PlayerController>
 
         if (OnGround)
         {
+            _isJumping = true;
             PlayerAnimator.SetJumpTrigger();
             PlayerRigidbody.Jump();
-            _isJumping = true;
             tempOnGround = false;
 
             AudioManager.PlayJump();
@@ -375,7 +375,7 @@ public class PlayerController : Singleton<PlayerController>
 
         if (!tempOnGround)
         {
-            if (!PlayerCollisions.AnyCollisions)
+            if (!PlayerCollisions.AnyCollisions || _isJumping)
             {
                 OnGround = false;
                 tempOnGround = true;

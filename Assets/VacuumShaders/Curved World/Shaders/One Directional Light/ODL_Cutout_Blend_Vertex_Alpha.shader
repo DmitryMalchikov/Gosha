@@ -84,8 +84,8 @@ Shader "Hidden/VacuumShaders/Curved World/One Directional Light/Cutout/Vertex Al
 
 			CGPROGRAM       
 			#pragma vertex vert  
-	    	#pragma fragment frag  
-			#define UNITY_PASS_FORWARDBASE   		  
+	    	#pragma fragment frag 
+#pragma multi_compile_instancing
 			#pragma multi_compile_fwdbase nodirlightmap nodynlightmap
 						       
 

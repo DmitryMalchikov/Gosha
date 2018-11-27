@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class FriendObject : MonoBehaviour, IAvatarSprite
@@ -15,6 +16,8 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
     public Image Avatar;
     public GameObject YouPanel;
     public Color YourColor = Color.green;
+
+    public event Action<Sprite> OnAvatarDownloaded;
 
     public Sprite AvatarSprite
     {
@@ -183,6 +186,11 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         if (Avatar)
         {
             Avatar.sprite = sprite;
+        }
+
+        if (OnAvatarDownloaded != null)
+        {
+            OnAvatarDownloaded(sprite);
         }
     }
 }

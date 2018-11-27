@@ -36,8 +36,8 @@ half        _DetailNormalMapScale;
 sampler2D   _SpecGlossMap;
 sampler2D   _MetallicGlossMap;
 half        _Metallic;
-half        _Glossiness;
-half        _GlossMapScale;
+float       _Glossiness;
+float       _GlossMapScale;
 
 sampler2D   _OcclusionMap;
 half        _OcclusionStrength;
@@ -62,27 +62,27 @@ struct VertexInput
     half3 normal    : NORMAL;
     float2 uv0      : TEXCOORD0;
     float2 uv1      : TEXCOORD1;
-#if defined(DYNAMICLIGHTMAP_ON) || defined(UNITY_PASS_META)
+//#if defined(DYNAMICLIGHTMAP_ON) || defined(UNITY_PASS_META)
     float2 uv2      : TEXCOORD2;
-#endif
+//#endif
 
 	//Curved World
-	half4 tangent   : TANGENT;
-
-    UNITY_VERTEX_INPUT_INSTANCE_ID
+	half4 tangent   : TANGENT; 
+	
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 float4 TexCoords(VertexInput v)
 {
-	float4 texcoord;
-	texcoord.xy = TRANSFORM_TEX(v.uv0, _MainTex); // Always source from uv0
+    float4 texcoord;
+    texcoord.xy = TRANSFORM_TEX(v.uv0, _MainTex); // Always source from uv0
 	texcoord.xy += _V_CW_MainTex_Scroll * _Time.x;
 
-	texcoord.zw = TRANSFORM_TEX(((_UVSec == 0) ? v.uv0 : v.uv1), _DetailAlbedoMap);
+    texcoord.zw = TRANSFORM_TEX(((_UVSec == 0) ? v.uv0 : v.uv1), _DetailAlbedoMap);
 	texcoord.zw += _V_CW_DetailTex_Scroll * _Time.x;
-	return texcoord;
-}
 
+    return texcoord;
+}
 
 half DetailMask(float2 uv)
 {
@@ -180,6 +180,23 @@ half2 MetallicGloss(float2 uv)
     return mg;
 }
 
+half2 MetallicRough(float2 uv)
+{
+    half2 mg;
+#ifdef _METALLICGLOSSMAP
+    mg.r = tex2D(_MetallicGlossMap, uv).r;
+#else
+    mg.r = _Metallic;
+#endif
+
+#ifdef _SPECGLOSSMAP
+    mg.g = 1.0f - tex2D(_SpecGlossMap, uv).r;
+#else
+    mg.g = 1.0f - _Glossiness;
+#endif
+    return mg;
+}
+
 half3 Emission(float2 uv)
 {
 #ifndef _EMISSION
@@ -216,13 +233,8 @@ half3 NormalInTangentSpace(float4 texcoords)
 
 float4 Parallax (float4 texcoords, half3 viewDir)
 {
-// D3D9/SM30 supports up to 16 samplers, skip the parallax map in case we exceed the limit
-#define EXCEEDS_D3D9_SM3_MAX_SAMPLER_COUNT  (defined(LIGHTMAP_ON) && defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) && defined(_NORMALMAP) && \
-                                             defined(_EMISSION) && defined(_DETAIL) && (defined(_METALLICGLOSSMAP) || defined(_SPECGLOSSMAP)))
-
-#if !defined(_PARALLAXMAP) || (SHADER_TARGET < 30) || (defined(SHADER_API_D3D9) && EXCEEDS_D3D9_SM3_MAX_SAMPLER_COUNT)
-    // SM20: instruction count limitation
-    // SM20: no parallax
+#if !defined(_PARALLAXMAP) || (SHADER_TARGET < 30)
+    // Disable parallax on pre-SM3.0 shader target models
     return texcoords;
 #else
     half h = tex2D (_ParallaxMap, texcoords.xy).g;
@@ -230,7 +242,6 @@ float4 Parallax (float4 texcoords, half3 viewDir)
     return float4(texcoords.xy + offset, texcoords.zw + offset);
 #endif
 
-#undef EXCEEDS_D3D9_SM3_MAX_SAMPLER_COUNT
 }
 
 #endif // UNITY_STANDARD_INPUT_INCLUDED

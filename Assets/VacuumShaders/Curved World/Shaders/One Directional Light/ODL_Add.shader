@@ -79,7 +79,7 @@ Shader "Hidden/VacuumShaders/Curved World/One Directional Light/Additive/Texture
 			CGPROGRAM       
 			#pragma vertex vert  
 	    	#pragma fragment frag  
-			#define UNITY_PASS_FORWARDBASE   		  
+#pragma multi_compile_instancing
 			#pragma multi_compile_fwdbasealpha noshadow nodirlightmap nodynlightmap
 						       
 

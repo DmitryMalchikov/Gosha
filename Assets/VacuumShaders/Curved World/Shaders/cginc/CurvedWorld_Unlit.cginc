@@ -98,6 +98,8 @@ struct vInput
 	#if defined(V_CW_VERTEX_COLOR) || defined(V_CW_BLEND_BY_VERTEX) || defined(V_CW_TERRAINBLEND_VERTEXCOLOR)
 		fixed4 color : COLOR;
 	#endif
+
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 struct vOutput
@@ -126,13 +128,18 @@ struct vOutput
 		fixed4 color : COLOR;
 	#endif
 
+	UNITY_VERTEX_INPUT_INSTANCE_ID
+    UNITY_VERTEX_OUTPUT_STEREO
 };
 
 //Vertex////////////////////////////////////////////////////////////////
 vOutput vert(vInput v)
 { 
+	UNITY_SETUP_INSTANCE_ID(v);
 	vOutput o;
-	UNITY_INITIALIZE_OUTPUT(vOutput,o); 
+	UNITY_INITIALIZE_OUTPUT(vOutput, o);
+	UNITY_TRANSFER_INSTANCE_ID(v, o);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 		
 	#if defined(V_CW_REFLECTIVE) || defined(V_CW_REFLECTIVE_FRESNEL) || defined(V_CW_IBL_CUBE)
 		V_CW_TransformPointAndNormal(v.vertex, v.normal, v.tangent);	
