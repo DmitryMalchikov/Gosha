@@ -21,12 +21,12 @@ public class ShopManager : APIManager<ShopManager>
        {
            if (upgrade)
            {
-               string data = Extensions.LoadJsonData(DataType.Shop);
-               ShopModel model = JsonConvert.DeserializeObject<ShopModel>(data);
+               string data = FileExtensions.LoadJsonData(DataType.Shop);
+               ShopModel model = FileExtensions.TryParseData<ShopModel>(data);
 
                model.BonusUpgrades.FirstOrDefault(bu => bu.Id == itemId).Amount++;
                SetShopItems(model);
-               Extensions.SaveJsonDataAsync(DataType.Shop, JsonConvert.SerializeObject(model));
+               FileExtensions.SaveJsonDataAsync(DataType.Shop, model);
            }
 
            LoginManager.User.IceCream -= price;
@@ -59,16 +59,22 @@ public class ShopManager : APIManager<ShopManager>
     public CustomTask GetShopItemsAsync()
     {
         CustomTask task = new CustomTask();
-        CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
-       {
-           CurrentShop = model;
-           HashManager.SetShopHash(model.ShopHash);
+        if (CurrentShop == null || LoginManager.User.ShopHash != CurrentShop.ShopHash)
+        {
+            CoroutineManager.SendRequest(GetShopItemsUrl, null, (ShopModel model) =>
+            {
+               CurrentShop = model;
+               HashManager.SetShopHash(model.ShopHash);
+               SetShopItems(model);
 
-           SetShopItems(model);
-
-           task.Ready = true;
-       }, type: DataType.Shop, loadingPanelsKey: "shop");
-
+               task.Ready = true;
+            }, 
+           type: DataType.Shop, loadingPanelsKey: "shop");
+        }
+        else
+        {
+            SetShopItems(CurrentShop);
+        }
         return task;
     }
 
@@ -87,7 +93,6 @@ public class ShopManager : APIManager<ShopManager>
         Canvaser.Instance.Shop.SetCases(model.Cases);
         Canvaser.Instance.Shop.SetCards(model.Cards);
         Canvaser.Instance.Shop.SetUpgrades(model.BonusUpgrades);
-
         Canvaser.Instance.Shop.gameObject.SetActive(true);
     }
 

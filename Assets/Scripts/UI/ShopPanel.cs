@@ -110,7 +110,7 @@ public class ShopPanel : MonoBehaviour
                 if (amount < 5)
                 {
                     current.PriceText.text = (item.Cost * (amount + 1)).ToString();
-                    current.BuyButton.interactable = true;
+                    current.BuyButton.interactable = LoginManager.User.IceCream >= (item.Cost * (amount + 1));
                 }
                 else
                 {
@@ -194,22 +194,15 @@ public class ShopPanel : MonoBehaviour
             Cases.Add(newCase);
         }
     }
-    public void CleanContent(Transform content)
-    {
-        foreach (Transform item in content)
-        {
-            Destroy(item.gameObject);
-        }
-    }
 
     public void ClearCards()
     {
-        CleanContent(CardContent);
+        CardContent.ClearContent();
         CardSets.Clear();
     }
     public void ClearCases()
     {
-        CleanContent(CaseContent);
+        CaseContent.ClearContent();
         Cases.Clear();
     }
 

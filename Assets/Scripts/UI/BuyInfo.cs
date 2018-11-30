@@ -52,7 +52,7 @@ public class BuyInfo : MonoBehaviour
 
                 Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
 
-                Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+                FileExtensions.SaveJsonDataAsync(DataType.UserInfo, LoginManager.User);
             }
             else if (!string.IsNullOrEmpty(ItemName))
             {
@@ -70,7 +70,7 @@ public class BuyInfo : MonoBehaviour
                 Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
                 Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
 
-                Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+                FileExtensions.SaveJsonDataAsync(DataType.UserInfo, LoginManager.User);
             }
 
             Canvaser.Instance.Shop.CheckBuyBtns();

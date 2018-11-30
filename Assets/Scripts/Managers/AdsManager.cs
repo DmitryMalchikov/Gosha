@@ -61,9 +61,14 @@ public class AdsManager : APIManager<AdsManager>
         CoroutineManager.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (AdsModel ads) => 
         {
             text.text = ads.Text;
-
             GetAdsImage(ads.Id, image);
-        });
+        }, 
+        errorMethod: (model) =>
+        {
+            Canvaser.Instance.ADSPanel.gameObject.SetActive(false);
+            OnAdsDownloaded();
+        }
+        );
     }
 
     public void GetAdsImage(int adsId, RawImage image)

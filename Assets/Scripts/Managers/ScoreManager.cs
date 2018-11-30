@@ -84,7 +84,7 @@ public class ScoreManager : APIManager<ScoreManager>
         Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
         Canvaser.Instance.SetNotifications(LoginManager.User);
 
-        Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+        FileExtensions.SaveJsonDataAsync(DataType.UserInfo, LoginManager.User);
     }
 
     public void UseBonusAsync(int bonusInvId)

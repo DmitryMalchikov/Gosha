@@ -9,6 +9,10 @@ public class StartBonuses : MonoBehaviour
     {
         if (bonuses == null || bonuses.Count == 0)
         {
+            for (int i = 0; i < BPanels.Length; i++)
+            {
+                BPanels[i].SetInfo(null);
+            }
             return;
         }
         for (int i = 0; i < BPanels.Length; i++)

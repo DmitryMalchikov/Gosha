@@ -22,7 +22,7 @@ public class Bonus
         else
         {
             Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
-            Extensions.SaveJsonDataAsync(DataType.UserInfo, JsonConvert.SerializeObject(LoginManager.User));
+            FileExtensions.SaveJsonDataAsync(DataType.UserInfo, LoginManager.User);
         }
         return true;
     }

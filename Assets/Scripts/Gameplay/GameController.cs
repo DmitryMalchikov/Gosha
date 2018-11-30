@@ -23,6 +23,8 @@ public class GameController : Singleton<GameController>
     float points;
     bool setRun = false;
     public static string PersistentDataPath { get; private set; }
+    public static string StreamingAssetsPath { get; private set; }
+    public static string DeviceId { get; private set; }
 
     public static void OnHit()
     {
@@ -228,9 +230,11 @@ public class GameController : Singleton<GameController>
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         PersistentDataPath = Application.persistentDataPath;
+        StreamingAssetsPath = Application.streamingAssetsPath;
+        DeviceId = SystemInfo.deviceUniqueIdentifier;
         Paused = false;
     }
     private void Update()

@@ -86,7 +86,6 @@ public class Tile : MonoBehaviour
         SetUpStartTile();
         GenerateBonus();
         GenerateBox();
-
     }
 
     public void GenerateBonus()

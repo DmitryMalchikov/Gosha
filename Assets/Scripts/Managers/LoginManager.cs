@@ -172,7 +172,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
 
         CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
        {
-           Extensions.RemoveJsonData(DataType.UserInfo);
+           FileExtensions.RemoveJsonData(DataType.UserInfo);
            LocalUser = false;
            userToken = token;
 
@@ -223,11 +223,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
                 info = new UserInfoModel();
             }
 
-            User = info;
-            GameController.Instance.LoadBonusesTime(info.BonusUpgrades);
-            Canvaser.Instance.SetAllIceCreams(User.IceCream);
-            Canvaser.Instance.SBonuses.SetStartBonuses(info.Bonuses);
-            Canvaser.Instance.SetNotifications(info);
+            SetUserInfos(info);
 
             if (!LocalUser)
             {
@@ -256,10 +252,32 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
             {
                 callback();
             }
+        },
+        errorMethod: (model) => 
+        {
+            LocalUser = true;
+        },
+        type: DataType.UserInfo,
+        finallyMethod: () => 
+        {
+            if (User == null)
+            {
+                SetUserInfos(new UserInfoModel());
+            }
+            FileExtensions.SaveJsonDataAsync(DataType.UserInfo, User);
             task.Ready = true;
-        }, type: DataType.UserInfo);
+        });
 
         return task;
+    }
+
+    public void SetUserInfos(UserInfoModel user)
+    {
+        User = user;
+        GameController.Instance.LoadBonusesTime(user.BonusUpgrades);
+        Canvaser.Instance.SetAllIceCreams(user.IceCream);
+        Canvaser.Instance.SBonuses.SetStartBonuses(user.Bonuses);
+        Canvaser.Instance.SetNotifications(user);
     }
 
     public void RegisterAsync(RegisterBindingModel model)
@@ -270,7 +288,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
             model.Cases = User.Cases;
             model.Bonuses = User.Bonuses.ToArray();
             model.BonusUpgrades = User.BonusUpgrades.ToArray();
-            Extensions.RemoveJsonData(DataType.UserInfo);
+            FileExtensions.RemoveJsonData(DataType.UserInfo);
         }
 
         CoroutineManager.SendRequest(RegisterUrl, model, () =>
@@ -369,7 +387,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
             model.Cases = User.Cases;
             model.Bonuses = User.Bonuses.ToArray();
             model.BonusUpgrades = User.BonusUpgrades.ToArray();
-            Extensions.RemoveJsonData(DataType.UserInfo);
+            FileExtensions.RemoveJsonData(DataType.UserInfo);
         }
 
         CoroutineManager.SendRequest(ExternalRegisterUrl, model, () =>

@@ -17,7 +17,7 @@ public class CoroutineManager : Singleton<CoroutineManager>
         }
     }
 
-    public static Coroutine SendRequest(string url, object parameters,Action successMethod = null, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
+    public static Coroutine SendRequest(string url, object parameters, Action successMethod = null, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
     {
         String contentType = "application/json";
         return Instance.StartCoroutine(NetworkHelper.SendRequest(url, parameters, contentType, successMethod, errorMethod, loadingPanelsKey, type, forceUpdate, preSuccessMethod, finallyMethod));

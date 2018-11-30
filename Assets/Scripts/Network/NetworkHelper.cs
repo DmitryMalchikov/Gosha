@@ -11,12 +11,10 @@ using uTasks;
 
 public static class NetworkHelper
 {
+    public static bool HaveInternetConnection { get; private set; }
+
     public static UnityWebRequest CreateRequest(string url, string postParameters, string ContentType, List<Header> headers = null)
     {
-        if (string.IsNullOrEmpty(postParameters))
-        {
-            postParameters = "sas";
-        }
         var data = Encoding.UTF8.GetBytes(postParameters);
         UnityWebRequest req = new UnityWebRequest(url, "POST");
         req.uploadHandler = new UploadHandlerRaw(data);
@@ -46,7 +44,11 @@ public static class NetworkHelper
 
         try
         {
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                HandleRequestError(response, errorMethod);
+            }
+            else
             {
                 if (preSuccessMethod != null)
                 {
@@ -56,10 +58,6 @@ public static class NetworkHelper
                 {
                     yield return successMethod(response);
                 }
-            }
-            else
-            {
-                HandleRequestError(response, errorMethod);
             }
         }
         finally
@@ -79,7 +77,8 @@ public static class NetworkHelper
 
     public static IEnumerator SendRequest<T>(string url, object parameters, string contentType, Action<T> successMethod, Action<AnswerModel> errorMethod = null, string loadingPanelsKey = null, DataType type = DataType.Network, bool forceUpdate = false, Action<AnswerModel> preSuccessMethod = null, Action finallyMethod = null)
     {
-        yield return SendRequestBody(url, parameters, contentType, answer => ParseDataAndCallSuccess(answer, successMethod), errorMethod, loadingPanelsKey, type, forceUpdate, preSuccessMethod, finallyMethod);
+        string pass = EncodeKeyHandler.GetKey(type);
+        yield return SendRequestBody(url, parameters, contentType, answer => ParseDataAndCallSuccess(answer, successMethod, pass), errorMethod, loadingPanelsKey, type, forceUpdate, preSuccessMethod, finallyMethod);
     }
 
     private static IEnumerator Empty(Action action)
@@ -91,18 +90,18 @@ public static class NetworkHelper
         yield break;
     }
 
-    private static IEnumerator ParseDataAndCallSuccess<T>(AnswerModel response, Action<T> successMethod)
+    private static IEnumerator ParseDataAndCallSuccess<T>(AnswerModel response, Action<T> successMethod, string pass)
     {
         T data = default(T);
 
-        var task = Task.Run(() => data = JsonConvert.DeserializeObject<T>(response.Text));
+        var task = Task.Run(() => data = FileExtensions.TryParseData<T>(response.Text, pass));
 
         while (!task.IsCompleted)
         {
             yield return null;
         }
 
-        if (successMethod != null)
+        if (data != null && successMethod != null)
         {
             successMethod(data);
         }
@@ -117,36 +116,52 @@ public static class NetworkHelper
             Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey));
         }
 
-        while (GameController.PersistentDataPath == null)
-        {
-            yield return null;
-        }
-        string parms = string.Empty;
+        yield return WaitPersistentDataPath();
 
-        IEnumerator e = SerializeParameters(parameters);
-        yield return e;
-        parms = e.Current as string;
+        InputString parms = new InputString();
+        yield return SerializeParameters(parameters, parms);
 
         if (!forceUpdate)
         {
-            string data = Extensions.LoadJsonData(type);
-            if (!string.IsNullOrEmpty(data) || type == DataType.UserInfo)
-            {
-                response.SetFields(new AnswerModel(data));
-            }
+            LocalResponse(response, type);
         }
+
         if (response.StatusCode == 0)
         {
             forceUpdate = true;
-            LoadingManager.PanelKeyToEnable = loadingPanelsKey;
-            var req = CreateRequest(url, parms, contentType, LoginManager.Instance.Headers);
+            //Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey));
+            var req = CreateRequest(url, parms.Value, contentType, LoginManager.Instance.Headers);
             yield return SendRequest(req);
             SetResponse(response, req);
         }
 
+        if (response.StatusCode == 0 && forceUpdate)
+        {
+            HaveInternetConnection = false;
+            LocalResponse(response, type);
+            forceUpdate = false;           
+        }
+
         if (NeedSave(response.StatusCode, forceUpdate, type))
         {
-            Extensions.SaveJsonDataAsync(type, response.Text);
+            FileExtensions.SaveJsonDataAsync(type, response.Text);
+        }
+    }
+
+    private static IEnumerator WaitPersistentDataPath()
+    {
+        while (GameController.PersistentDataPath == null)
+        {
+            yield return null;
+        }
+    }
+
+    private static void LocalResponse(AnswerModel response, DataType type)
+    {
+        string data = FileExtensions.LoadJsonData(type);
+        if (!string.IsNullOrEmpty(data) || type == DataType.UserInfo)
+        {
+            response.SetFields(new AnswerModel(data));
         }
     }
 
@@ -162,19 +177,22 @@ public static class NetworkHelper
     private static void SetResponse(AnswerModel response, UnityWebRequest req)
     {
 #if UNITY_5
-        if (req.isError)
+                if (req.isError)
 #else
-        if (req.isHttpError)
+        if (req.isHttpError || req.isNetworkError)
 #endif
         {
             response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
+            //var model = new AnswerModel(req.downloadHandler.text);
+            //model.StatusCode = HttpStatusCode.InternalServerError;
+            //response.SetFields(model);
         }
-#if !UNITY_5
-        else if (req.isNetworkError)
-        {
-            response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
-        }
-#endif
+        //#if !UNITY_5
+        //        else if (req.isNetworkError)
+        //        {
+        //            //response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
+        //        }
+        //#endif
         else
         {
             response.SetFields(new AnswerModel(req.downloadHandler.text));
@@ -196,6 +214,7 @@ public static class NetworkHelper
 
     private static bool GetForceUpdate(DataType type, bool inputForceUpdate)
     {
+        //TODO: add if no connection always false
         if (type == DataType.Network)
         {
             return true;
@@ -207,7 +226,7 @@ public static class NetworkHelper
         return inputForceUpdate;
     }
 
-    private static IEnumerator SerializeParameters(object parameters)
+    private static IEnumerator<string> SerializeParameters(object parameters, InputString destination)
     {
         if (parameters == null)
         {
@@ -234,7 +253,8 @@ public static class NetworkHelper
         {
             yield return null;
         }
-        yield return task.Result;
+
+        destination.Value = task.Result;
     }
 
     public static void HandleRequestError(AnswerModel response, Action<AnswerModel> errorMethod)
@@ -270,7 +290,7 @@ public static class NetworkHelper
         catch
         {
             errorCodes = new Dictionary<string, IList<string>> { { "Message", new List<string> { "FatalError" } } };
-            Canvaser.Errors.Enqueue(new WebException(text));
+            //Canvaser.Errors.Enqueue(new WebException(text));
         }
         return new AnswerModel() { StatusCode = code, Errors = errorCodes };
     }
