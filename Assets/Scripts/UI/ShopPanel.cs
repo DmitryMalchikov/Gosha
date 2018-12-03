@@ -102,37 +102,7 @@ public class ShopPanel : MonoBehaviour
         {
             var item = upgrades[i];
             ItemInfo current = Items.FirstOrDefault(x => x.ItemName == item.Name);
-            if (LoginManager.LocalUser)
-            {
-                var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
-                var amount = upgrade != null ? upgrade.UpgradeAmount : 0;
-                current.Upgrade.value = amount;
-                if (amount < 5)
-                {
-                    current.PriceText.text = (item.Cost * (amount + 1)).ToString();
-                    current.BuyButton.interactable = LoginManager.User.IceCream >= (item.Cost * (amount + 1));
-                }
-                else
-                {
-                    current.BuyButton.interactable = false;
-                    current.PriceText.text = "Max";
-                }
-            }
-            else
-            {
-                current.Upgrade.value = item.Amount;
-                if (item.Amount < 5)
-                {
-                    current.PriceText.text = (item.Cost * (item.Amount + 1)).ToString();
-                    current.BuyButton.interactable = true;
-                }
-                else
-                {
-                    current.BuyButton.interactable = false;
-                    current.PriceText.text = "Max";
-                }
-            }
-            current.ItemID = item.Id;
+            current.SetUpgrade(item);
         }
     }
 
@@ -141,8 +111,7 @@ public class ShopPanel : MonoBehaviour
         for (int i = 0; i < upgrades.Length; i++)
         {
             ItemInfo current = Items.FirstOrDefault(x => x.ItemName == upgrades[i].Name);
-            current.PriceText.text = upgrades[i].Cost.ToString();
-            current.ItemID = upgrades[i].Id;
+            current.SetBonus(upgrades[i]);
         }
     }
 
@@ -150,17 +119,17 @@ public class ShopPanel : MonoBehaviour
     {
         for (int i = 0; i < Items.Length; i++)
         {
-            Items[i].BuyButton.interactable = Items[i].PriceText.text != "Max" && int.Parse(Items[i].PriceText.text) <= LoginManager.User.IceCream;
+            Items[i].BuyButton.interactable = Items[i].PriceText.text != "Max" && Items[i].Price <= LoginManager.User.IceCream;
         }
         for (int i = 0; i < Cases.Count; i++)
         {
-            Cases[i].BuyButton.interactable = int.Parse(Cases[i].PriceText.text) <= LoginManager.User.IceCream;
+            Cases[i].BuyButton.interactable = Cases[i].Price <= LoginManager.User.IceCream;
         }
         for (int i = 0; i < CardSets.Count; i++)
         {
             for (int j = 0; j < CardSets[i].Cards.Length; j++)
             {
-                CardSets[i].Cards[j].BuyButton.interactable = int.Parse(CardSets[i].Cards[j].PriceText.text) <= LoginManager.User.IceCream;
+                CardSets[i].Cards[j].BuyButton.interactable = CardSets[i].Cards[j].Price <= LoginManager.User.IceCream;
             }
         }
     }

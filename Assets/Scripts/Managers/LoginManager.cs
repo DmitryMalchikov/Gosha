@@ -117,7 +117,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
 
     private void LocalLogin()
     {
-        LocalUser = true;
+       // LocalUser = true;
         AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
         AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
         LoginCanvas.Instance.EnableWarning(false);
@@ -156,7 +156,8 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
             (response) =>
             {
                 //LoginCanvas.Instance.EnableWarning(true);
-                Canvaser.Instance.CloseLoading();
+                LocalLogin();
+                //Canvaser.Instance.CloseLoading();
             });
     }
 
@@ -171,7 +172,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
         LoginBtn.interactable = false;
 
         CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
-       {
+        {
            FileExtensions.RemoveJsonData(DataType.UserInfo);
            LocalUser = false;
            userToken = token;
@@ -253,10 +254,6 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
                 callback();
             }
         },
-        errorMethod: (model) => 
-        {
-            LocalUser = true;
-        },
         type: DataType.UserInfo,
         finallyMethod: () => 
         {
@@ -278,6 +275,7 @@ public class LoginManager : Singleton<LoginManager>, IAvatarSprite
         Canvaser.Instance.SetAllIceCreams(user.IceCream);
         Canvaser.Instance.SBonuses.SetStartBonuses(user.Bonuses);
         Canvaser.Instance.SetNotifications(user);
+        LocalUser = string.IsNullOrEmpty(user.Nickname);
     }
 
     public void RegisterAsync(RegisterBindingModel model)

@@ -59,14 +59,7 @@ public class TournamentPanel : TimeCheck
         for (int i = 0; i < models.Length; i++)
         {
             FriendObject newParticipant = Instantiate(TournamentPlayer, StatisticsContent).GetComponent<FriendObject>();
-            if (models[i].Id == LoginManager.User.Id)
-            {
-                newParticipant.YourPanelTournament(models[i], i);
-            }
-            else
-            {
-                newParticipant.SetTournamentObject(models[i], i);
-            }
+            newParticipant.SetStatisticsObject(models[i], i);
 
             Participants.Add(newParticipant);
         }

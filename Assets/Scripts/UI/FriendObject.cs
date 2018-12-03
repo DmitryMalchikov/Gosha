@@ -5,7 +5,15 @@ using UnityEngine.UI;
 public class FriendObject : MonoBehaviour, IAvatarSprite
 {
     public FriendModel Info;
-    public FriendOfferModel OfferInfo;
+
+    public FriendOfferModel OfferInfo
+    {
+        get
+        {
+            return Info as FriendOfferModel;
+        }
+    }
+
     public Text Name;
     public Text Record;
     public Text Position;
@@ -42,21 +50,6 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         Destroy(gameObject);
     }
 
-    public void AcceptOffer(bool isAccepted)
-    {
-        if (isAccepted)
-        {
-            FriendsManager.Instance.AcceptFriendshipAsync(OfferInfo.Id);
-            Canvaser.Instance.FriendsPanel.AddOfferToFriends(OfferInfo);
-        }
-        else
-        {
-            FriendsManager.Instance.DeclineFriendshipAsync(OfferInfo.Id);
-        }
-
-        Destroy(gameObject);
-    }
-
     public void ShowPlayerInfo()
     {
         if (OfferInfo.FriendshipStatus != FriendshipStatus.AreFriends)
@@ -73,12 +66,12 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
     {
         if (OfferInfo.FriendshipStatus == FriendshipStatus.NotFriends)
         {
-            FriendsManager.Instance.OfferFriendshipAsync(OfferInfo.Id);
+            FriendsManager.Instance.OfferFriendshipAsync(Info.Id);
             OfferInfo.FriendshipStatus = FriendshipStatus.OutgoingRequest;
         }
         else
         {
-            FriendsManager.Instance.AcceptFriendshipAsync(OfferInfo.Id);
+            FriendsManager.Instance.AcceptFriendshipAsync(Info.Id);
             OfferInfo.FriendshipStatus = FriendshipStatus.AreFriends;
         }
 
@@ -119,7 +112,7 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
             Warning.SetActive(false);
         //if (friendOffer.FriendshipStatus == 0)
         //{
-        OfferInfo = friendOffer;
+        Info = friendOffer;
         //}
         if (Position)
             Position.text = friendOffer.Place.ToString();
@@ -140,15 +133,33 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         Destroy(gameObject.GetComponent<Button>());
     }
 
-    public void YourPanelTournament(FriendOfferStatisticsModel friend, int place)
+    public void YourPanelTournament()
     {
-        OfferInfo = friend;
-        Name.text = string.Format("{0}. {1}", place + 1, LocalizationManager.GetLocalizedValue("you"));
-        Record.text = friend.Points + LocalizationManager.GetLocalizedValue("meter");
         GetComponent<Image>().color = YourColor;
         Name.color = Color.white;
         Record.color = Color.white;
         Destroy(gameObject.GetComponent<Button>());
+    }
+
+    public void SetInfo(FriendOfferStatisticsModel friend, int place)
+    {
+        bool you = friend.Id == LoginManager.User.Id;
+        string nickname = you ? LocalizationManager.GetLocalizedValue("you") : friend.Nickname;
+
+        Info = friend;
+        Name.text = string.Format("{0}. {1}", place + 1, nickname);
+        Record.text = friend.Points.ToString() + LocalizationManager.GetLocalizedValue("meter");
+
+        if (you)
+        {
+            YourPanelTournament();
+        }
+    }
+
+    public void SetStatisticsObject(FriendOfferStatisticsModel friend, int place)
+    {
+        SetInfo(friend, place);
+        LoginManager.Instance.GetUserImage(this, friend.Id);
     }
 
     public void Trade()
@@ -166,19 +177,6 @@ public class FriendObject : MonoBehaviour, IAvatarSprite
         {
             Canvaser.Instance.FriendsPanel.FriendOfferInfo.SetOfferInfo(this, OfferInfo.FriendshipStatus == FriendshipStatus.OutgoingRequest);
         }
-    }
-
-    public void SetTournamentObject(FriendOfferModel friend, int place)
-    {
-        OfferInfo = friend;
-        Name.text = string.Format("{0}. {1}", place + 1, friend.Nickname);
-        Record.text = (friend as FriendOfferStatisticsModel).Points.ToString() + LocalizationManager.GetLocalizedValue("meter");
-    }
-
-    public void SetStatisticsObject(FriendOfferModel friend, int place)
-    {
-        SetTournamentObject(friend, place);
-        LoginManager.Instance.GetUserImage(this, friend.Id);
     }
 
     public void SetSprite(Sprite sprite)

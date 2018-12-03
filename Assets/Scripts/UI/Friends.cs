@@ -55,7 +55,6 @@ public class Friends : MonoBehaviour
     {
         FriendsContent.ClearContent();
         RequestsContent.ClearContent();
-
         FriendsManager.Instance.GetFriendsAsync(() => OpenRequests());
     }
 
@@ -116,13 +115,13 @@ public class Friends : MonoBehaviour
 
     public void RemoveFromFriends(int id)
     {
-        var toDelete = FriendObjects.FirstOrDefault(fo => fo.OfferInfo.Id == id);
+        var toDelete = FriendObjects.FirstOrDefault(fo => fo.Info.Id == id);
         Destroy(toDelete.gameObject);
     }
 
     public void RemoveFromFriendRequests(int id)
     {
-        var toDelete = FriendRequestsObjects.FirstOrDefault(fo => fo.OfferInfo.Id == id);
+        var toDelete = FriendRequestsObjects.FirstOrDefault(fo => fo.Info.Id == id);
         Destroy(toDelete.gameObject);
     }
 
@@ -168,31 +167,20 @@ public class Friends : MonoBehaviour
 
     public void SearchFriend(string name)
     {
-        if (string.IsNullOrEmpty(name))
+        bool found = false;
+        for (int i = 0; i < FriendObjects.Length; i++)
         {
-            for (int i = 0; i < FriendObjects.Length; i++)
+            if (FriendObjects[i].Info.Nickname.IndexOf(name, System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
+                found = true;
                 FriendObjects[i].gameObject.SetActive(true);
             }
-            FriendNotFoundMsg.SetActive(false);
-        }
-        else
-        {
-            bool found = false;
-            for (int i = 0; i < FriendObjects.Length; i++)
+            else
             {
-                if (FriendObjects[i].Info.Nickname.IndexOf( name, System.StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    found = true;
-                    FriendObjects[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    FriendObjects[i].gameObject.SetActive(false);
-                }
+                FriendObjects[i].gameObject.SetActive(false);
             }
-            FriendNotFoundMsg.SetActive(!found);
         }
+        FriendNotFoundMsg.SetActive(!found);
     }
 
     public void SearchFriend()

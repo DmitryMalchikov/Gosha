@@ -60,10 +60,7 @@ public class Canvaser : Singleton<Canvaser>
     public StartBonuses SBonuses;
     public Text Score;
     public Image SettingsAvatar;
-    public Image SettingsAvatarBorder;
-    public Text SettingsNickname;
     public LocalizedText SettingsRegion;
-    public LocalizedText SettingsRegionWord;
     public ShopPanel Shop;
     public StatisticsPanel Stats;
     public SuitsPanel Suits;

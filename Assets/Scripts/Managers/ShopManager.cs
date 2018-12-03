@@ -14,32 +14,30 @@ public class ShopManager : APIManager<ShopManager>
     public string PromoCodeUrl = "/api/shop/promocode";
     public static ShopModel CurrentShop;
 
-    public void BuyItemAsync(int itemId, bool upgrade, int price, ResultCallback callback = null)
+    public void BuyItemAsync(BuyInfo info, ResultCallback callback = null)
     {
-        ItemBuyModel buy = new ItemBuyModel() { ItemId = itemId, Amount = 1 };
+        ItemBuyModel buy = new ItemBuyModel() { ItemId = info.ItemID, Amount = 1 };
         CoroutineManager.SendRequest(BuyItemUrl, buy, () =>
-       {
-           if (upgrade)
+        {
+           if (info.ItemName.Contains("Upgrade"))
            {
                string data = FileExtensions.LoadJsonData(DataType.Shop);
                ShopModel model = FileExtensions.TryParseData<ShopModel>(data);
 
-               model.BonusUpgrades.FirstOrDefault(bu => bu.Id == itemId).Amount++;
+               model.BonusUpgrades.FirstOrDefault(bu => bu.Id == info.ItemID).Amount++;
                SetShopItems(model);
                FileExtensions.SaveJsonDataAsync(DataType.Shop, model);
            }
 
-           LoginManager.User.IceCream -= price;
+           LoginManager.User.IceCream -= info.PriceValue;
            Canvaser.Instance.SetAllIceCreams(LoginManager.User.IceCream);
            Canvaser.Instance.Shop.CheckBuyBtns();
 
            LoginManager.Instance.GetUserInfoAsync();
-
-           if (callback != null)
-           {
-               callback();
-           }
-       });
+       }, errorMethod: (model) =>       
+       {
+           info.BuyItemLocaly();
+       }, finallyMethod: () => callback());
     }
 
     public void EnterPromoCodeAsync(string code)

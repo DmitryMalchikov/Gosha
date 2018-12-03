@@ -54,14 +54,7 @@ public class StatisticsPanel : MonoBehaviour
         for (int i = 0; i < leaders.Count; i++)
         {
             FriendObject newLeader = Instantiate(Leader, parentPanel).GetComponent<FriendObject>();
-            if (leaders[i].Id == LoginManager.User.Id)
-            {
-                newLeader.YourPanelTournament(leaders[i], i);
-            }
-            else
-            {
-                newLeader.SetStatisticsObject(leaders[i], i);
-            }
+            newLeader.SetStatisticsObject(leaders[i], i);
             friendList.Add(newLeader);
         }
     }

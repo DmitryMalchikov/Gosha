@@ -6,6 +6,7 @@ public class ItemInfo : MonoBehaviour
     public int ItemID;
     public string ItemName;
     public string Desc;
+    public int Price;
 
     public ShopCard CardInfo;
     public ShopItem CaseInfo;
@@ -18,16 +19,15 @@ public class ItemInfo : MonoBehaviour
     public TradePanel _TradePanel;
 
     public Slider Upgrade;
-
     InventoryItem curItem;
 
     public void OpenBuyInfo()
     {
-        Canvaser.Instance.BuyInfoPanel.SetBuyInfo(ItemID, NameText.text, Desc, PriceText.text, ImgSource.sprite, ItemName);
+        Canvaser.Instance.BuyInfoPanel.SetBuyInfo(this);
     }
     public void OpenUpgradeInfo()
     {
-        Canvaser.Instance.UpgradeInfoPanel.SetBuyInfo(ItemID, NameText.text, Desc, PriceText.text, ImgSource.sprite, ItemName);
+        Canvaser.Instance.UpgradeInfoPanel.SetBuyInfo(this);
     }
 
     public void SetCard(ShopCard card)
@@ -37,12 +37,47 @@ public class ItemInfo : MonoBehaviour
         PriceText.text = card.Cost.ToString();
         ItemID = card.Id;
         ImgSource.sprite = Resources.Load<Sprite>(string.Format("{0} ({1})", CardInfo.SuitName, CardInfo.Position));
+        Price = card.Cost;
     }
 
     public void SetCase(ShopItem item)
     {
         CaseInfo = item;
         NameText.text = LocalizationManager.GetValue(item.NameRu, item.Name);
+        PriceText.text = item.Cost.ToString();
+        ItemID = item.Id;
+        Price = item.Cost;
+    }
+
+    public void SetUpgrade(ShopItem item)
+    {
+        int amount = item.Amount;
+
+        if (LoginManager.LocalUser)
+        {
+            var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
+            amount = upgrade != null ? upgrade.UpgradeAmount : 0;
+        }
+
+        Upgrade.value = amount;
+        if (amount < 5)
+        {
+            Price = (item.Cost * (amount + 1));
+            PriceText.text = Price.ToString();
+            BuyButton.interactable = LoginManager.User.IceCream >= (item.Cost * (amount + 1));
+        }
+        else
+        {
+            BuyButton.interactable = false;
+            PriceText.text = "Max";
+        }
+
+        ItemID = item.Id;
+    }
+
+    public void SetBonus(ShopItem item)
+    {
+        Price = item.Cost;
         PriceText.text = item.Cost.ToString();
         ItemID = item.Id;
     }

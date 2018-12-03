@@ -109,6 +109,7 @@ public static class NetworkHelper
 
     public static IEnumerator StartRequest(string url, object parameters, string contentType, bool forceUpdate, DataType type, AnswerModel response, string loadingPanelsKey)
     {
+        HaveInternetConnection = true;
         forceUpdate = GetForceUpdate(type, forceUpdate);
 
         if (forceUpdate)
