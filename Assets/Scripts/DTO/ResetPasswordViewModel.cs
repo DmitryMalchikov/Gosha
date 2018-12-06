@@ -1,7 +1,10 @@
-﻿public class ResetPasswordViewModel
+﻿namespace Assets.Scripts.DTO
 {
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public string ConfirmPassword { get; set; }
-    public string Code { get; set; }
+    public class ResetPasswordViewModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public string Code { get; set; }
+    }
 }

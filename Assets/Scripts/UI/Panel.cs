@@ -1,29 +1,32 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Panel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    private RectTransform panelRectTransform;
-
-    void OnEnable()
+    public class Panel : MonoBehaviour
     {
-        StartCoroutine(WaitCanvas());
-    }
+        private RectTransform _panelRectTransform;
 
-    IEnumerator WaitCanvas()
-    {
-        yield return new WaitUntil(() => Canvaser.Instance != null);
-
-        panelRectTransform = transform as RectTransform;
-        panelRectTransform.SetAsLastSibling();
-        if (Canvaser.Instance.ErrorWindow.activeInHierarchy)
+        void OnEnable()
         {
-            Canvaser.Instance.ErrorWindow.transform.SetAsLastSibling();
-            Canvaser.Instance.MainPanel.SetAsLastSibling();
+            StartCoroutine(WaitCanvas());
         }
-        else if (Canvaser.Instance.LoadingPanel.activeInHierarchy)
+
+        IEnumerator WaitCanvas()
         {
-            Canvaser.Instance.LoadingPanel.transform.SetAsLastSibling();
+            yield return new WaitUntil(() => Canvaser.Instance != null);
+
+            _panelRectTransform = transform as RectTransform;
+            _panelRectTransform.SetAsLastSibling();
+            if (Canvaser.Instance.ErrorWindow.activeInHierarchy)
+            {
+                Canvaser.Instance.ErrorWindow.transform.SetAsLastSibling();
+                Canvaser.Instance.MainPanel.SetAsLastSibling();
+            }
+            else if (Canvaser.Instance.LoadingPanel.activeInHierarchy)
+            {
+                Canvaser.Instance.LoadingPanel.transform.SetAsLastSibling();
+            }
         }
     }
 }

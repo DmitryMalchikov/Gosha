@@ -1,26 +1,29 @@
 ﻿using UnityEngine;
 
-public class OneSignalManager : MonoBehaviour
+namespace Assets.Scripts.Managers
 {
-
-    void Start()
+    public class OneSignalManager : MonoBehaviour
     {
-        // Enable line below to enable logging if you are having issues setting up OneSignal. (logLevel, visualLogLevel)
-        // OneSignal.SetLogLevel(OneSignal.LOG_LEVEL.INFO, OneSignal.LOG_LEVEL.INFO);
 
-        OneSignal.StartInit("a679caa4-ff0e-4bc9-a39b-57fa977e8e1a")
-          .HandleNotificationOpened(HandleNotificationOpened)
-          .EndInit();
+        void Start()
+        {
+            // Enable line below to enable logging if you are having issues setting up OneSignal. (logLevel, visualLogLevel)
+            // OneSignal.SetLogLevel(OneSignal.LOG_LEVEL.INFO, OneSignal.LOG_LEVEL.INFO);
 
-        OneSignal.inFocusDisplayType = OneSignal.OSInFocusDisplayOption.None;
+            OneSignal.StartInit("a679caa4-ff0e-4bc9-a39b-57fa977e8e1a")
+                .HandleNotificationOpened(HandleNotificationOpened)
+                .EndInit();
 
-        // Call syncHashedEmail anywhere in your app if you have the user's email.
-        // This improves the effectiveness of OneSignal's "best-time" notification scheduling feature.
-        // OneSignal.syncHashedEmail(userEmail);
-    }
+            OneSignal.inFocusDisplayType = OneSignal.OSInFocusDisplayOption.None;
 
-    // Gets called when the player opens the notification.
-    private static void HandleNotificationOpened(OSNotificationOpenedResult result)
-    {
+            // Call syncHashedEmail anywhere in your app if you have the user's email.
+            // This improves the effectiveness of OneSignal's "best-time" notification scheduling feature.
+            // OneSignal.syncHashedEmail(userEmail);
+        }
+
+        // Gets called when the player opens the notification.
+        private static void HandleNotificationOpened(OSNotificationOpenedResult result)
+        {
+        }
     }
 }

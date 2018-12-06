@@ -1,5 +1,8 @@
-﻿public class InventoryCard : InventoryItem
+﻿namespace Assets.Scripts.DTO
 {
-    public int SuitId { get; set; }
-    public byte Position { get; set; }
+    public class InventoryCard : InventoryItem
+    {
+        public int SuitId { get; set; }
+        public byte Position { get; set; }
+    }
 }

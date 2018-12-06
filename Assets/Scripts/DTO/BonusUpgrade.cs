@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public class BonusUpgrade
+namespace Assets.Scripts.DTO
 {
-    public string BonusName { get; set; }
-    public int UpgradeAmount { get; set; }
-    public float BonusTime
+    public class BonusUpgrade
     {
-        get
+        public string BonusName { get; set; }
+        public int UpgradeAmount { get; set; }
+        public float BonusTime
         {
-            return 6 * Mathf.Pow(1.15f, UpgradeAmount);
+            get
+            {
+                return 6 * Mathf.Pow(1.15f, UpgradeAmount);
+            }
         }
     }
 }

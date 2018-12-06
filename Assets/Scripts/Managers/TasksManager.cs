@@ -1,135 +1,142 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.DTO;
+using Assets.Scripts.Gameplay;
+using Assets.Scripts.UI;
+using Assets.Scripts.Utils;
 
-public class TasksManager : APIManager<TasksManager>
+namespace Assets.Scripts.Managers
 {
-    public List<PlayerTasks> RunTasks = new List<PlayerTasks>();
-    public List<PlayerTasks> JumpTasks = new List<PlayerTasks>();
-    public List<PlayerTasks> PlayTasks = new List<PlayerTasks>();
-    public List<PlayerTasks> CollectBonusTasks = new List<PlayerTasks>();
-
-    public string SubmitTaskUrl = "/api/tasks/submittask";
-    public string GetTasksUrl = "/api/tasks/WeeklyTasksInfo";
-
-    public override void SetUrls()
+    public class TasksManager : APIManager<TasksManager>
     {
-        ServerInfo.SetUrl(ref SubmitTaskUrl);
-        ServerInfo.SetUrl(ref GetTasksUrl);
-    }
+        public List<PlayerTasks> RunTasks = new List<PlayerTasks>();
+        public List<PlayerTasks> JumpTasks = new List<PlayerTasks>();
+        public List<PlayerTasks> PlayTasks = new List<PlayerTasks>();
+        public List<PlayerTasks> CollectBonusTasks = new List<PlayerTasks>();
 
-    public void LoadTasks(PlayerTasks[] tasks)
-    {
-        for (int i = 0; i < tasks.Length; i++)
+        public string SubmitTaskUrl = "/api/tasks/submittask";
+        public string GetTasksUrl = "/api/tasks/WeeklyTasksInfo";
+
+        public override void SetUrls()
         {
-            tasks[i].PlayerStartProgress = tasks[i].PlayerProgress;
-
-            switch (tasks[i].Type)
-            {
-                case "Run":
-                    RunTasks.Add(tasks[i]);
-                    break;
-                case "Jump":
-                    JumpTasks.Add(tasks[i]);
-                    break;
-                case "Play":
-                    PlayTasks.Add(tasks[i]);
-                    break;
-                case "CollectBonus":
-                    CollectBonusTasks.Add(tasks[i]);
-                    break;
-            }
-        }
-    }
-
-    public void CheckTasks(TasksTypes type, int completeAmount = 1)
-    {
-        List<PlayerTasks> tasks = new List<PlayerTasks>();
-        bool send = false;
-
-        switch (type)
-        {
-            case TasksTypes.Run:
-                tasks = RunTasks;
-                break;
-            case TasksTypes.Jump:
-                tasks = JumpTasks;
-                break;
-            case TasksTypes.Play:
-                tasks = PlayTasks;
-                send = true;
-                break;
-            case TasksTypes.CollectBonus:
-                tasks = CollectBonusTasks;
-                break;
+            ServerInfo.SetUrl(ref SubmitTaskUrl);
+            ServerInfo.SetUrl(ref GetTasksUrl);
         }
 
-        for (int i = 0; i < tasks.Count; i++)
+        public void LoadTasks(PlayerTasks[] tasks)
         {
-            tasks[i].PlayerProgress += completeAmount;
-
-            if (tasks[i].PlayerProgress >= tasks[i].ActionsCount || send)
+            for (int i = 0; i < tasks.Length; i++)
             {
-                SubmitTaskAsync(tasks[i]);
+                tasks[i].PlayerStartProgress = tasks[i].PlayerProgress;
 
-                if (tasks[i].PlayerProgress >= tasks[i].ActionsCount)
+                switch (tasks[i].Type)
                 {
-                    tasks.RemoveAt(i);
-                    i--;
+                    case "Run":
+                        RunTasks.Add(tasks[i]);
+                        break;
+                    case "Jump":
+                        JumpTasks.Add(tasks[i]);
+                        break;
+                    case "Play":
+                        PlayTasks.Add(tasks[i]);
+                        break;
+                    case "CollectBonus":
+                        CollectBonusTasks.Add(tasks[i]);
+                        break;
                 }
             }
         }
-    }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause && GameController.Started)
+        public void CheckTasks(TasksTypes type, int completeAmount = 1)
         {
-            SubmitAllTasks(false);
-        }
-    }
+            List<PlayerTasks> tasks = new List<PlayerTasks>();
+            bool send = false;
 
-    public void SubmitAllTasks(bool reset)
-    {
-        List<PlayerTasks> tasks = new List<PlayerTasks>();
-
-        tasks.AddRange(RunTasks);
-        tasks.AddRange(JumpTasks);
-        tasks.AddRange(PlayTasks);
-        tasks.AddRange(CollectBonusTasks);
-
-        for (int i = 0; i < tasks.Count; i++)
-        {
-            if (!tasks[i].InOneRun)
+            switch (type)
             {
-                SubmitTaskAsync(tasks[i]);
+                case TasksTypes.Run:
+                    tasks = RunTasks;
+                    break;
+                case TasksTypes.Jump:
+                    tasks = JumpTasks;
+                    break;
+                case TasksTypes.Play:
+                    tasks = PlayTasks;
+                    send = true;
+                    break;
+                case TasksTypes.CollectBonus:
+                    tasks = CollectBonusTasks;
+                    break;
             }
-            else if (reset)
+
+            for (int i = 0; i < tasks.Count; i++)
             {
-                tasks[i].PlayerProgress = 0;
+                tasks[i].PlayerProgress += completeAmount;
+
+                if (tasks[i].PlayerProgress >= tasks[i].ActionsCount || send)
+                {
+                    SubmitTaskAsync(tasks[i]);
+
+                    if (tasks[i].PlayerProgress >= tasks[i].ActionsCount)
+                    {
+                        tasks.RemoveAt(i);
+                        i--;
+                    }
+                }
             }
         }
-    }
 
-    void SubmitTaskAsync(PlayerTasks model)
-    {
-        SubmitTaskModel value = new SubmitTaskModel() { Id = model.Id, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, TaskId = model.TaskId };
-        CoroutineManager.SendRequest(SubmitTaskUrl, value, (PlayerTasksAnswer newModel) =>
-       {
-           model.Id = newModel.Id;
-           model.PlayerStartProgress = model.PlayerProgress;
-
-           if (model.PlayerProgress >= model.ActionsCount)
-           {
-               Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
-           }
-       });
-    }
-
-    public void GetAllTasksAsync()
-    {
-        CoroutineManager.SendRequest(GetTasksUrl, null, (PlayerTaskModel[] tasks) =>
+        private void OnApplicationPause(bool pause)
         {
-            Canvaser.Instance.WeeklyTasks.SetTasks(tasks);
-        }, loadingPanelsKey: "weeklytasks");
-    }
+            if (pause && GameController.Started)
+            {
+                SubmitAllTasks(false);
+            }
+        }
 
+        public void SubmitAllTasks(bool reset)
+        {
+            List<PlayerTasks> tasks = new List<PlayerTasks>();
+
+            tasks.AddRange(RunTasks);
+            tasks.AddRange(JumpTasks);
+            tasks.AddRange(PlayTasks);
+            tasks.AddRange(CollectBonusTasks);
+
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                if (!tasks[i].InOneRun)
+                {
+                    SubmitTaskAsync(tasks[i]);
+                }
+                else if (reset)
+                {
+                    tasks[i].PlayerProgress = 0;
+                }
+            }
+        }
+
+        void SubmitTaskAsync(PlayerTasks model)
+        {
+            SubmitTaskModel value = new SubmitTaskModel() { Id = model.Id, PlayerProgress = model.PlayerProgress - model.PlayerStartProgress, TaskId = model.TaskId };
+            CoroutineManager.SendRequest(SubmitTaskUrl, value, (PlayerTasksAnswer newModel) =>
+            {
+                model.Id = newModel.Id;
+                model.PlayerStartProgress = model.PlayerProgress;
+
+                if (model.PlayerProgress >= model.ActionsCount)
+                {
+                    Canvaser.Instance.PopUpPanel.ShowTask(model.GenerateDescription());
+                }
+            });
+        }
+
+        public void GetAllTasksAsync()
+        {
+            CoroutineManager.SendRequest(GetTasksUrl, null, (PlayerTaskModel[] tasks) =>
+            {
+                Canvaser.Instance.WeeklyTasks.SetTasks(tasks);
+            }, loadingPanelsKey: "weeklytasks");
+        }
+
+    }
 }

@@ -1,39 +1,36 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Gameplay;
+using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class BonusPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Text Info;
-    public string Name;
-    public int Count;
-    public Toggle Active;
-    public IBonus Bonus;
-
-    public void SetInfo(Bonus bonus)
+    public class BonusPanel : MonoBehaviour
     {
-        Bonus = UserBonusFactory.CreateUserBonus(bonus);
+        public Text Info;
+        public string Name;
+        public Toggle Active;
+        public IBonus Bonus;
 
-        if (Bonus != null)
+        public void SetInfo(Bonus bonus)
         {
-            Count = bonus.Amount;
-        }
-        else
-        {            
-            Count = 0;
+            Bonus = UserBonusFactory.CreateUserBonus(bonus);
+            Info.text = LocalizationManager.GetLocalizedValue(Name.ToLower()) + " (" + Bonus.Count + ")";
         }
 
-        Info.text = LocalizationManager.GetLocalizedValue(Name.ToLower()) + " (" + Count + ")";
-    }
-
-    public void SetBonus()
-    {
-        if (Active.isOn)
+        public void SetBonus()
         {
-            GameController.Instance.CurrentBonus = Bonus;
-        }
-        else if (!Canvaser.Instance.BonusesToggleGroup.AnyTogglesOn())
-        {
-            GameController.Instance.CurrentBonus = null;
+            if (Active.isOn)
+            {
+                GameController.Instance.CurrentBonus = Bonus;
+            }
+            else if (!Canvaser.Instance.BonusesToggleGroup.AnyTogglesOn())
+            {
+                GameController.Instance.CurrentBonus = null;
+            }
         }
     }
 }

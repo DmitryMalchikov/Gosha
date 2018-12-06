@@ -2,16 +2,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IceCreamChanger : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public Text IceCream;
-    public int CurrentCount;
-    public float Duration = 2;
-
-    public void ChangeIceCream(int count)
+    public class IceCreamChanger : MonoBehaviour
     {
-        if (CurrentCount != count)
+        public Text IceCream;
+        public int CurrentCount;
+        public float Duration = 2;
+
+        public void ChangeIceCream(int count)
         {
+            if (CurrentCount == count) return;
+
             if ((!gameObject.activeInHierarchy) || CurrentCount == 0)
             {
                 SetIceCream(count);
@@ -21,35 +23,35 @@ public class IceCreamChanger : MonoBehaviour
                 UpdateIceCream(count);
             }
         }
-    }
 
-    public void SetIceCream(int count)
-    {
-        CurrentCount = count;
-        IceCream.text = count.ToString();
-    }
-
-    public void UpdateIceCream(int count)
-    {
-        StartCoroutine(Transition(count));
-    }
-
-    IEnumerator Transition(int endVal)
-    {
-        float lerp = Time.deltaTime / Duration;
-        while (Mathf.Abs(endVal - CurrentCount) > 0)
+        public void SetIceCream(int count)
         {
-            yield return new WaitForSeconds(Time.deltaTime);
-            lerp += Time.deltaTime / Duration;
-            if (Mathf.Abs(endVal - CurrentCount) < 4)
+            CurrentCount = count;
+            IceCream.text = count.ToString();
+        }
+
+        public void UpdateIceCream(int count)
+        {
+            StartCoroutine(Transition(count));
+        }
+
+        IEnumerator Transition(int endVal)
+        {
+            float lerp = Time.deltaTime / Duration;
+            while (Mathf.Abs(endVal - CurrentCount) > 0)
             {
-                CurrentCount += ((endVal - CurrentCount) > 0) ? 1 : -1;
+                yield return new WaitForSeconds(Time.deltaTime);
+                lerp += Time.deltaTime / Duration;
+                if (Mathf.Abs(endVal - CurrentCount) < 4)
+                {
+                    CurrentCount += ((endVal - CurrentCount) > 0) ? 1 : -1;
+                }
+                else
+                {
+                    CurrentCount = (int)Mathf.Lerp(CurrentCount, endVal, lerp);
+                }
+                IceCream.text = CurrentCount.ToString();
             }
-            else
-            {
-                CurrentCount = (int)Mathf.Lerp(CurrentCount, endVal, lerp);
-            }
-            IceCream.text = CurrentCount.ToString();
         }
     }
 }

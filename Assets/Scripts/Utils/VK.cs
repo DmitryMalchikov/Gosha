@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
-using UnityEngine;
-using System.Runtime.InteropServices;
+﻿using UnityEngine;
 
-public class VK : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    public delegate void ActionResult(string msg);
+    public class VK : MonoBehaviour
+    {
+        public delegate void ActionResult(string msg);
 
-    static event ActionResult OnLogin;
-    static event ActionResult OnShare;
-    static public string AppId = "6227224";
+        static event ActionResult OnLogin;
+        static event ActionResult OnShare;
+        static public string AppId = "6227224";
 
 #if !UNITY_EDITOR && UNITY_ANDROID
     static AndroidJavaObject ajo;
@@ -34,13 +34,13 @@ public class VK : MonoBehaviour
 	private static extern bool WallPost(string link, string linkTitle, string text, string imageLink);
 #endif
 
-    private void Start()
-    {
-        Init();
-    }
+        private void Start()
+        {
+            Init();
+        }
 
-    public void Init()
-    {
+        public void Init()
+        {
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
         ajo = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
@@ -49,10 +49,10 @@ public class VK : MonoBehaviour
 		VKInit("6227224", name);
 #endif
 #endif
-    }
+        }
 
-    public static bool IsLoggedIn()
-    {
+        public static bool IsLoggedIn()
+        {
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
         return ajo.Call<string>("VKcall", "isLoggedIn", "") == "1";
@@ -60,13 +60,13 @@ public class VK : MonoBehaviour
 		return VKLoggedIn();
 #endif
 #else
-        return false;
+            return false;
 #endif
-    }
+        }
 
-    public static void Login(ActionResult callback)
-    {
-        OnLogin += callback;
+        public static void Login(ActionResult callback)
+        {
+            OnLogin += callback;
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
         ajo.Call<string>("VKcall", "login", JsonConvert.SerializeObject(scopes));
@@ -74,47 +74,47 @@ public class VK : MonoBehaviour
 		VKLogin();
 #endif
 #endif
-    }
-
-    public void OnLoginError()
-    {
-        if (OnLogin != null)
-        {
-            OnLogin("error");
-            OnLogin = null;
         }
-    }
 
-    public void OnLoginSuccess()
-    {
-        if (OnLogin != null)
+        public void OnLoginError()
         {
-            OnLogin("success");
-            OnLogin = null;
+            if (OnLogin != null)
+            {
+                OnLogin("error");
+                OnLogin = null;
+            }
         }
-    }
 
-    public void OnShareSuccess()
-    {
-        if (OnShare != null)
+        public void OnLoginSuccess()
         {
-            OnShare("");
-            OnShare = null;
+            if (OnLogin != null)
+            {
+                OnLogin("success");
+                OnLogin = null;
+            }
         }
-    }
 
-    public void OnShareError(string message)
-    {
-        if (OnShare != null)
+        public void OnShareSuccess()
         {
-            OnShare(message);
-            OnShare = null;
+            if (OnShare != null)
+            {
+                OnShare("");
+                OnShare = null;
+            }
         }
-    }
 
-    public static void WallPost(string message, string link, string linkTitle, string imageUrl, ActionResult callback)
-    {
-        OnShare += callback;
+        public void OnShareError(string message)
+        {
+            if (OnShare != null)
+            {
+                OnShare(message);
+                OnShare = null;
+            }
+        }
+
+        public static void WallPost(string message, string link, string linkTitle, string imageUrl, ActionResult callback)
+        {
+            OnShare += callback;
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
         ajo.Call("openVKShareDialog", message, link, linkTitle, imageUrl);
@@ -122,15 +122,16 @@ public class VK : MonoBehaviour
 		WallPost(link, linkTitle, message, imageUrl);
 #endif
 #endif
-    }
+        }
 
-    public static void LogOut()
-    {
+        public static void LogOut()
+        {
 #if !UNITY_EDITOR
 #if UNITY_IOS
         VKLogout ();
 #elif UNITY_ANDROID
 #endif
 #endif
+        }
     }
 }

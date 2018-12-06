@@ -1,15 +1,21 @@
-﻿public class BonusMagnet : BonusParent
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Gameplay;
+
+namespace Assets.Scripts.Utils
 {
-    public BonusMagnet(Bonus bonus) : base(bonus) { }
-
-    public override bool UseBonus()
+    public class BonusMagnet : BonusParent
     {
-        if (CurrentBonus.Use())
-        {
-            Collector.Instance.UseMagnet();
-            return true;
-        }
+        public BonusMagnet(Bonus bonus) : base(bonus) { }
 
-        return false;
+        public override bool UseBonus()
+        {
+            if (Use())
+            {
+                Collector.Instance.UseMagnet();
+                return true;
+            }
+
+            return false;
+        }
     }
 }

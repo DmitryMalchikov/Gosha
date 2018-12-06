@@ -1,15 +1,21 @@
-﻿public class BonusShield : BonusParent
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Gameplay;
+
+namespace Assets.Scripts.Utils
 {
-    public BonusShield(Bonus bonus) : base(bonus) { }
-
-    public override bool UseBonus()
+    public class BonusShield : BonusParent
     {
-        if (CurrentBonus.Use())
-        {
-            PlayerShield.Instance.ApplyShield();
-            return true;
-        }
+        public BonusShield(Bonus bonus) : base(bonus) { }
 
-        return false;
+        public override bool UseBonus()
+        {
+            if (Use())
+            {
+                PlayerShield.Instance.ApplyShield();
+                return true;
+            }
+
+            return false;
+        }
     }
 }

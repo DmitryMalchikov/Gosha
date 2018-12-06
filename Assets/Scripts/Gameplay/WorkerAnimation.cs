@@ -1,24 +1,27 @@
 ﻿using UnityEngine;
 
-public class WorkerAnimation : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    private Animator _animator;
-
-    private void Start()
+    public class WorkerAnimation : MonoBehaviour
     {
-        _animator = GetComponent<Animator>();
-    }
+        private Animator _animator;
 
-    private void OnDisable()
-    {
-        _animator.enabled = false;
-    }
+        private void Start()
+        {
+            _animator = GetComponent<Animator>();
+        }
 
-    private void OnEnable()
-    {
-		if (!_animator) {
-			_animator = GetComponent<Animator> ();
-		}
-        _animator.enabled = true;
+        private void OnDisable()
+        {
+            _animator.enabled = false;
+        }
+
+        private void OnEnable()
+        {
+            if (!_animator) {
+                _animator = GetComponent<Animator> ();
+            }
+            _animator.enabled = true;
+        }
     }
 }

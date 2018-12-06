@@ -2,43 +2,46 @@
 using System.Linq;
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class IceCremChecker : MonoBehaviour
+namespace Assets.Scripts
 {
-    void Start()
+    [ExecuteInEditMode]
+    public class IceCremChecker : MonoBehaviour
     {
-        List<Transform> ic = new List<Transform>();
-        for (int i = 0; i < transform.childCount; i++)
+        void Start()
         {
-            ic.Add(transform.GetChild(i));
-        }
-
-        var list = CheckDuplicatePos(ic);
-        for (int i = 0; i < ic.Count; i++)
-        {
-            if (!list.Contains(ic[i]))
+            List<Transform> ic = new List<Transform>();
+            for (int i = 0; i < transform.childCount; i++)
             {
-                DestroyImmediate(ic[i].gameObject);
+                ic.Add(transform.GetChild(i));
+            }
+
+            var list = CheckDuplicatePos(ic);
+            for (int i = 0; i < ic.Count; i++)
+            {
+                if (!list.Contains(ic[i]))
+                {
+                    DestroyImmediate(ic[i].gameObject);
+                }
             }
         }
+
+        private List<Transform> CheckDuplicatePos(List<Transform> obj)
+        {
+            return obj.Distinct(new TransformComparer()).ToList();
+        }
+
     }
 
-    private List<Transform> CheckDuplicatePos(List<Transform> obj)
+    public class TransformComparer : IEqualityComparer<Transform>
     {
-        return obj.Distinct(new TransformComparer()).ToList();
-    }
+        public bool Equals(Transform x, Transform y)
+        {
+            return Vector3.Distance(x.localPosition, y.localPosition) < 0.03f;
+        }
 
-}
-
-public class TransformComparer : IEqualityComparer<Transform>
-{
-    public bool Equals(Transform x, Transform y)
-    {
-        return Vector3.Distance(x.localPosition, y.localPosition) < 0.03f;
-    }
-
-    public int GetHashCode(Transform obj)
-    {
-        return 1;
+        public int GetHashCode(Transform obj)
+        {
+            return 1;
+        }
     }
 }

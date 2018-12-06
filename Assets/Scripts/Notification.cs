@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Notification : MonoBehaviour
+namespace Assets.Scripts
 {
-    public Text count;
-
-    public void SetCount(int number)
+    public class Notification : MonoBehaviour
     {
-        if (number > 0)
+        public Text count;
+
+        public void SetCount(int number)
         {
-            count.text = number.ToString();
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            gameObject.SetActive(false);
+            if (number > 0)
+            {
+                count.text = number.ToString();
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 }

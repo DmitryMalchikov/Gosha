@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 
-public class PanelInitializatier : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    [SerializeField]
-    private GameObject[] _panels;
-
-    private void Start()
+    public class PanelInitializatier : MonoBehaviour
     {
-        for (int i  = 0; i < _panels.Length; i++)
+        [SerializeField]
+        private GameObject[] _panels;
+
+        private void Start()
         {
-            _panels[i].SetActive(false);
+            for (int i  = 0; i < _panels.Length; i++)
+            {
+                _panels[i].SetActive(false);
+            }
         }
     }
 }

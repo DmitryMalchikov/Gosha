@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 
-public class Shield : MonoBehaviour, IPickable
+namespace Assets.Scripts.Gameplay
 {
-    public void PickUp()
+    public class Shield : MonoBehaviour, IPickable
     {
-        PlayerShield.Instance.ApplyShield();
-        gameObject.SetActive(false);
-        AudioManager.PlayEffectPickup();
+        public void PickUp()
+        {
+            PlayerShield.Instance.ApplyShield();
+            gameObject.SetActive(false);
+            AudioManager.PlayEffectPickup();
+        }
     }
 }

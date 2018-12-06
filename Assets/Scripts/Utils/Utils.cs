@@ -3,43 +3,46 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-public static class Utils
+namespace Assets.Scripts.Utils
 {
-    private static string shluha = "supershluha2";
-
-    public static string CalculateMD5Hash(string input)
-
+    public static class Utils
     {
-        // step 1, calculate MD5 hash from input
+        private static string shluha = "supershluha2";
 
-        MD5 md5 = MD5.Create();
+        public static string CalculateMD5Hash(string input)
 
-        byte[] inputBytes = Encoding.ASCII.GetBytes(input + shluha);
-
-        byte[] hash = md5.ComputeHash(inputBytes);
-
-        // step 2, convert byte array to hex string
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < hash.Length; i++)
         {
-            sb.Append(hash[i].ToString("X2"));
+            // step 1, calculate MD5 hash from input
+
+            MD5 md5 = MD5.Create();
+
+            byte[] inputBytes = Encoding.ASCII.GetBytes(input + shluha);
+
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // step 2, convert byte array to hex string
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+
+            return sb.ToString();
+
         }
-
-        return sb.ToString();
-
     }
-}
 
-public static class CoroutineUtil
-{
-    public static IEnumerator WaitForRealSeconds(float time)
+    public static class CoroutineUtil
     {
-        float start = Time.realtimeSinceStartup;
-        while (Time.realtimeSinceStartup < start + time)
+        public static IEnumerator WaitForRealSeconds(float time)
         {
-            yield return null;
+            float start = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup < start + time)
+            {
+                yield return null;
+            }
         }
     }
 }

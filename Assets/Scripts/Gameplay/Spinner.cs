@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 
-public class Spinner : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public Vector3 Rotatation = new Vector3(0, 10f, 0);
-
-    void Update()
+    public class Spinner : MonoBehaviour
     {
-        transform.Rotate(Rotatation * Time.deltaTime, Space.World);
-    }
+        public Vector3 Rotation = new Vector3(0, 60f, 0);
 
-    public void StartRotation(Vector3 previousRot)
-    {
-        transform.rotation = Quaternion.Euler(previousRot);
+        void Update()
+        {
+            transform.Rotate(Rotation * Time.deltaTime, Space.World);
+        }
+
+        public void StartRotation(Vector3 previousRot)
+        {
+            transform.rotation = Quaternion.Euler(previousRot);
+        }
     }
 }

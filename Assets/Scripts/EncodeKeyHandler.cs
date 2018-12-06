@@ -1,25 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts.Gameplay;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
 using UnityEngine;
 
-public class EncodeKeyHandler : Singleton<EncodeKeyHandler>
+namespace Assets.Scripts
 {
-    [SerializeField]
-    private string _shopKey = "sosipisos";
-
-    public static string GetKey(DataType type)
+    public class EncodeKeyHandler : Singleton<EncodeKeyHandler>
     {
-        string pass = string.Empty;
+        [SerializeField]
+        private string _shopKey = "sosipisos";
 
-        if (type == DataType.Shop && LoginManager.LocalUser)
+        public static string GetKey(DataType type)
         {
-            pass = Instance._shopKey;
-        }
-        else
-        {
-            pass = GameController.DeviceId;
-        }
+            string pass = string.Empty;
 
-        return pass;
+            if (type == DataType.Shop && LoginManager.LocalUser)
+            {
+                pass = Instance._shopKey;
+            }
+            else
+            {
+                pass = GameController.DeviceId;
+            }
+
+            return pass;
+        }
     }
 }

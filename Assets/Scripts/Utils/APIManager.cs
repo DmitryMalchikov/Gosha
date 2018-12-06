@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
-public abstract class APIManager<T> : Singleton<T> where T: MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-	protected virtual void Start ()
+    public abstract class APIManager<T> : Singleton<T> where T: MonoBehaviour
     {
-        SetUrls();
-	}
+        protected virtual void Start ()
+        {
+            SetUrls();
+        }
 
-    public abstract void SetUrls();
+        public abstract void SetUrls();
+    }
 }

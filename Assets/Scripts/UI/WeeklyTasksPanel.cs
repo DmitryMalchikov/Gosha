@@ -1,22 +1,27 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class WeeklyTasksPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Transform Content;
-    public GameObject TaskObject;
-
-    public void SetTasks(PlayerTaskModel[] models)
+    public class WeeklyTasksPanel : MonoBehaviour
     {
-        ClearContent();
+        public Transform Content;
+        public GameObject TaskObject;
 
-        for (int i = 0; i < models.Length; i++)
+        public void SetTasks(PlayerTaskModel[] models)
         {
-            WeeklyTask newTask = Instantiate(TaskObject, Content).GetComponent<WeeklyTask>();
-            newTask.SetTask(i + 1, models[i]);
+            ClearContent();
+
+            for (int i = 0; i < models.Length; i++)
+            {
+                WeeklyTask newTask = Instantiate(TaskObject, Content).GetComponent<WeeklyTask>();
+                newTask.SetTask(i + 1, models[i]);
+            }
         }
-    }
-    public void ClearContent()
-    {
-        Content.ClearContent();
+        public void ClearContent()
+        {
+            Content.ClearContent();
+        }
     }
 }

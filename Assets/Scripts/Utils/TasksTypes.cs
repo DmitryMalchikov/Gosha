@@ -1,18 +1,21 @@
-﻿public enum TasksTypes {
-	Run, 
-	Jump, 
-	Play, 
-	CollectBonus,
-	CollectIceCream, 
-	Buy, 
-	Loose, 
-	Share,
-    All
-}
+﻿namespace Assets.Scripts.Utils
+{
+    public enum TasksTypes {
+        Run, 
+        Jump, 
+        Play, 
+        CollectBonus,
+        CollectIceCream, 
+        Buy, 
+        Loose, 
+        Share,
+        All
+    }
 
-public enum BonusType{
-	Magnet,
-	Shield,
-	Freeze,
-	Rocket
+    public enum BonusType{
+        Magnet,
+        Shield,
+        Freeze,
+        Rocket
+    }
 }

@@ -1,81 +1,88 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-public class PhoneNumberTemplate
+namespace Assets.Scripts.Utils
 {
-    private const char defaultCharacter = '_';
-    private const string charactersType = @"\d";
-    private const char placeholder = '#';
-
-    private string _result = string.Empty;
-    private byte _previousLength = 0;
-    private string _previousInput;
-
-    public string ChangePhoneCharacters(string input, string regionTemplate)
+    public class PhoneNumberTemplate
     {
-        if (input == _result)
-        {
-            return input;
-        }
-        bool isDeleting = _previousLength > input.Length;
-        char deletedCharacter = ' ';
-        _previousLength = (byte)input.Length;
-        if (isDeleting && !string.IsNullOrEmpty(_previousInput))
-        {
-            deletedCharacter = _previousInput[_previousInput.Length - 1];
-        }
-        _previousInput = input;
+        private const char defaultCharacter = '_';
+        private const string charactersType = @"\d";
+        private const char placeholder = '#';
 
-        string template = regionTemplate.Replace(defaultCharacter, placeholder);
+        private string _result = string.Empty;
+        private byte _previousLength = 0;
+        private string _previousInput;
 
-        StringBuilder builder = new StringBuilder(template);
-        Regex reg = new Regex(charactersType);
-        var matches = reg.Matches(input);
-        int index = -1;
-
-        for (int i = 0; i < matches.Count; i++)
+        public string ChangePhoneCharacters(string input, string regionTemplate)
         {
-            index = -1;
-            for (int j = 0; j < builder.Length; j++)
+            if (input == _result)
             {
-                if (builder[j] == placeholder)
+                return input;
+            }
+            bool isDeleting = _previousLength > input.Length;
+            char deletedCharacter = ' ';
+            _previousLength = (byte)input.Length;
+            if (isDeleting && !string.IsNullOrEmpty(_previousInput))
+            {
+                deletedCharacter = _previousInput[_previousInput.Length - 1];
+            }
+            _previousInput = input;
+
+            string template = regionTemplate.Replace(defaultCharacter, placeholder);
+
+            StringBuilder builder = new StringBuilder(template);
+            Regex reg = new Regex(charactersType);
+            var matches = reg.Matches(input);
+            int index = -1;
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                index = -1;
+                for (int j = 0; j < builder.Length; j++)
                 {
-                    index = j;
-                    break;
+                    if (builder[j] == placeholder)
+                    {
+                        index = j;
+                        break;
+                    }
+                }
+
+                if (index > -1)
+                {
+                    builder.Replace(placeholder, matches[i].Value[0], index, 1);
                 }
             }
 
-            if (index > -1)
-            {
-                builder.Replace(placeholder, matches[i].Value[0], index, 1);
-            }
-        }
 
-
-        for (int i = builder.Length - 1; builder.Length > 0 && i >= 0; i--)
-        {
-            if (builder[i] == placeholder)
+            for (int i = builder.Length - 1; builder.Length > 0 && i >= 0; i--)
             {
-                builder.Remove(i, 1);
-            }
-            else if (!Regex.IsMatch(builder[i].ToString(), charactersType))
-            {
-                if (i > 0)
+                if (builder[i] == placeholder)
                 {
-                    if (isDeleting)
+                    builder.Remove(i, 1);
+                }
+                else if (!Regex.IsMatch(builder[i].ToString(), charactersType))
+                {
+                    if (i > 0)
                     {
-                        if (!Regex.IsMatch(builder[i].ToString(), charactersType))
+                        if (isDeleting)
                         {
-                            if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
+                            if (!Regex.IsMatch(builder[i].ToString(), charactersType))
                             {
-                                if (!Regex.IsMatch(deletedCharacter.ToString(), charactersType))
+                                if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
                                 {
-                                    builder.Remove(i - 1, 2);
-                                    i--;
+                                    if (!Regex.IsMatch(deletedCharacter.ToString(), charactersType))
+                                    {
+                                        builder.Remove(i - 1, 2);
+                                        i--;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
                                 }
                                 else
                                 {
-                                    break;
+                                    builder.Remove(i, 1);
                                 }
                             }
                             else
@@ -83,14 +90,14 @@ public class PhoneNumberTemplate
                                 builder.Remove(i, 1);
                             }
                         }
+                        else if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
+                        {
+                            break;
+                        }
                         else
                         {
                             builder.Remove(i, 1);
                         }
-                    }
-                    else if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
-                    {
-                        break;
                     }
                     else
                     {
@@ -99,16 +106,12 @@ public class PhoneNumberTemplate
                 }
                 else
                 {
-                    builder.Remove(i, 1);
+                    break;
                 }
             }
-            else
-            {
-                break;
-            }
-        }
 
-        _result = builder.ToString();
-        return _result;
+            _result = builder.ToString();
+            return _result;
+        }
     }
 }

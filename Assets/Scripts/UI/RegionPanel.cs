@@ -1,26 +1,28 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class RegionPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public RegionModel info;
-    public LocalizedText RegionName;
-    public Toggle ToggleBox;
-    public Image Flag;
-
-    public void ChooseRegion(bool isChosen)
+    public class RegionPanel : MonoBehaviour
     {
-        if (isChosen)
+        public RegionModel info;
+        public LocalizedText RegionName;
+        public Toggle ToggleBox;
+        public Image Flag;
+
+        public void ChooseRegion(bool isChosen)
         {
+            if (!isChosen) return;
             Canvaser.Instance.RegistrationPanel.Region = info;
             Canvaser.Instance.RegistrationPanel.Phone.placeholder.GetComponent<Text>().text = info.PhonePlaceholder;
         }
-    }
 
-    public void SetRegionPanel(RegionModel model)
-    {
-        info = model;
-        RegionName.Key = info.Name;
-        Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
+        public void SetRegionPanel(RegionModel model)
+        {
+            info = model;
+            RegionName.Key = info.Name;
+            Flag.sprite = Resources.Load<Sprite>("Flag" + info.Id);
+        }
     }
 }

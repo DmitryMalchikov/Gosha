@@ -1,13 +1,16 @@
-﻿public class RegisterBindingModel : RegisterExternalBindingModel
+﻿namespace Assets.Scripts.DTO
 {
-    public string Password { get; set; }
-    public string ConfirmPassword { get; set; }
-
-    public RegisterBindingModel(RegisterBindingModel model) : base(model)
+    public class RegisterBindingModel : RegisterExternalBindingModel
     {
-        Password = model.Password;
-        ConfirmPassword = model.Password;
-    }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
 
-    public RegisterBindingModel() { }
+        public RegisterBindingModel(RegisterBindingModel model) : base(model)
+        {
+            Password = model.Password;
+            ConfirmPassword = model.Password;
+        }
+
+        public RegisterBindingModel() { }
+    }
 }

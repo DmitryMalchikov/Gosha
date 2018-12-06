@@ -1,33 +1,38 @@
 ﻿using System.Collections;
+using Assets.Scripts.Gameplay;
+using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Countdown : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Text SecondsLeft;
-
-    private void OnEnable()
+    public class Countdown : MonoBehaviour
     {
-        StartCoroutine(StartCountdown());
-    }
+        public Text SecondsLeft;
 
-    private IEnumerator StartCountdown()
-    {
-        var time = 3;
-
-        while (time > 0)
+        private void OnEnable()
         {
-            SecondsLeft.text = time.ToString();
-            yield return StartCoroutine(CoroutineUtil.WaitForRealSeconds(1));
-            time--;
+            StartCoroutine(StartCountdown());
         }
 
-        if (!GameController.Paused)
+        private IEnumerator StartCountdown()
         {
-            PlayerController.Instance.RemoveObstcles();
-        }
+            var time = 3;
 
-        GameController.Instance.ContinueAfterCountdown();
-        gameObject.SetActive(false);     
+            while (time > 0)
+            {
+                SecondsLeft.text = time.ToString();
+                yield return StartCoroutine(CoroutineUtil.WaitForRealSeconds(1));
+                time--;
+            }
+
+            if (!GameController.Paused)
+            {
+                PlayerController.Instance.RemoveObstacles();
+            }
+
+            GameController.Instance.ContinueAfterCountdown();
+            gameObject.SetActive(false);     
+        }
     }
 }

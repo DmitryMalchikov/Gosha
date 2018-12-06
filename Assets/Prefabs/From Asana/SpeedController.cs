@@ -1,4 +1,8 @@
 ﻿using System.Collections;
+using Assets.Scripts.Gameplay;
+using Assets.Scripts.Managers;
+using Assets.Scripts.UI;
+using Assets.Scripts.Utils;
 using UnityEngine;
 
 public class SpeedController : Singleton<SpeedController>

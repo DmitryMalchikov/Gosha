@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public class SuitInfo : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public string SuitName;
+    public class SuitInfo : MonoBehaviour
+    {
+        public string SuitName;
+    }
 }

@@ -1,6 +1,9 @@
-﻿public class PlayerTasksAnswer
+﻿namespace Assets.Scripts.DTO
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public Bonus Reward { get; set; }
+    public class PlayerTasksAnswer
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Bonus Reward { get; set; }
+    }
 }

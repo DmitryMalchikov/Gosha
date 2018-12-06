@@ -1,6 +1,9 @@
-﻿public class DuelsFullInfoModel
+﻿namespace Assets.Scripts.DTO
 {
-    public DuelModel[] DuelOffers { get; set; }
-    public DuelModel[] DuelRequests { get; set; }
-    public string DuelsHash { get; set; }
+    public class DuelsFullInfoModel
+    {
+        public DuelModel[] DuelOffers { get; set; }
+        public DuelModel[] DuelRequests { get; set; }
+        public string DuelsHash { get; set; }
+    }
 }

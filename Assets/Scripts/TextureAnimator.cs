@@ -1,23 +1,27 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Gameplay;
+using UnityEngine;
 
-public class TextureAnimator : MonoBehaviour
+namespace Assets.Scripts
 {
-    public float SpeedCoef = .5f;
-    private Material mat;
-    private float offset = 0;
-
-    void Start()
+    public class TextureAnimator : MonoBehaviour
     {
-        mat = GetComponent<Renderer>().material;
-    }
+        public float SpeedCoef = .5f;
+        private Material mat;
+        private float _offset = 0;
+
+        void Start()
+        {
+            mat = GetComponent<Renderer>().material;
+        }
     
-    void Update()
-    {
-        if (!GameController.Started)
-            return;
+        void Update()
+        {
+            if (!GameController.Started)
+                return;
 
-        offset += Time.deltaTime * SpeedController.Speed.z * SpeedCoef;
-        offset %= 1;
-        mat.SetTextureOffset("_MainTex", new Vector2(0, offset));
+            _offset += Time.deltaTime * SpeedController.Speed.z * SpeedCoef;
+            _offset %= 1;
+            mat.SetTextureOffset("_MainTex", new Vector2(0, _offset));
+        }
     }
 }

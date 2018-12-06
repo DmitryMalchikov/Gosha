@@ -1,19 +1,51 @@
-﻿public abstract class BonusParent : IBonus
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using Assets.Scripts.UI;
+
+namespace Assets.Scripts.Utils
 {
-    Bonus _childBonus;
-
-    public BonusParent(Bonus bonus)
+    public class BonusParent : IBonus
     {
-        _childBonus = bonus;
-    }
+        Bonus _childBonus;
 
-    public Bonus CurrentBonus
-    {
-        get
+        public int Count { get { return _childBonus == null ? 0 : _childBonus.Amount; } }
+
+        public BonusParent() { }
+
+        public BonusParent(Bonus bonus)
         {
-            return _childBonus;
+            _childBonus = bonus;
         }
-    }
 
-    public abstract bool UseBonus();
+        public Bonus CurrentBonus
+        {
+            get
+            {
+                return _childBonus;
+            }
+        }
+
+        public bool Use()
+        {
+            if (_childBonus.Amount < 1)
+            {
+                return false;
+            }
+
+            _childBonus.Amount -= 1;
+            if (!LoginManager.LocalUser)
+            {
+                ScoreManager.Instance.UseBonusAsync(_childBonus.Id);
+            }
+            else
+            {
+                Canvaser.Instance.SBonuses.SetStartBonuses(LoginManager.User.Bonuses);
+                FileExtensions.SaveJsonDataAsync(DataType.UserInfo, LoginManager.User);
+            }
+            return true;
+        }
+
+        public virtual bool UseBonus() { return false; }
+    }
 }

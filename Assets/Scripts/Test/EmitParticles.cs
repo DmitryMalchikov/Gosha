@@ -1,18 +1,20 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EmitParticles : MonoBehaviour
+namespace Assets.Scripts.Test
 {
-    private ParticleSystem _part;
-    private IEnumerator Start()
+    public class EmitParticles : MonoBehaviour
     {
-        _part = GetComponent<ParticleSystem>();
-
-        while (true)
+        private ParticleSystem _part;
+        private IEnumerator Start()
         {
-            yield return new WaitForSeconds(3);
-            _part.Emit(30);
+            _part = GetComponent<ParticleSystem>();
+
+            while (true)
+            {
+                yield return new WaitForSeconds(3);
+                _part.Emit(30);
+            }
         }
     }
 }

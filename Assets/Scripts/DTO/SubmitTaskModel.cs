@@ -1,6 +1,9 @@
-﻿public class SubmitTaskModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int Id { get; set; }
-    public int TaskId { get; set; }
-    public int PlayerProgress { get; set; }
+    public class SubmitTaskModel
+    {
+        public int Id { get; set; }
+        public int TaskId { get; set; }
+        public int PlayerProgress { get; set; }
+    }
 }

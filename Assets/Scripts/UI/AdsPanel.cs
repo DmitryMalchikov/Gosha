@@ -1,28 +1,32 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AdsPanel : MonoBehaviour {
+namespace Assets.Scripts.UI
+{
+    public class AdsPanel : MonoBehaviour {
 
-    public RawImage img;
-    public Text txt;
+        public RawImage img;
+        public Text txt;
 
-    public List<GameObject> LoadingPanels = new List<GameObject>();
+        public List<GameObject> LoadingPanels = new List<GameObject>();
 
-    public void OpenAds()
-    {
-        gameObject.SetActive(true);
-        Canvaser.Instance.DoubleIcecreamClicked = false;
+        public void OpenAds()
+        {
+            gameObject.SetActive(true);
+            Canvaser.Instance.DoubleIcecreamClicked = false;
+        }
+
+        public void OpenUrl()
+        {
+            Application.OpenURL(txt.text);
+        }
+
+        public void DoubleScore()
+        {
+            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+            AdsManager.Instance.GetAds(txt, img);
+        }
     }
-
-    public void OpenUrl()
-    {
-        Application.OpenURL(txt.text);
-    }
-
-	public void DoubleScore()
-	{
-		AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-		AdsManager.Instance.GetAds(txt, img);
-	}
 }

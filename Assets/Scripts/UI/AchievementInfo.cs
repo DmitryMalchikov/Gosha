@@ -1,48 +1,50 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Managers;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class AchievementInfo : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public PlayerAchievementModel info;
-
-    public Text Title;
-    public Text Description;
-    public GameObject SocialNetworkButtons;
-
-    public RawImage ADS;
-    public Text ADSText;
-
-    public void SetAchievementInfo(PlayerAchievementModel model)
+    public class AchievementInfo : MonoBehaviour
     {
-        info = model;
-        Title.text = model.Name;
-        Description.text = model.GenerateDescription();
-        SocialNetworkButtons.SetActive(model.PlayerProgress >= model.ActionsCount);
-        AdsManager.Instance.GetAds(ADSText, ADS);
-        gameObject.SetActive(true);
-    }
+        public Text Title;
+        public Text Description;
+        public GameObject SocialNetworkButtons;
 
-    public void SetAchievementInfo()
-    {
-        Title.text = LocalizationManager.GetLocalizedValue("share");
-        Description.text = LocalizationManager.GetLocalizedValue("sharegamewithyourfriends");
-        SocialNetworkButtons.SetActive(true);
-        AdsManager.Instance.GetAds(ADSText, ADS);
-        gameObject.SetActive(true);
-    }
+        public RawImage ADS;
+        public Text ADSText;
 
-    public void ShareFB()
-    {
-        FBManager.Instance.OpenShare("Kek");
-    }
+        public void SetAchievementInfo(PlayerAchievementModel model)
+        {
+            Title.text = model.Name;
+            Description.text = model.GenerateDescription();
+            SocialNetworkButtons.SetActive(model.PlayerProgress >= model.ActionsCount);
+            AdsManager.Instance.GetAds(ADSText, ADS);
+            gameObject.SetActive(true);
+        }
 
-    public void ShareVK()
-    {
-        VKManager.Instance.OpenShare("Kek");
-    }
+        public void SetAchievementInfo()
+        {
+            Title.text = LocalizationManager.GetLocalizedValue("share");
+            Description.text = LocalizationManager.GetLocalizedValue("sharegamewithyourfriends");
+            SocialNetworkButtons.SetActive(true);
+            AdsManager.Instance.GetAds(ADSText, ADS);
+            gameObject.SetActive(true);
+        }
 
-    public void ShareOK()
-    {
-        OKManager.Instance.OpenShare("Kek");
+        public void ShareFB()
+        {
+            FBManager.Instance.OpenShare("Kek");
+        }
+
+        public void ShareVK()
+        {
+            VKManager.Instance.OpenShare("Kek");
+        }
+
+        public void ShareOK()
+        {
+            OKManager.Instance.OpenShare("Kek");
+        }
     }
 }

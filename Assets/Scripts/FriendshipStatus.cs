@@ -1,7 +1,10 @@
-﻿public enum FriendshipStatus
+﻿namespace Assets.Scripts
 {
-    IncomingRequest,
-    AreFriends,
-    NotFriends,
-    OutgoingRequest
+    public enum FriendshipStatus
+    {
+        IncomingRequest,
+        AreFriends,
+        NotFriends,
+        OutgoingRequest
+    }
 }

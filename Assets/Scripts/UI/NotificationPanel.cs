@@ -1,50 +1,54 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Managers;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class NotificationPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Text NotificationText;
-
-    private NotificationType _currentType;
-
-    public void OpenNotification(NotificationType type, int count)
+    public class NotificationPanel : MonoBehaviour
     {
-        _currentType = type;
+        public Text NotificationText;
 
-        string typeText = "friendrequests";
+        private NotificationType _currentType;
 
-        switch (type)
+        public void OpenNotification(NotificationType type, int count)
         {
-            case NotificationType.DuelRequest:
-                typeText = "notificationduel";
-                break;
-            case NotificationType.FriendRequest:
-                typeText = "notificationfriendship";
-                break;
-            case NotificationType.TradeRequest:
-                typeText = "notificationtrade";
-                break;
+            _currentType = type;
+
+            string typeText = "friendrequests";
+
+            switch (type)
+            {
+                case NotificationType.DuelRequest:
+                    typeText = "notificationduel";
+                    break;
+                case NotificationType.FriendRequest:
+                    typeText = "notificationfriendship";
+                    break;
+                case NotificationType.TradeRequest:
+                    typeText = "notificationtrade";
+                    break;
+            }
+
+            NotificationText.text = string.Format(LocalizationManager.GetLocalizedValue("youhavenewnotifications"), LocalizationManager.GetLocalizedValue(typeText), count);
+
+            gameObject.SetActive(true);
         }
 
-        NotificationText.text = string.Format(LocalizationManager.GetLocalizedValue("youhavenewnotifications"), LocalizationManager.GetLocalizedValue(typeText), count);
-
-        gameObject.SetActive(true);
-    }
-
-    public void GoToNotifications()
-    {
-        switch (_currentType)
+        public void GoToNotifications()
         {
-            case NotificationType.DuelRequest:
-                Canvaser.Instance.Duels.OpenDirectlyRequests();
-                break;
-            case NotificationType.FriendRequest:
-                Canvaser.Instance.FriendsPanel.OpenDirectlyRequests();
-                break;
-            case NotificationType.TradeRequest:
-                Canvaser.Instance.GetTrades();
-                break;
+            switch (_currentType)
+            {
+                case NotificationType.DuelRequest:
+                    Canvaser.Instance.Duels.OpenDirectlyRequests();
+                    break;
+                case NotificationType.FriendRequest:
+                    Canvaser.Instance.FriendsPanel.OpenDirectlyRequests();
+                    break;
+                case NotificationType.TradeRequest:
+                    Canvaser.Instance.GetTrades();
+                    break;
+            }
+            gameObject.SetActive(false);
         }
-        gameObject.SetActive(false);
     }
 }

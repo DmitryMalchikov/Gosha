@@ -1,19 +1,22 @@
-﻿public class NameLocalization
+﻿namespace Assets.Scripts.DTO
 {
-    public string Name { get; set; }
-    public string NameRu { get; set; }
-
-    public NameLocalization() { }
-
-    public NameLocalization(string name, string nameRu)
+    public class NameLocalization
     {
-        Name = name;
-        NameRu = nameRu;
-    }
+        public string Name { get; set; }
+        public string NameRu { get; set; }
 
-    public void SetNames(string name, string nameRu)
-    {
-        Name = name;
-        NameRu = NameRu;
+        public NameLocalization() { }
+
+        public NameLocalization(string name, string nameRu)
+        {
+            Name = name;
+            NameRu = nameRu;
+        }
+
+        public void SetNames(string name, string nameRu)
+        {
+            Name = name;
+            NameRu = NameRu;
+        }
     }
 }

@@ -1,43 +1,46 @@
 ﻿using UnityEngine;
 
-public class Effect : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    private ParticleSystem[] _effects;
-
-    void Start()
+    public class Effect : MonoBehaviour
     {
-        _effects = GetComponentsInChildren<ParticleSystem>();
-    }
+        private ParticleSystem[] _effects;
 
-    public void Show(bool toShow, bool stopImmediately = false)
-    {
-        if (toShow)
+        private void Start()
         {
-            Play();
+            _effects = GetComponentsInChildren<ParticleSystem>();
         }
-        else
-        {
-            Stop(stopImmediately);
-        }
-    }
 
-    public void Play()
-    {
-        for (byte i = 0; i < _effects.Length; i++)
+        public void Show(bool toShow, bool stopImmediately = false)
         {
-            _effects[i].Play();
-        }
-    }
-
-    public void Stop(bool stopImmediately)
-    {
-        for (byte i = 0; i < _effects.Length; i++)
-        {
-            if (stopImmediately)
+            if (toShow)
             {
-                _effects[i].Clear();
+                Play();
             }
-            _effects[i].Stop();
+            else
+            {
+                Stop(stopImmediately);
+            }
+        }
+
+        public void Play()
+        {
+            for (byte i = 0; i < _effects.Length; i++)
+            {
+                _effects[i].Play();
+            }
+        }
+
+        public void Stop(bool stopImmediately)
+        {
+            for (byte i = 0; i < _effects.Length; i++)
+            {
+                if (stopImmediately)
+                {
+                    _effects[i].Clear();
+                }
+                _effects[i].Stop();
+            }
         }
     }
 }

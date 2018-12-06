@@ -1,144 +1,148 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class PlayerAnimator : Singleton<PlayerAnimator>
+namespace Assets.Scripts.Gameplay
 {
-    #region Hashes
-    private static readonly int CrouchHash = Animator.StringToHash("Crouch");
-    private static readonly int JumpHash = Animator.StringToHash("Jump");
-    private static readonly int DeathHash = Animator.StringToHash("Death");
-    private static readonly int HitLeftHash = Animator.StringToHash("HitLeft");
-    private static readonly int HitRightHash = Animator.StringToHash("HitRight");
-    private static readonly int LeftHash = Animator.StringToHash("Left");
-    private static readonly int RightHash = Animator.StringToHash("Right");
-    private static readonly int OnGroundHash = Animator.StringToHash("OnGround");
-    private static readonly int StartedHash = Animator.StringToHash("Started");
-    private static readonly int RocketHash = Animator.StringToHash("Rocket");
-    private static readonly int RocketTriggerHash = Animator.StringToHash("RocketTrigger");
-    private static readonly int ResetTriggerHash = Animator.StringToHash("Reset");
-    private static readonly int GroundNearHash = Animator.StringToHash("GroundNear");
-    #endregion
-
-    [SerializeField]
-    private Animator _animator;
-    [SerializeField]
-    private Transform _animatorRoot;
-    [SerializeField]
-    private float _groundNearDistance = 0.5f;
-
-    private static Animator InstaceAnimator
+    public class PlayerAnimator : Singleton<PlayerAnimator>
     {
-        get
+        #region Hashes
+        private static readonly int CrouchHash = Animator.StringToHash("Crouch");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int DeathHash = Animator.StringToHash("Death");
+        private static readonly int HitLeftHash = Animator.StringToHash("HitLeft");
+        private static readonly int HitRightHash = Animator.StringToHash("HitRight");
+        private static readonly int LeftHash = Animator.StringToHash("Left");
+        private static readonly int RightHash = Animator.StringToHash("Right");
+        private static readonly int OnGroundHash = Animator.StringToHash("OnGround");
+        private static readonly int StartedHash = Animator.StringToHash("Started");
+        private static readonly int RocketHash = Animator.StringToHash("Rocket");
+        private static readonly int RocketTriggerHash = Animator.StringToHash("RocketTrigger");
+        private static readonly int ResetTriggerHash = Animator.StringToHash("Reset");
+        private static readonly int GroundNearHash = Animator.StringToHash("GroundNear");
+        #endregion
+
+        [SerializeField]
+        private Animator _animator;
+        [SerializeField]
+        private Transform _animatorRoot;
+        [SerializeField]
+        private float _groundNearDistance = 0.5f;
+
+        private static Animator InstanceAnimator
         {
-            return Instance._animator;
+            get
+            {
+                return Instance._animator;
+            }
         }
-    }
 
-    public static void SetRocket(bool isOn)
-    {
-        InstaceAnimator.SetBool(RocketHash, isOn);
-
-        if (isOn)
+        public static void SetRocket(bool isOn)
         {
-            InstaceAnimator.SetTrigger(RocketTriggerHash);
+            InstanceAnimator.SetBool(RocketHash, isOn);
+
+            if (isOn)
+            {
+                InstanceAnimator.SetTrigger(RocketTriggerHash);
+            }
+            else
+            {
+                InstanceAnimator.ResetTrigger(RocketTriggerHash);
+            }
         }
-        else
+
+        public static void Started(bool start)
         {
-            InstaceAnimator.ResetTrigger(RocketTriggerHash);
+            SetStarted(start);
+            SetResetTrigger(!start);
+            InstanceAnimator.transform.rotation = Quaternion.identity;
         }
-    }
 
-    public static void Started(bool start)
-    {
-        SetStarted(start);
-        SetResetTrigger(!start);
-        InstaceAnimator.transform.rotation = Quaternion.identity;
-    }
-
-    public static void Continue(bool toContinue)
-    {
-        SetStarted(toContinue);
-        SetResetTrigger(toContinue);
-        InstaceAnimator.transform.rotation = Quaternion.identity;
-    }
-
-    public static void SetStarted(bool isOn)
-    {
-        InstaceAnimator.SetBool(StartedHash, isOn);
-    }
-
-    public static void SetOnGround(bool isOn)
-    {
-        InstaceAnimator.SetBool(OnGroundHash, isOn);
-    }
-
-    public static void SetResetTrigger(bool set)
-    {
-        if (set)
+        public static void Continue(bool toContinue)
         {
-            InstaceAnimator.SetTrigger(ResetTriggerHash);
+            SetStarted(toContinue);
+            SetResetTrigger(toContinue);
+            InstanceAnimator.transform.rotation = Quaternion.identity;
         }
-        else
+
+        public static void SetStarted(bool isOn)
         {
-            InstaceAnimator.ResetTrigger(ResetTriggerHash);
+            InstanceAnimator.SetBool(StartedHash, isOn);
         }
-    }
 
-    public static void SetTurnTrigger(bool right)
-    {
-        if (right)
+        public static void SetOnGround(bool isOn)
         {
-            InstaceAnimator.SetTrigger(RightHash);
+            InstanceAnimator.SetBool(OnGroundHash, isOn);
         }
-        else
+
+        public static void SetResetTrigger(bool set)
         {
-            InstaceAnimator.SetTrigger(LeftHash);
+            if (set)
+            {
+                InstanceAnimator.SetTrigger(ResetTriggerHash);
+            }
+            else
+            {
+                InstanceAnimator.ResetTrigger(ResetTriggerHash);
+            }
         }
-    }
 
-    public static void SetSideHitTrigger(float sign)
-    {
-        if (sign == 1)
+        public static void SetTurnTrigger(bool right)
         {
-            InstaceAnimator.SetTrigger(HitLeftHash);
+            if (right)
+            {
+                InstanceAnimator.SetTrigger(RightHash);
+            }
+            else
+            {
+                InstanceAnimator.SetTrigger(LeftHash);
+            }
         }
-        else
+
+        public static void SetSideHitTrigger(float sign)
         {
-            InstaceAnimator.SetTrigger(HitRightHash);
+            if (sign == 1)
+            {
+                InstanceAnimator.SetTrigger(HitLeftHash);
+            }
+            else
+            {
+                InstanceAnimator.SetTrigger(HitRightHash);
+            }
         }
-    }
 
-    public static void SetJumpTrigger()
-    {
-        InstaceAnimator.SetTrigger(JumpHash);
-    }
+        public static void SetJumpTrigger()
+        {
+            InstanceAnimator.SetTrigger(JumpHash);
+        }
 
-    public static void SetCrouchTrigger()
-    {
-        InstaceAnimator.SetTrigger(CrouchHash);
-    }
+        public static void SetCrouchTrigger()
+        {
+            InstanceAnimator.SetTrigger(CrouchHash);
+        }
 
-    public static void SetDeath()
-    {
-        InstaceAnimator.SetTrigger(DeathHash);
-        InstaceAnimator.transform.rotation = Quaternion.Euler(0, Instance._animatorRoot.rotation.eulerAngles.y - 90, 0);
-        SetStarted(false);
-        ResetTriggers();
-    }
+        public static void SetDeath()
+        {
+            InstanceAnimator.SetTrigger(DeathHash);
+            InstanceAnimator.transform.rotation = Quaternion.Euler(0, Instance._animatorRoot.rotation.eulerAngles.y - 90, 0);
+            SetStarted(false);
+            ResetTriggers();
+        }
 
-    public static void SetGroundNear()
-    {
-        bool successRaycast = Physics.Raycast(new Ray(Instance.transform.position, Vector3.down), Instance._groundNearDistance, Masks.EnvironmentMask);
-        InstaceAnimator.SetBool(GroundNearHash, successRaycast);
-    }
+        public static void SetGroundNear()
+        {
+            bool successRaycast = Physics.Raycast(new Ray(Instance.transform.position, Vector3.down), Instance._groundNearDistance, Masks.EnvironmentMask);
+            InstanceAnimator.SetBool(GroundNearHash, successRaycast);
+        }
 
-    public static void ResetTriggers()
-    {
-        InstaceAnimator.ResetTrigger(HitLeftHash);
-        InstaceAnimator.ResetTrigger(HitRightHash);
-        InstaceAnimator.ResetTrigger(LeftHash);
-        InstaceAnimator.ResetTrigger(RightHash);
-        InstaceAnimator.ResetTrigger(CrouchHash);
-        InstaceAnimator.ResetTrigger(ResetTriggerHash);
-        InstaceAnimator.ResetTrigger(JumpHash);
+        public static void ResetTriggers()
+        {
+            InstanceAnimator.ResetTrigger(HitLeftHash);
+            InstanceAnimator.ResetTrigger(HitRightHash);
+            InstanceAnimator.ResetTrigger(LeftHash);
+            InstanceAnimator.ResetTrigger(RightHash);
+            InstanceAnimator.ResetTrigger(CrouchHash);
+            InstanceAnimator.ResetTrigger(ResetTriggerHash);
+            InstanceAnimator.ResetTrigger(JumpHash);
+        }
     }
 }

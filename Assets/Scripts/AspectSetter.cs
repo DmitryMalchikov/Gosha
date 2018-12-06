@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-[ExecuteInEditMode]
-public class AspectSetter : MonoBehaviour
+namespace Assets.Scripts
 {
-    public float Aspect = 1;
-
-    private void Update()
+    [ExecuteInEditMode]
+    public class AspectSetter : MonoBehaviour
     {
-        GetComponent<Camera>().aspect = Aspect;
+        public float Aspect = 1;
+
+        private void Update()
+        {
+            GetComponent<Camera>().aspect = Aspect;
+        }
     }
 }

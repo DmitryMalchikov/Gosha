@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using System.Runtime.InteropServices;
-using RestSharp.Contrib;
 
-public class GoshaAuthManager : MonoBehaviour
+namespace Assets.Scripts.Managers
 {
-	#if UNITY_IOS && !UNITY_EDITOR
+    public class GoshaAuthManager : MonoBehaviour
+    {
+#if UNITY_IOS && !UNITY_EDITOR
 	[DllImport("__Internal")]
 	private static extern void GoshaInit(string gameObject);
 
@@ -25,4 +25,5 @@ public class GoshaAuthManager : MonoBehaviour
 		GoshaInit (name);
 	}
 #endif
+    }
 }

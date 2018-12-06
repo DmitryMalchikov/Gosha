@@ -1,71 +1,75 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
 using Facebook.Unity;
+using UnityEngine;
 
-public class FBManager : Singleton<FBManager>
+namespace Assets.Scripts.Managers
 {
-    private string _currentAchievement;
-
-    private void Start()
+    public class FBManager : Singleton<FBManager>
     {
-        if (!FB.IsInitialized)
+        private string _currentAchievement;
+
+        private void Start()
         {
-			FB.Init(OnInitComplete);
+            if (!FB.IsInitialized)
+            {
+                FB.Init(OnInitComplete);
+            }
+            else
+            {
+                FB.ActivateApp();
+            }
         }
-        else
-        {
-            FB.ActivateApp();
+
+        private void OnInitComplete(){
+            Debug.Log("Init completed");
         }
-    }
 
-	private void OnInitComplete(){
-		Debug.Log("Init completed");
-	}
-
-    public void LogIn()
-    {
-        FB.LogInWithReadPermissions(callback: OnLogIn);
-    }
-
-    private void OnLogIn(ILoginResult result)
-    {
-        if (FB.IsLoggedIn)
+        public void LogIn()
         {
-            Share(_currentAchievement);
+            FB.LogInWithReadPermissions(callback: OnLogIn);
         }
-    }
 
-    public void OpenShare(string achievementName)
-    {
-        _currentAchievement = achievementName;
-
-        if (FB.IsLoggedIn)
+        private void OnLogIn(ILoginResult result)
         {
-            Share(_currentAchievement);
+            if (FB.IsLoggedIn)
+            {
+                Share(_currentAchievement);
+            }
         }
-        else
+
+        public void OpenShare(string achievementName)
         {
-            LogIn();
+            _currentAchievement = achievementName;
+
+            if (FB.IsLoggedIn)
+            {
+                Share(_currentAchievement);
+            }
+            else
+            {
+                LogIn();
+            }
         }
-    }
 
-    public void Share(string achievementName)
-    {
-        FB.FeedShare(linkCaption: "Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, 
-			link: new System.Uri("http://gosha.by/Html/HomePage.html"), 
-			linkName: "Go-go Gosha!",
-			callback: OnShare,
-            picture: new System.Uri(LoginManager.Instance.ShareImageUrl));       
-    }
-
-    private void OnShare(IShareResult result)
-    {
-        if (result.Cancelled || !string.IsNullOrEmpty(result.Error))
+        public void Share(string achievementName)
         {
-
+            FB.FeedShare(linkCaption: "Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, 
+                link: new System.Uri("http://gosha.by/Html/HomePage.html"), 
+                linkName: "Go-go Gosha!",
+                callback: OnShare,
+                picture: new System.Uri(LoginManager.Instance.ShareImageUrl));       
         }
-        else
+
+        private void OnShare(IShareResult result)
         {
-			AchievementsManager.Instance.CheckAchievements(TasksTypes.Share);
+            if (result.Cancelled || !string.IsNullOrEmpty(result.Error))
+            {
+
+            }
+            else
+            {
+                AchievementsManager.Instance.CheckAchievements(TasksTypes.Share);
+            }
         }
     }
 }

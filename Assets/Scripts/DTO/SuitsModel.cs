@@ -1,5 +1,8 @@
-﻿public class SuitsModel
+﻿namespace Assets.Scripts.DTO
 {
-    public Costume[] Costumes { get; set; }
-    public string SuitsHash { get; set; }
+    public class SuitsModel
+    {
+        public Costume[] Costumes { get; set; }
+        public string SuitsHash { get; set; }
+    }
 }

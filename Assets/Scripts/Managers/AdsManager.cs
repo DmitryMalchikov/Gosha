@@ -1,96 +1,102 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.DTO;
+using Assets.Scripts.UI;
+using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AdsManager : APIManager<AdsManager>
+namespace Assets.Scripts.Managers
 {
-    public event ResultCallback OnAdsDownloaded;
-    public static bool Initialized = false;
-
-    public string AdsUrl = "/api/ads/Advertisement";
-    public string AdsImageUrl = "/api/ads/adsimage?adsId=";
-	public string DoubleScoreUrl = "/api/gameplay/doublescore";
-
-    private List<GameObject> _loadingPanels;
-
-    public override void SetUrls()
+    public class AdsManager : APIManager<AdsManager>
     {
-        ServerInfo.SetUrl(ref AdsUrl);
-        ServerInfo.SetUrl(ref AdsImageUrl);
-		ServerInfo.SetUrl(ref DoubleScoreUrl);
-        Initialized = true;
-    }
+        public event ResultCallback OnAdsDownloaded;
+        public static bool Initialized = false;
 
-	public void DoubleScoreAds(Text text, RawImage image)
-	{
-        CoroutineManager.SendRequest(DoubleScoreUrl, new { Value = (int)LocalizationManager.CurrentLanguage },  (AdsModel ads) =>
-		{
-			text.text = ads.Text;
+        public string AdsUrl = "/api/ads/Advertisement";
+        public string AdsImageUrl = "/api/ads/adsimage?adsId=";
+        public string DoubleScoreUrl = "/api/gameplay/doublescore";
 
-			GetAdsImage(ads.Id, image);
-		});
-	}
+        private List<GameObject> _loadingPanels;
 
-    private void TurnOnLoading()
-    {
-        if (_loadingPanels == null)
+        public override void SetUrls()
         {
-            _loadingPanels = Canvaser.Instance.ADSPanel.GetComponent<AdsPanel>().LoadingPanels;
+            ServerInfo.SetUrl(ref AdsUrl);
+            ServerInfo.SetUrl(ref AdsImageUrl);
+            ServerInfo.SetUrl(ref DoubleScoreUrl);
+            Initialized = true;
         }
 
-        for (int i = 0; i < _loadingPanels.Count; i++)
+        public void DoubleScoreAds(Text text, RawImage image)
         {
-            _loadingPanels[i].SetActive(true);
+            CoroutineManager.SendRequest(DoubleScoreUrl, new { Value = (int)LocalizationManager.CurrentLanguage },  (AdsModel ads) =>
+            {
+                text.text = ads.Text;
+
+                GetAdsImage(ads.Id, image);
+            });
         }
-    }
 
-    private void TurnOffLoading()
-    {
-        for (int i = 0; i < _loadingPanels.Count; i++)
+        private void TurnOnLoading()
         {
-            _loadingPanels[i].SetActive(false);
+            if (_loadingPanels == null)
+            {
+                _loadingPanels = Canvaser.Instance.ADSPanel.GetComponent<AdsPanel>().LoadingPanels;
+            }
+
+            for (int i = 0; i < _loadingPanels.Count; i++)
+            {
+                _loadingPanels[i].SetActive(true);
+            }
         }
-    }
 
-    public void GetAds(Text text, RawImage image)
-    {
-        Canvaser.Instance.ADSPanel.OpenAds();
-        image.texture = null;
-        TurnOnLoading();
-        CoroutineManager.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (AdsModel ads) => 
+        private void TurnOffLoading()
         {
-            text.text = ads.Text;
-            GetAdsImage(ads.Id, image);
-        }, 
-        errorMethod: (model) =>
-        {
-            Canvaser.Instance.ADSPanel.gameObject.SetActive(false);
-            OnAdsDownloaded();
+            for (int i = 0; i < _loadingPanels.Count; i++)
+            {
+                _loadingPanels[i].SetActive(false);
+            }
         }
-        );
-    }
 
-    public void GetAdsImage(int adsId, RawImage image)
-    {
-        StartCoroutine(DownloadImage(adsId, image));
-    }
-
-    IEnumerator DownloadImage(int adsId, RawImage image)
-    {
-        string url = AdsImageUrl + adsId;
-
-        WWW www = new WWW(url);
-
-        yield return www;
-
-        image.texture = www.texture;
-        if (OnAdsDownloaded != null)
+        public void GetAds(Text text, RawImage image)
         {
-            OnAdsDownloaded();
+            Canvaser.Instance.ADSPanel.OpenAds();
+            image.texture = null;
+            TurnOnLoading();
+            CoroutineManager.SendRequest(AdsUrl, new { Value = (int)LocalizationManager.CurrentLanguage},  (AdsModel ads) => 
+                {
+                    text.text = ads.Text;
+                    GetAdsImage(ads.Id, image);
+                }, 
+                errorMethod: (model) =>
+                {
+                    Canvaser.Instance.ADSPanel.gameObject.SetActive(false);
+                    if (OnAdsDownloaded != null) OnAdsDownloaded();
+                }
+            );
         }
-        OnAdsDownloaded = null;
-        TurnOffLoading();
-    }
 
+        public void GetAdsImage(int adsId, RawImage image)
+        {
+            StartCoroutine(DownloadImage(adsId, image));
+        }
+
+        IEnumerator DownloadImage(int adsId, RawImage image)
+        {
+            string url = AdsImageUrl + adsId;
+
+            WWW www = new WWW(url);
+
+            yield return www;
+
+            image.texture = www.texture;
+            if (OnAdsDownloaded != null)
+            {
+                OnAdsDownloaded();
+            }
+            OnAdsDownloaded = null;
+            TurnOffLoading();
+        }
+
+    }
 }

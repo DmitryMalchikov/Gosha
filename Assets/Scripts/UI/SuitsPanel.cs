@@ -1,185 +1,190 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Assets.Scripts.DTO;
+using Assets.Scripts.Gameplay;
+using Assets.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SuitsPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public SnapScrolling SuitsScroll;
-    public GameObject SuitCamera;
-    public Image CurrentSuitImage;
-    public RawImage SuitImage;
-    public GameObject SuitPanel;
-    public GameObject CardsPanel;
-    public Image[] Cards;
-    public Button GetSuitBtn;
-    public Button BuyCards;
-    public Button ShowSuitsCards;
-    public Button Share;
-    public Button TakeOffSuitBtn;
-    public Text Warning;
-    public Text SuitName;
-    public Button PutOnSuitBtn;
-    public NewCardsPanel NewCards;
-
-    private string _currentSuitName;
-
-    public void SetCurrentCostume(Costume suit)
+    public class SuitsPanel : MonoBehaviour
     {
-        string Name = LocalizationManager.GetValue(suit.NameRu, suit.Name);
-        bool HasSuit = suit.CostumeAmount > 0;
-        PutOnSuitBtn.gameObject.SetActive(HasSuit);
+        public SnapScrolling SuitsScroll;
+        public GameObject SuitCamera;
+        public Image CurrentSuitImage;
+        public RawImage SuitImage;
+        public GameObject SuitPanel;
+        public GameObject CardsPanel;
+        public Image[] Cards;
+        public Button GetSuitBtn;
+        public Button BuyCards;
+        public Button ShowSuitsCards;
+        public Button Share;
+        public Button TakeOffSuitBtn;
+        public Text Warning;
+        public Text SuitName;
+        public Button PutOnSuitBtn;
+        public NewCardsPanel NewCards;
 
-        TakeOffSuitBtn.gameObject.SetActive(PlayerPrefs.GetString("CurrentSuit") == suit.Name);
+        private string _currentSuitName;
 
-        if (suit.Cards.Length == 0)
+        public void SetCurrentCostume(Costume suit)
         {
-            ShowSuitsCards.gameObject.SetActive(false);
-            Share.gameObject.SetActive(!HasSuit);
-            NewCards.Close();
-        }
-        else
-        {
-            Share.gameObject.SetActive(false);
-            if (HasSuit)
+            string Name = LocalizationManager.GetValue(suit.NameRu, suit.Name);
+            bool HasSuit = suit.CostumeAmount > 0;
+            PutOnSuitBtn.gameObject.SetActive(HasSuit);
+
+            TakeOffSuitBtn.gameObject.SetActive(PlayerPrefs.GetString("CurrentSuit") == suit.Name);
+
+            if (suit.Cards.Length == 0)
             {
-                NewCards.Open(suit);
+                ShowSuitsCards.gameObject.SetActive(false);
+                Share.gameObject.SetActive(!HasSuit);
+                NewCards.Close();
             }
             else
             {
-                NewCards.Close();
+                Share.gameObject.SetActive(false);
+                if (HasSuit)
+                {
+                    NewCards.Open(suit);
+                }
+                else
+                {
+                    NewCards.Close();
+                }
+                ShowSuitsCards.gameObject.SetActive(true);
+                UpdateCards();
             }
-            ShowSuitsCards.gameObject.SetActive(true);
-            UpdateCards();
+            SuitsManager.PutOnSuit(suit.Name);
+            SuitName.text = Name;
+            _currentSuitName = suit.Name;
         }
-        SuitsManager.PutOnSuit(suit.Name);
-        SuitName.text = Name;
-        _currentSuitName = suit.Name;
-    }
 
-    public void PutOnSuit()
-    {
-        SuitsScroll.PutOnSuit();
-        PlayerPrefs.SetString("CurrentSuit", _currentSuitName);
-    }
+        public void PutOnSuit()
+        {
+            SuitsScroll.PutOnSuit();
+            PlayerPrefs.SetString("CurrentSuit", _currentSuitName);
+        }
 
-    public void TakeOffSuit()
-    {
-        SuitsScroll.PutOnSuit(false);
-        PlayerPrefs.SetString("CurrentSuit", "");
-    }
+        public void TakeOffSuit()
+        {
+            SuitsScroll.PutOnSuit(false);
+            PlayerPrefs.SetString("CurrentSuit", "");
+        }
 
-    public void Open()
-    {
-        if (Canvaser.Instance.IsLoggedIn())
+        public void Open()
+        {
+            if (Canvaser.Instance.IsLoggedIn())
+            {
+                gameObject.SetActive(true);
+                Canvaser.Instance.Suits.ResetPanel();
+                CardsPanel.SetActive(false);
+                SuitPanel.SetActive(true);
+
+                InventoryManager.Instance.GetSuitsAsync();
+            }
+        }
+
+        public void OpenWithForceUpdate()
         {
             gameObject.SetActive(true);
             Canvaser.Instance.Suits.ResetPanel();
             CardsPanel.SetActive(false);
             SuitPanel.SetActive(true);
 
-            InventoryManager.Instance.GetSuitsAsync();
+            InventoryManager.Instance.GetSuitsAsync(true);
         }
-    }
 
-    public void OpenWithForceUpdate()
-    {
-        gameObject.SetActive(true);
-        Canvaser.Instance.Suits.ResetPanel();
-        CardsPanel.SetActive(false);
-        SuitPanel.SetActive(true);
-
-        InventoryManager.Instance.GetSuitsAsync(true);
-    }
-
-    public void SetCostumes(Costume[] costumes)
-    {
-        if (costumes.Length == 0)
+        public void SetCostumes(Costume[] costumes)
         {
+            if (costumes.Length == 0)
+            {
+                SuitImage.gameObject.SetActive(false);
+                Warning.text = LocalizationManager.GetLocalizedValue("nosuits");
+                Warning.gameObject.SetActive(true);
+            }
+            else
+            {
+                SuitCamera.SetActive(true);
+                SuitImage.gameObject.SetActive(true);
+                Warning.gameObject.SetActive(false);
+            }
+        
+            SuitsScroll.gameObject.SetActive(true);
+            SuitsScroll.SetCostumes(costumes);
+        }
+
+        public void ResetPanel()
+        {
+            SuitsScroll.gameObject.SetActive(false);
+            SuitCamera.SetActive(false);
             SuitImage.gameObject.SetActive(false);
-            Warning.text = LocalizationManager.GetLocalizedValue("nosuits");
-            Warning.gameObject.SetActive(true);
-        }
-        else
-        {
-            SuitCamera.SetActive(true);
-            SuitImage.gameObject.SetActive(true);
             Warning.gameObject.SetActive(false);
         }
-        
-        SuitsScroll.gameObject.SetActive(true);
-        SuitsScroll.SetCostumes(costumes);
-    }
 
-    public void ResetPanel()
-    {
-        SuitsScroll.gameObject.SetActive(false);
-        SuitCamera.SetActive(false);
-        SuitImage.gameObject.SetActive(false);
-        Warning.gameObject.SetActive(false);
-    }
-
-    public void ShowCards()
-    {
-        SuitPanel.SetActive(false);
-        SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
-        CardsPanel.SetActive(true);
-        UpdateCards();
-    }
-
-    public void TurnOffCards()
-    {
-        for (int i = 0; i < Cards.Length; i++)
+        public void ShowCards()
         {
-            Cards[i].gameObject.SetActive(false);
+            SuitPanel.SetActive(false);
+            SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+            CardsPanel.SetActive(true);
+            UpdateCards();
         }
-    }
 
-    public void SetCard(InventoryCard card, string SuitName)
-    {
-        Cards[card.Position - 1].gameObject.SetActive(card.Amount > 0);
-        Cards[card.Position - 1].GetComponent<Image>().sprite = Resources.Load<Sprite>(SuitName + " (" + card.Position + ")");
-    }
-
-    public void UpdateCards()
-    {
-        TurnOffCards();
-        if (SuitsScroll.Costumes.Length > 0)
+        public void TurnOffCards()
         {
-            foreach (InventoryCard item in SuitsScroll.Costumes[SuitsScroll.selectedPanID].Cards)
+            for (int i = 0; i < Cards.Length; i++)
             {
-                SetCard(item, SuitsScroll.Costumes[SuitsScroll.selectedPanID].Name);
+                Cards[i].gameObject.SetActive(false);
             }
         }
 
-        if (Cards.Count(x => x.gameObject.activeInHierarchy) == 4)
+        public void SetCard(InventoryCard card, string SuitName)
         {
-            BuyCards.gameObject.SetActive(false);
-            GetSuitBtn.gameObject.SetActive(true);
+            Cards[card.Position - 1].gameObject.SetActive(card.Amount > 0);
+            Cards[card.Position - 1].GetComponent<Image>().sprite = Resources.Load<Sprite>(SuitName + " (" + card.Position + ")");
         }
-        else
+
+        public void UpdateCards()
         {
-            BuyCards.gameObject.SetActive(true);
-            GetSuitBtn.gameObject.SetActive(false);
+            TurnOffCards();
+            if (SuitsScroll.Costumes.Length > 0)
+            {
+                foreach (InventoryCard item in SuitsScroll.Costumes[SuitsScroll.selectedPanID].Cards)
+                {
+                    SetCard(item, SuitsScroll.Costumes[SuitsScroll.selectedPanID].Name);
+                }
+            }
+
+            if (Cards.Count(x => x.gameObject.activeInHierarchy) == 4)
+            {
+                BuyCards.gameObject.SetActive(false);
+                GetSuitBtn.gameObject.SetActive(true);
+            }
+            else
+            {
+                BuyCards.gameObject.SetActive(true);
+                GetSuitBtn.gameObject.SetActive(false);
+            }
         }
-    }
 
-    public void ShowCostume()
-    {
-        CardsPanel.SetActive(false);
-        SuitsManager.PutOnSuit(SuitName.text);
-        SuitPanel.SetActive(true);
-    }
+        public void ShowCostume()
+        {
+            CardsPanel.SetActive(false);
+            SuitsManager.PutOnSuit(SuitName.text);
+            SuitPanel.SetActive(true);
+        }
 
-    public void ClosePanel()
-    {
-        SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
-        SuitCamera.SetActive(false);
-        gameObject.SetActive(false);
-    }
+        public void ClosePanel()
+        {
+            SuitsManager.PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
+            SuitCamera.SetActive(false);
+            gameObject.SetActive(false);
+        }
 
-    public void GetSuit()
-    {
-        ShopManager.Instance.GetSuitAsync(SuitsScroll.Costumes[SuitsScroll.selectedPanID].CostumeId);
+        public void GetSuit()
+        {
+            ShopManager.Instance.GetSuitAsync(SuitsScroll.Costumes[SuitsScroll.selectedPanID].CostumeId);
+        }
     }
 }

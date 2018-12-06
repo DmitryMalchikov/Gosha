@@ -1,32 +1,35 @@
 ﻿using UnityEngine;
 
-public class BlopFollower : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public Transform Target;
-
-    private Projector projector;
-    private Vector3 offset;
-
-    void Start()
+    public class BlopFollower : MonoBehaviour
     {
-        offset = Target.position - transform.position;
-        projector = GetComponent<Projector>();
-    }
+        public Transform Target;
 
+        private Projector projector;
+        private Vector3 offset;
 
-    void Update()
-    {
-        if (PlayerController.Instance.OnGround)
+        void Start()
         {
-            if (!projector.enabled)
-            {
-                projector.enabled = true;
-            }
-            transform.position = Target.position - offset;
+            offset = Target.position - transform.position;
+            projector = GetComponent<Projector>();
         }
-        else
+
+
+        void Update()
         {
-            projector.enabled = false;
+            if (PlayerController.Instance.OnGround)
+            {
+                if (!projector.enabled)
+                {
+                    projector.enabled = true;
+                }
+                transform.position = Target.position - offset;
+            }
+            else
+            {
+                projector.enabled = false;
+            }
         }
     }
 }

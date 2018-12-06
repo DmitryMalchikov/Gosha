@@ -1,15 +1,20 @@
-﻿public class BonusFreeze : BonusParent
+﻿using Assets.Scripts.DTO;
+
+namespace Assets.Scripts.Utils
 {
-    public BonusFreeze(Bonus bonus) : base(bonus) { }
-
-    public override bool UseBonus()
+    public class BonusFreeze : BonusParent
     {
-        if (CurrentBonus.Use())
-        {
-            SpeedController.Instance.ApplyDeceleration();
-            return true;
-        }
+        public BonusFreeze(Bonus bonus) : base(bonus) { }
 
-        return false;
+        public override bool UseBonus()
+        {
+            if (Use())
+            {
+                SpeedController.Instance.ApplyDeceleration();
+                return true;
+            }
+
+            return false;
+        }
     }
 }

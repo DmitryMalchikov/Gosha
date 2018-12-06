@@ -1,28 +1,33 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.UI;
+using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class SuitsManager : Singleton<SuitsManager>
+namespace Assets.Scripts.Gameplay
 {
-    private static SuitInfo[] _suitsItems;
-
-    private void Start()
+    public class SuitsManager : Singleton<SuitsManager>
     {
-        _suitsItems = GetComponentsInChildren<SuitInfo>();
-        PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
-    }
+        private static SuitInfo[] _suitsItems;
 
-    public static void PutOnSuit(string suitName)
-    {
-        for (int i = 0; i < _suitsItems.Length; i++)
+        private void Start()
         {
-            _suitsItems[i].gameObject.SetActive(_suitsItems[i].SuitName == suitName);
+            _suitsItems = GetComponentsInChildren<SuitInfo>();
+            PutOnSuit(PlayerPrefs.GetString("CurrentSuit"));
         }
-    }
 
-    public static void TakeOffSuits()
-    {
-        for (int i = 0; i < _suitsItems.Length; i++)
+        public static void PutOnSuit(string suitName)
         {
-            _suitsItems[i].gameObject.SetActive(false);
+            for (int i = 0; i < _suitsItems.Length; i++)
+            {
+                _suitsItems[i].gameObject.SetActive(_suitsItems[i].SuitName == suitName);
+            }
+        }
+
+        public static void TakeOffSuits()
+        {
+            for (int i = 0; i < _suitsItems.Length; i++)
+            {
+                _suitsItems[i].gameObject.SetActive(false);
+            }
         }
     }
 }

@@ -1,12 +1,17 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 
-public class Deceleration : MonoBehaviour, IPickable
+namespace Assets.Scripts.Gameplay
 {
-    public void PickUp()
+    public class Deceleration : MonoBehaviour, IPickable
     {
-        SpeedController.Instance.ApplyDeceleration();
-        gameObject.SetActive(false);
-        AudioManager.PlayEffectPickup();
+        public void PickUp()
+        {
+            SpeedController.Instance.ApplyDeceleration();
+            gameObject.SetActive(false);
+            AudioManager.PlayEffectPickup();
+        }
     }
 }
 

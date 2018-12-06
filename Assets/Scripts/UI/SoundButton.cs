@@ -1,21 +1,25 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Managers;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SoundButton : MonoBehaviour, IPointerClickHandler
+namespace Assets.Scripts.UI
 {
-    private Selectable _selectable;
-
-    private void Start()
+    public class SoundButton : MonoBehaviour, IPointerClickHandler
     {
-        _selectable = GetComponent<Selectable>();
-    }
+        private Selectable _selectable;
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (_selectable.interactable)
+        private void Start()
         {
-            AudioManager.PlayBtnTapSound();
+            _selectable = GetComponent<Selectable>();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (_selectable.interactable)
+            {
+                AudioManager.PlayBtnTapSound();
+            }
         }
     }
 }

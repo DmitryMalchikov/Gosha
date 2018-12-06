@@ -1,5 +1,8 @@
-﻿public class FriendOfferModel : FriendModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int Place { get; set; }
-    public FriendshipStatus FriendshipStatus { get; set; }
+    public class FriendOfferModel : FriendModel
+    {
+        public int Place { get; set; }
+        public FriendshipStatus FriendshipStatus { get; set; }
+    }
 }

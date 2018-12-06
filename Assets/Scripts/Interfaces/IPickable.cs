@@ -1,4 +1,7 @@
-﻿public interface IPickable
+﻿namespace Assets.Scripts.Interfaces
 {
-    void PickUp();
+    public interface IPickable
+    {
+        void PickUp();
+    }
 }

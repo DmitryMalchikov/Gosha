@@ -1,39 +1,43 @@
 ﻿using System;
 using System.Collections;
+using Assets.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LocalizedText : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public string Key;
-    Text text;
-
-    private void OnEnable()
+    public class LocalizedText : MonoBehaviour
     {
-        if (!text)
+        public string Key;
+        private Text _text;
+
+        private void OnEnable()
         {
-            text = GetComponent<Text>();
+            if (!_text)
+            {
+                _text = GetComponent<Text>();
+            }
+
+            StartCoroutine(WaitData());
         }
 
-        StartCoroutine(WaitData());
-    }
-
-    public void SetText()
-    {
-        text.text = LocalizationManager.GetLocalizedValue(Key);
-        if (text.text.Contains("%"))
+        public void SetText()
         {
-            text.text = text.text.Replace("%", Environment.NewLine);
-        }
-    }
-
-    IEnumerator WaitData()
-    {
-        while (!LocalizationManager.IsReady)
-        {
-            yield return false;
+            _text.text = LocalizationManager.GetLocalizedValue(Key);
+            if (_text.text.Contains("%"))
+            {
+                _text.text = _text.text.Replace("%", Environment.NewLine);
+            }
         }
 
-        SetText();
+        private IEnumerator WaitData()
+        {
+            while (!LocalizationManager.IsReady)
+            {
+                yield return null;
+            }
+
+            SetText();
+        }
     }
 }

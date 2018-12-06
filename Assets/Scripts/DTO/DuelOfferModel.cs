@@ -1,5 +1,8 @@
-﻿public class DuelOfferModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int Id { get; set; }
-    public int Bet { get; set; }
+    public class DuelOfferModel
+    {
+        public int Id { get; set; }
+        public int Bet { get; set; }
+    }
 }

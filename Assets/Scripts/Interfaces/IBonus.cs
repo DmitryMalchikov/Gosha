@@ -1,5 +1,11 @@
-﻿public interface IBonus
+﻿using Assets.Scripts.DTO;
+
+namespace Assets.Scripts.Interfaces
 {
-    Bonus CurrentBonus { get; }
-    bool UseBonus();
+    public interface IBonus
+    {
+        int Count { get; }
+        Bonus CurrentBonus { get; }
+        bool UseBonus();
+    }
 }

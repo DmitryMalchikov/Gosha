@@ -1,10 +1,13 @@
-﻿public enum DataType
+﻿namespace Assets.Scripts.Utils
 {
-    Shop,
-    Duels,
-    Friends,
-    Suits,
-    Network,
-    Trades,
-    UserInfo
+    public enum DataType
+    {
+        Shop,
+        Duels,
+        Friends,
+        Suits,
+        Network,
+        Trades,
+        UserInfo
+    }
 }

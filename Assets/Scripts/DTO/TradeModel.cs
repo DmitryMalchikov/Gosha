@@ -1,5 +1,8 @@
-﻿public class TradeModel
+﻿namespace Assets.Scripts.DTO
 {
-    public TradeOfferModel[] Trades { get; set; }
-    public string TradesHash { get; set; }
+    public class TradeModel
+    {
+        public TradeOfferModel[] Trades { get; set; }
+        public string TradesHash { get; set; }
+    }
 }

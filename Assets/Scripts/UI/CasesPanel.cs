@@ -1,123 +1,124 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.DTO;
+using Assets.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CasesPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public GameObject CaseCamera;
-    public RawImage CaseImage;
-    public GameObject SuitPanel;
-    public Text PrizeText;
-    public GameObject PrizePanel;
-    public Text Warning;
-    public Text SuitName;
-    public Animator Case;
-    public GameObject Idle;
-    public GameObject PreopenCase;
-    public GameObject OpenCaseParticle;
-    public GameObject GetPrizePnl;
-    public GameObject GetPrizeBtn;
-    public Text PrizeAmountTxt;
-    public BoxPrize BoxPrizeObj;
-    public ParticleSystem Sparks;
-
-    public void SetPrize(Bonus bonus)
+    public class CasesPanel : MonoBehaviour
     {
-        PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + LocalizationManager.GetValue(bonus.Name.NameRu, bonus.Name.Name);
-        if (bonus.Amount > 1)
-        {
-            PrizeAmountTxt.text += "(" + bonus.Amount.ToString() + ")";
-        }
-        BoxPrizeObj.SetPrize(bonus.Name.Name);
-        StartCoroutine(WaitForOpen());
-    }
+        public GameObject CaseCamera;
+        public RawImage CaseImage;
+        public Text Warning;
+        public Animator Case;
+        public GameObject Idle;
+        public GameObject PreopenCase;
+        public GameObject OpenCaseParticle;
+        public GameObject GetPrizePnl;
+        public GameObject GetPrizeBtn;
+        public Text PrizeAmountTxt;
+        public BoxPrize BoxPrizeObj;
+        public ParticleSystem Sparks;
 
-    IEnumerator WaitForOpen()
-    {
-        yield return new WaitForSeconds(3f);
-        OpenCase(true);
-        PreopenCase.SetActive(false);
-        if (!string.IsNullOrEmpty(PrizeAmountTxt.text))
+        public void SetPrize(Bonus bonus)
         {
-            PrizeAmountTxt.gameObject.SetActive(true);
+            PrizeAmountTxt.text = LocalizationManager.GetLocalizedValue("yougot") + " " + LocalizationManager.GetValue(bonus.Name.NameRu, bonus.Name.Name);
+            if (bonus.Amount > 1)
+            {
+                PrizeAmountTxt.text += "(" + bonus.Amount.ToString() + ")";
+            }
+            BoxPrizeObj.SetPrize(bonus.Name.Name);
+            StartCoroutine(WaitForOpen());
         }
 
-        yield return null;
-        Sparks.Emit(30);
-    }
-
-    public void TakePrize()
-    {
-        LoginManager.User.Cases--;
-        Canvaser.Instance.CasesCount.text = ": " + LoginManager.User.Cases.ToString();
-        CloseCase();
-        LoginManager.Instance.GetUserInfoAsync(() =>
+        IEnumerator WaitForOpen()
         {
-            InventoryManager.Instance.GetMyCasesAsync();
-        });
-    }
+            yield return new WaitForSeconds(3f);
+            OpenCase(true);
+            PreopenCase.SetActive(false);
+            if (!string.IsNullOrEmpty(PrizeAmountTxt.text))
+            {
+                PrizeAmountTxt.gameObject.SetActive(true);
+            }
 
-    public void OpenCase(bool open)
-    {
-        Case.SetBool("Open", open);
-        OpenCaseParticle.SetActive(open);
-        GetPrizeBtn.SetActive(open);
-        BoxPrizeObj.PrizeOut(open);
-    }
-
-    public void CloseCase()
-    {
-        OpenCase(false);
-        Idle.SetActive(true);
-        PrizeAmountTxt.text = "";
-        if (PrizeAmountTxt.gameObject.activeInHierarchy)
-        {
-            PrizeAmountTxt.gameObject.SetActive(false);
-        }
-        BoxPrizeObj.TurnOffPrizes();
-        GetPrizePnl.SetActive(false);       
-    }
-
-    public void ClosePanel()
-    {
-        CloseCase();
-        CaseCamera.SetActive(false);
-        gameObject.SetActive(false);
-    }
-
-    public void SetCases(List<InventoryItem> cases)
-    {
-        if (cases.Count < 1 || cases[0].Amount < 1)
-        {
-            Warning.text = LocalizationManager.GetLocalizedValue("nocases");
-            ShowWarning(true);
-        }
-        else
-        {
-            CaseCamera.SetActive(true);
-            ShowWarning(false);
-        }
-        gameObject.SetActive(true);
-    }
-
-    public void OpenCase()
-    {
-        if (LoginManager.User.Cases < 1)
-        {
-            return;
+            yield return null;
+            Sparks.Emit(30);
         }
 
-        GetPrizePnl.SetActive(true);
-        PreopenCase.SetActive(true);
-        Idle.SetActive(false);
-        LootManager.Instance.OpenCaseAsync(LoginManager.User.CaseId);
-        AudioManager.PlayCaseOpen();
-    }
+        public void TakePrize()
+        {
+            LoginManager.User.Cases--;
+            Canvaser.Instance.CasesCount.text = ": " + LoginManager.User.Cases.ToString();
+            CloseCase();
+            LoginManager.Instance.GetUserInfoAsync(() =>
+            {
+                InventoryManager.Instance.GetMyCasesAsync();
+            });
+        }
 
-    public void ShowWarning(bool show)
-    {
-        Warning.gameObject.SetActive(show);
-        CaseImage.gameObject.SetActive(!show);
+        public void OpenCase(bool open)
+        {
+            Case.SetBool("Open", open);
+            OpenCaseParticle.SetActive(open);
+            GetPrizeBtn.SetActive(open);
+            BoxPrizeObj.PrizeOut(open);
+        }
+
+        public void CloseCase()
+        {
+            OpenCase(false);
+            Idle.SetActive(true);
+            PrizeAmountTxt.text = "";
+            if (PrizeAmountTxt.gameObject.activeInHierarchy)
+            {
+                PrizeAmountTxt.gameObject.SetActive(false);
+            }
+            BoxPrizeObj.TurnOffPrizes();
+            GetPrizePnl.SetActive(false);       
+        }
+
+        public void ClosePanel()
+        {
+            CloseCase();
+            CaseCamera.SetActive(false);
+            gameObject.SetActive(false);
+        }
+
+        public void SetCases(List<InventoryItem> cases)
+        {
+            if (cases.Count < 1 || cases[0].Amount < 1)
+            {
+                Warning.text = LocalizationManager.GetLocalizedValue("nocases");
+                ShowWarning(true);
+            }
+            else
+            {
+                CaseCamera.SetActive(true);
+                ShowWarning(false);
+            }
+            gameObject.SetActive(true);
+        }
+
+        public void OpenCase()
+        {
+            if (LoginManager.User.Cases < 1)
+            {
+                return;
+            }
+
+            GetPrizePnl.SetActive(true);
+            PreopenCase.SetActive(true);
+            Idle.SetActive(false);
+            LootManager.Instance.OpenCaseAsync(LoginManager.User.CaseId);
+            AudioManager.PlayCaseOpen();
+        }
+
+        public void ShowWarning(bool show)
+        {
+            Warning.gameObject.SetActive(show);
+            CaseImage.gameObject.SetActive(!show);
+        }
     }
 }

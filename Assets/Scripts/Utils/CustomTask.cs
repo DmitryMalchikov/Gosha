@@ -1,29 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-public class CustomTask
+namespace Assets.Scripts.Utils
 {
-    public CustomTask()
+    public class CustomTask
     {
-        _isReady = false;
-    }
-
-    public bool Ready
-    {
-        get
+        public CustomTask()
         {
-            return _isReady;
+            _isReady = false;
         }
-        set
+
+        public bool Ready
         {
-            _isReady = value;
+            get
+            {
+                return _isReady;
+            }
+            set
+            {
+                _isReady = value;
+            }
         }
-    }
 
-    private bool _isReady = false;
+        private bool _isReady = false;
 
-    public static bool TasksReady(IEnumerable<CustomTask> tasks)
-    {
-        return !tasks.Any(t => t._isReady == false);
+        public static bool TasksReady(IEnumerable<CustomTask> tasks)
+        {
+            return !tasks.Any(t => t._isReady == false);
+        }
     }
 }

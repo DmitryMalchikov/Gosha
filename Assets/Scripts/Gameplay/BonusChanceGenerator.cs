@@ -1,19 +1,23 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class BonusChanceGenerator : Singleton<BonusChanceGenerator>
+namespace Assets.Scripts.Gameplay
 {
-    [SerializeField]
-    public byte _bonusChance;
-    [SerializeField]
-    public byte _boxChance = 1;
-
-    public static bool GenerateBox()
+    public class BonusChanceGenerator : Singleton<BonusChanceGenerator>
     {
-        return Random.Range(0, 100) <= Instance._boxChance;
-    }
+        [SerializeField]
+        private byte _bonusChance;
+        [SerializeField]
+        private byte _boxChance = 1;
 
-    public static bool GenerateBonus()
-    {
-        return Random.Range(0, 100) <= Instance._bonusChance;
+        public static bool GenerateBox()
+        {
+            return Random.Range(0, 100) <= Instance._boxChance;
+        }
+
+        public static bool GenerateBonus()
+        {
+            return Random.Range(0, 100) <= Instance._bonusChance;
+        }
     }
 }

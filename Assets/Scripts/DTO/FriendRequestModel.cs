@@ -1,5 +1,8 @@
-﻿public class FriendRequestModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int Id { get; set; }
-    public string Nickname { get; set; }
+    public class FriendRequestModel
+    {
+        public int Id { get; set; }
+        public string Nickname { get; set; }
+    }
 }

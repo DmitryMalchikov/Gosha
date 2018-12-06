@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 
-public class Box : MonoBehaviour, IPickable
+namespace Assets.Scripts.Gameplay
 {
-    public void PickUp()
+    public class Box : MonoBehaviour, IPickable
     {
-        AudioManager.PlayIceCreamPickup();
-        GameController.Instance.AddBox();
-        transform.parent.gameObject.SetActive(false);
+        public void PickUp()
+        {
+            AudioManager.PlayIceCreamPickup();
+            GameController.Instance.AddBox();
+            transform.parent.gameObject.SetActive(false);
+        }
     }
 }

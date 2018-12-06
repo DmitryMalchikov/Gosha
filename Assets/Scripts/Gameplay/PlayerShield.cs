@@ -1,72 +1,71 @@
 ﻿using System.Collections;
+using Assets.Scripts.Managers;
+using Assets.Scripts.UI;
+using Assets.Scripts.Utils;
 using UnityEngine;
 
-public class PlayerShield : Singleton<PlayerShield>
+namespace Assets.Scripts.Gameplay
 {
-    private static bool _shieldIsOn;
-    private static float _shieldTimeLeft = 0;
-
-    public static bool ShieldIsOn
+    public class PlayerShield : Singleton<PlayerShield>
     {
-        get
+        private static float _shieldTimeLeft = 0;
+
+        public static bool ShieldIsOn { get; private set; }
+
+        public static void OnHit()
         {
-            return _shieldIsOn;
-        }
-    }
+            ShieldIsOn = false;
+            PlayerRigidbody.OnShieldHit();
+            AudioManager.PlayShieldHitEffect();
+        }    
 
-    public static void OnHit()
-    {
-        _shieldIsOn = false;
-        PlayerRigidbody.OnShieldHit();
-        AudioManager.PlayShieldHitEffect();
-    }    
-
-    public static void ResetShield()
-    {
-        _shieldIsOn = false;
-    }
-
-    public static void TurnShieldOn()
-    {
-        _shieldIsOn = true;
-        EffectsManager.PlayShieldEffect(true);
-        Canvaser.Instance.GamePanel.Shield.Activate(true);
-    }
-
-    public static void TurnShieldOff()
-    {
-        _shieldIsOn = false;
-        EffectsManager.PlayShieldEffect(false);
-        Canvaser.Instance.GamePanel.Shield.Activate(false);
-    }
-
-    IEnumerator RemoveShield()
-    {
-        TurnShieldOn();
-
-        while (_shieldTimeLeft > 0 && _shieldIsOn)
+        public static void ResetShield()
         {
-            yield return CoroutineManager.Frame;
-            _shieldTimeLeft -= Time.deltaTime;
-            Canvaser.Instance.GamePanel.Shield.SetTimer(_shieldTimeLeft);
+            ShieldIsOn = false;
         }
 
-        Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
-        TurnShieldOff();
-
-        if (_shieldTimeLeft <= 0)
+        public static void TurnShieldOn()
         {
-            AudioManager.PlayEffectEnd();
+            ShieldIsOn = true;
+            EffectsManager.PlayShieldEffect(true);
+            Canvaser.Instance.GamePanel.Shield.Activate(true);
         }
-    }
 
-    public void ApplyShield()
-    {
-        _shieldTimeLeft = GameController.Instance.ShieldTime;
-
-        if (!_shieldIsOn)
+        public static void TurnShieldOff()
         {
-            StartCoroutine(RemoveShield());
+            ShieldIsOn = false;
+            EffectsManager.PlayShieldEffect(false);
+            Canvaser.Instance.GamePanel.Shield.Activate(false);
+        }
+
+        private IEnumerator RemoveShield()
+        {
+            TurnShieldOn();
+
+            while (_shieldTimeLeft > 0 && ShieldIsOn)
+            {
+                yield return CoroutineManager.Frame;
+                _shieldTimeLeft -= Time.deltaTime;
+                Canvaser.Instance.GamePanel.Shield.SetTimer(_shieldTimeLeft);
+            }
+
+            Canvaser.Instance.GamePanel.ShieldCD.OpenCooldownPanel();
+            TurnShieldOff();
+
+            if (_shieldTimeLeft <= 0)
+            {
+                AudioManager.PlayEffectEnd();
+            }
+        }
+
+        public void ApplyShield()
+        {
+            _shieldTimeLeft = GameController.Instance.ShieldTime;
+
+            if (!ShieldIsOn)
+            {
+                StartCoroutine(RemoveShield());
+            }
         }
     }
 }

@@ -1,20 +1,25 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class BonusCollector : Singleton<BonusCollector>
+namespace Assets.Scripts.Gameplay
 {
-    IPickable _pickable;    
-
-    private void OnTriggerEnter(Collider other)
+    public class BonusCollector : Singleton<BonusCollector>
     {
-         _pickable = other.GetComponent<IPickable>();
+        private IPickable _pickable;
 
-         if (_pickable != null)
-         {
-             _pickable.PickUp();
+        private void OnTriggerEnter(Collider other)
+        {
+            _pickable = other.GetComponent<IPickable>();
 
-			if (other.tag == "Bonus") {
-				TasksManager.Instance.CheckTasks (TasksTypes.CollectBonus);
-			}
-         }
-     }
+            if (_pickable == null) return;
+            _pickable.PickUp();
+
+            if (other.tag == "Bonus")
+            {
+                TasksManager.Instance.CheckTasks(TasksTypes.CollectBonus);
+            }
+        }
+    }
 }

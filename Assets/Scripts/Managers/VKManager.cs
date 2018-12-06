@@ -1,47 +1,52 @@
-﻿public class VKManager : Singleton<VKManager>
+﻿using Assets.Scripts.Utils;
+
+namespace Assets.Scripts.Managers
 {
-    private string _currentAchievement;
-
-    public void OpenShare(string achievementName)
+    public class VKManager : Singleton<VKManager>
     {
-        _currentAchievement = achievementName;
+        private string _currentAchievement;
 
-        if (VK.IsLoggedIn())
+        public void OpenShare(string achievementName)
         {
-            WallPost();
+            _currentAchievement = achievementName;
+
+            if (VK.IsLoggedIn())
+            {
+                WallPost();
+            }
+            else
+            {
+                LogIn();
+            }
         }
-        else
+
+        private void LogIn()
         {
-            LogIn();
+            VK.Login(OnLogIn);
         }
-    }
 
-    private void LogIn()
-    {
-        VK.Login(OnLogIn);
-    }
-
-    private void WallPost()
-    {
-        VK.WallPost("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl
-            , (response) =>
-         {
-             if (string.IsNullOrEmpty(response))
-             {
-                 AchievementsManager.Instance.CheckAchievements(TasksTypes.Share);
-             }
-             else
-             {
-
-             }
-         });
-    }
-
-    private void OnLogIn(string result)
-    {
-        if (result == "success")
+        private void WallPost()
         {
-            WallPost();
+            VK.WallPost("Я играю в GoGo Gosha, а ты?\n" + _currentAchievement, "http://gosha.by/Html/HomePage.html", "Go-go Gosha!", LoginManager.Instance.ShareImageUrl
+                , (response) =>
+                {
+                    if (string.IsNullOrEmpty(response))
+                    {
+                        AchievementsManager.Instance.CheckAchievements(TasksTypes.Share);
+                    }
+                    else
+                    {
+
+                    }
+                });
+        }
+
+        private void OnLogIn(string result)
+        {
+            if (result == "success")
+            {
+                WallPost();
+            }
         }
     }
 }

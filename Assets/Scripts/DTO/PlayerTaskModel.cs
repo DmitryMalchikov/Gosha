@@ -1,7 +1,11 @@
 ﻿using System;
+using Assets.Scripts.Interfaces;
 
-public class PlayerTaskModel : PlayerTasks, IExpirable
+namespace Assets.Scripts.DTO
 {
-    public int Reward { get; set; }
-    public DateTime ExpireDate { get; set; }
+    public class PlayerTaskModel : PlayerTasks, IExpirable
+    {
+        public int Reward { get; set; }
+        public DateTime ExpireDate { get; set; }
+    }
 }

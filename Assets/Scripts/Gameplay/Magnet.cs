@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 
-public class Magnet : MonoBehaviour, IPickable
+namespace Assets.Scripts.Gameplay
 {
-    public void PickUp()
+    public class Magnet : MonoBehaviour, IPickable
     {
-        Collector.Instance.UseMagnet();
-        gameObject.SetActive(false);
-        AudioManager.PlayEffectPickup();
+        public void PickUp()
+        {
+            Collector.Instance.UseMagnet();
+            gameObject.SetActive(false);
+            AudioManager.PlayEffectPickup();
+        }
     }
 }

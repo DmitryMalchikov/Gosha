@@ -1,5 +1,8 @@
-﻿public class CheckTokenModel
+﻿namespace Assets.Scripts.DTO
 {
-    public string Email { get; set; }
-    public string Code { get; set; }
+    public class CheckTokenModel
+    {
+        public string Email { get; set; }
+        public string Code { get; set; }
+    }
 }

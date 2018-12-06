@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public interface IAvatarSprite
+namespace Assets.Scripts.Interfaces
 {
-    void SetSprite(Sprite sprite);
+    public interface IAvatarSprite
+    {
+        void SetSprite(Sprite sprite);
+    }
 }

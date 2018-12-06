@@ -1,29 +1,34 @@
 ﻿using System;
 using System.Collections;
+using Assets.Scripts.Interfaces;
+using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class TimeCheck : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    private WaitForSeconds minute = new WaitForSeconds(60);
-    public Text Time;
-
-    public abstract IExpirable Info { get; }
-
-    private void OnEnable()
+    public abstract class TimeCheck : MonoBehaviour
     {
-        StartCoroutine(CheckTime());
-    }
+        private readonly WaitForSeconds _minute = new WaitForSeconds(60);
+        public Text Time;
 
-    protected IEnumerator CheckTime()
-    {
-        yield return new WaitUntil(() => Info != null);
+        public abstract IExpirable Info { get; }
 
-        while (true)
+        private void OnEnable()
         {
-            var time = (Info.ExpireDate - DateTime.Now.ToUniversalTime());
-            Time.text = time.TimeSpanToLocalizedString();
-            yield return minute;
+            StartCoroutine(CheckTime());
+        }
+
+        protected IEnumerator CheckTime()
+        {
+            yield return new WaitUntil(() => Info != null);
+
+            while (true)
+            {
+                var time = (Info.ExpireDate - DateTime.Now.ToUniversalTime());
+                Time.text = time.TimeSpanToLocalizedString();
+                yield return _minute;
+            }
         }
     }
 }

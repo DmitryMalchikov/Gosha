@@ -1,4 +1,7 @@
-﻿public class InputString
+﻿namespace Assets.Scripts.DTO
 {
-    public string Value { get; set; }
+    public class InputString
+    {
+        public string Value { get; set; }
+    }
 }

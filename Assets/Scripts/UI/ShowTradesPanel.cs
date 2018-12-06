@@ -1,35 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShowTradesPanel : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Text Title;
-    public Transform Content;
-    public GameObject TradeInfoObject;
-    public TradeDetails Details;
-
-    public void SetTrades(TradeOfferModel[] trades)
+    public class ShowTradesPanel : MonoBehaviour
     {
-        ClearContent();
-        if (trades.Length == 0)
+        public Text Title;
+        public Transform Content;
+        public GameObject TradeInfoObject;
+        public TradeDetails Details;
+
+        public void SetTrades(TradeOfferModel[] trades)
         {
-            Title.text = LocalizationManager.GetLocalizedValue("nooffers");
-        }
-        else
-        {
-            Title.text = trades.Length + LocalizationManager.GetLocalizedValue("tradeoffers");
-            foreach (TradeOfferModel item in trades)
+            ClearContent();
+            if (trades.Length == 0)
             {
-                TradeInfo newTrade = Instantiate(TradeInfoObject, Content).GetComponent<TradeInfo>();
-                newTrade.SetTrade(item);
+                Title.text = LocalizationManager.GetLocalizedValue("nooffers");
             }
+            else
+            {
+                Title.text = trades.Length + LocalizationManager.GetLocalizedValue("tradeoffers");
+                foreach (TradeOfferModel item in trades)
+                {
+                    TradeInfo newTrade = Instantiate(TradeInfoObject, Content).GetComponent<TradeInfo>();
+                    newTrade.SetTrade(item);
+                }
+            }
+            gameObject.SetActive(true);
         }
-        gameObject.SetActive(true);
-    }
 
-    public void ClearContent()
-    {
-        Content.ClearContent();
+        public void ClearContent()
+        {
+            Content.ClearContent();
+        }
     }
 }

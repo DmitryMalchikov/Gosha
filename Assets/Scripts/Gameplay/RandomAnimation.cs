@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 
-public class RandomAnimation : StateMachineBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public byte TransitionsNumber;
-    private int _previousNumber = 0;
-
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo info, int layerIndex)
+    public class RandomAnimation : StateMachineBehaviour
     {
-        byte newNumber = (byte)Random.Range(1, TransitionsNumber);
+        public byte TransitionsNumber;
+        private int _previousNumber = 0;
 
-        if (_previousNumber == newNumber)
+        public override void OnStateEnter(Animator animator, AnimatorStateInfo info, int layerIndex)
         {
-            newNumber = (byte)((newNumber + 1) % TransitionsNumber);
-        }
+            byte newNumber = (byte)Random.Range(1, TransitionsNumber);
 
-        animator.SetInteger("AnimationIndex", newNumber);
-        _previousNumber = newNumber;
+            if (_previousNumber == newNumber)
+            {
+                newNumber = (byte)((newNumber + 1) % TransitionsNumber);
+            }
+
+            animator.SetInteger("AnimationIndex", newNumber);
+            _previousNumber = newNumber;
+        }
     }
 }

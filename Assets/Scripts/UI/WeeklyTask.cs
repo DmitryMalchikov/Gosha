@@ -1,28 +1,33 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Interfaces;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class WeeklyTask : TimeCheck
+namespace Assets.Scripts.UI
 {
-    public Text Task;
-    public GameObject IsLocked;
-    private PlayerTaskModel _info;
-
-    public override IExpirable Info
+    public class WeeklyTask : TimeCheck
     {
-        get
+        public Text Task;
+        public GameObject IsLocked;
+        private PlayerTaskModel _info;
+
+        public override IExpirable Info
         {
-            return _info;
+            get
+            {
+                return _info;
+            }
         }
-    }
 
-    public void SetTask(int number, PlayerTaskModel model)
-    {
-        _info = model;
-        Task.text = model.GenerateDescription();
-
-        if (_info.PlayerProgress >= _info.ActionsCount)
+        public void SetTask(int number, PlayerTaskModel model)
         {
-            IsLocked.SetActive(false);
+            _info = model;
+            Task.text = model.GenerateDescription();
+
+            if (_info.PlayerProgress >= _info.ActionsCount)
+            {
+                IsLocked.SetActive(false);
+            }
         }
     }
 }

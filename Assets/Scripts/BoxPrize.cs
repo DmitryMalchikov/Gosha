@@ -1,60 +1,63 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class BoxPrize : MonoBehaviour
+namespace Assets.Scripts
 {
-    public GameObject IceCream;
-    public GameObject Freeze;
-    public GameObject Magnet;
-    public GameObject Shield;
-    public PrizeCard Card;
-
-    public Animator anim;
-
-    GameObject ActiveObj;
-
-    string currentName;
-
-    public void SetPrize(string name)
+    public class BoxPrize : MonoBehaviour
     {
-        currentName = name;
-        switch (name)
+        public GameObject IceCream;
+        public GameObject Freeze;
+        public GameObject Magnet;
+        public GameObject Shield;
+        public PrizeCard Card;
+
+        public Animator anim;
+
+        private GameObject _activeObj;
+
+        private string _currentName;
+
+        public void SetPrize(string name)
         {
-            case "IceCream":
-            case null:
-                IceCream.SetActive(true);
-                ActiveObj = IceCream;
-                break;
-            case "Shield":
-                Shield.SetActive(true);
-                ActiveObj = Shield;
-                break;
-            case "Freeze":
-                Freeze.SetActive(true);
-                ActiveObj = Freeze;
-                break;
-            case "Magnet":
-                Magnet.SetActive(true);
-                ActiveObj = Magnet;
-                break;
-            default:
-                Card.SetCard(name.AddBrackets());
-                ActiveObj = Card.gameObject;
-                break;
-        }
-    }
+            _currentName = name;
+            switch (name)
+            {
+                case "IceCream":
+                case null:
+                    _activeObj = IceCream;
+                    break;
+                case "Shield":
+                    _activeObj = Shield;
+                    break;
+                case "Freeze":
+                    _activeObj = Freeze;
+                    break;
+                case "Magnet":
+                    _activeObj = Magnet;
+                    break;
+                default:
+                    Card.SetCard(name.AddBrackets());
+                    _activeObj = Card.gameObject;
+                    break;
+            }
 
-    public void PrizeOut(bool toOut)
-    {
-        anim.SetBool("Out", toOut);
-        if (toOut && !string.IsNullOrEmpty(currentName) && currentName.Contains("Card"))
+            _activeObj.SetActive(true);
+        }
+
+        public void PrizeOut(bool toOut)
         {
-            AudioManager.PlayCardGet();
+            anim.SetBool("Out", toOut);
+            if (toOut && !string.IsNullOrEmpty(_currentName) && _currentName.Contains("Card"))
+            {
+                AudioManager.PlayCardGet();
+            }
         }
-    }
 
-    public void TurnOffPrizes()
-    {
-        if (ActiveObj)
-            ActiveObj.SetActive(false);
+        public void TurnOffPrizes()
+        {
+            if (_activeObj)
+                _activeObj.SetActive(false);
+        }
     }
 }

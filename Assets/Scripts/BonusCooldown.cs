@@ -1,33 +1,37 @@
 ﻿using System.Collections;
+using Assets.Scripts.Gameplay;
 using UnityEngine;
 
-public class BonusCooldown : MonoBehaviour
+namespace Assets.Scripts
 {
-    public Animator anim;
-    public float Cooldown;
-    public GameObject panel;
-
-    public void Activate(bool toActivate)
+    public class BonusCooldown : MonoBehaviour
     {
-        panel.SetActive(toActivate);
-    }
+        public Animator anim;
+        public float Cooldown;
+        public GameObject panel;
 
-    public void SetTimer(float cooldown)
-    {
-        Cooldown = cooldown;
-        anim.speed = 1 / cooldown;
-    }
+        public void Activate(bool toActivate)
+        {
+            panel.SetActive(toActivate);
+        }
 
-    public void OpenCooldownPanel()
-    {
-        Activate(true);
-        StartCoroutine(ShowCooldown());
-    }
+        public void SetTimer(float cooldown)
+        {
+            Cooldown = cooldown;
+            anim.speed = 1 / cooldown;
+        }
 
-    IEnumerator ShowCooldown()
-    {
-        yield return new WaitForSeconds(Cooldown);
-        GameController.Instance.CanUseCurrentBonus = true;
-        Activate(false);
+        public void OpenCooldownPanel()
+        {
+            Activate(true);
+            StartCoroutine(ShowCooldown());
+        }
+
+        IEnumerator ShowCooldown()
+        {
+            yield return new WaitForSeconds(Cooldown);
+            GameController.Instance.CanUseCurrentBonus = true;
+            Activate(false);
+        }
     }
 }

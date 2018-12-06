@@ -1,31 +1,34 @@
 ﻿using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    public static T Instance
+    public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
     {
-        get
+        public static T Instance
         {
-            if (!_instance)
+            get
             {
-                _instance = FindObjectOfType<T>();
-            }
+                if (!_instance)
+                {
+                    _instance = FindObjectOfType<T>();
+                }
 
-            return _instance;
+                return _instance;
+            }
+            private set
+            {
+                if (!_instance)
+                {
+                    _instance = value;
+                }
+            }
         }
-        private set
+
+        private static T _instance;
+
+        private void Awake()
         {
-            if (!_instance)
-            {
-                _instance = value;
-            }
+            Instance = this as T;
         }
-    }
-
-    private static T _instance;
-
-    private void Awake()
-    {
-        Instance = this as T;
     }
 }

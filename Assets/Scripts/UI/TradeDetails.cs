@@ -1,80 +1,88 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class TradeDetails : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public TradeOfferModel info;
-
-    public Text Title;
-    public Button AcceptBtn;
-    public Button DeclineBtn;
-
-    public Text FirstUserName;
-    public Text SecondUserName;
-
-    public Image FirstUserItemImg;
-    public Image SecondUserItemImg;
-
-    public Text FirstUserItemName;
-    public Text SecondUserItemName;
-
-    public void Accept()
+    public class TradeDetails : MonoBehaviour
     {
-        TradeManager.Instance.AcceptTradeAsync(info.Id);
-        LoginManager.Instance.GetUserInfoAsync();
-    }
+        public TradeOfferModel info;
 
-    public void Decline()
-    {
-        TradeManager.Instance.DeclineTradeAsync(info.Id);
-        LoginManager.Instance.GetUserInfoAsync();
-    }
+        public Text Title;
+        public Button AcceptBtn;
+        public Button DeclineBtn;
 
-    public void SetDetails(TradeOfferModel model)
-    {
-        info = model;
+        public Text FirstUserName;
+        public Text SecondUserName;
 
-        if (model.UserId == LoginManager.User.Id)
+        public Image FirstUserItemImg;
+        public Image SecondUserItemImg;
+
+        public Text FirstUserItemName;
+        public Text SecondUserItemName;
+
+        public void Accept()
         {
-            Title.text = LocalizationManager.GetLocalizedValue("yourtradeoffer") + model.Nickname;
-            FirstUserName.text = LoginManager.User.Nickname;
-            SecondUserName.text = model.Nickname;
-            AcceptBtn.gameObject.SetActive(false);
-        }
-        else
-        {
-            Title.text = model.Nickname + LocalizationManager.GetLocalizedValue("offeredyou");
-            FirstUserName.text = model.Nickname;
-            SecondUserName.text = LoginManager.User.Nickname;
-            AcceptBtn.gameObject.SetActive(true);
+            TradeManager.Instance.AcceptTradeAsync(info.Id);
+            LoginManager.Instance.GetUserInfoAsync();
         }
 
-        FirstUserItemName.text = model.OfferItem.Name;
-        if (model.OfferItem.Name == "Ice cream")
+        public void Decline()
         {
-            FirstUserItemName.text += ": " + model.OfferItem.Amount;
+            TradeManager.Instance.DeclineTradeAsync(info.Id);
+            LoginManager.Instance.GetUserInfoAsync();
         }
-        SecondUserItemName.text = model.RequestItem.Name;
-        if (model.RequestItem.Name == "Ice cream")
+
+        public void SetDetails(TradeOfferModel model)
         {
-            SecondUserItemName.text += ": " + model.RequestItem.Amount;
+            info = model;
+
+            if (model.UserId == LoginManager.User.Id)
+            {
+                Title.text = LocalizationManager.GetLocalizedValue("yourtradeoffer") + model.Nickname;
+                FirstUserName.text = LoginManager.User.Nickname;
+                SecondUserName.text = model.Nickname;
+                AcceptBtn.gameObject.SetActive(false);
+            }
+            else
+            {
+                Title.text = model.Nickname + LocalizationManager.GetLocalizedValue("offeredyou");
+                FirstUserName.text = model.Nickname;
+                SecondUserName.text = LoginManager.User.Nickname;
+                AcceptBtn.gameObject.SetActive(true);
+            }
+
+            FirstUserItemName.text = ItemName(model.OfferItem);
+            SecondUserItemName.text = ItemName(model.RequestItem);
+            FirstUserItemImg.sprite = Resources.Load<Sprite>(ItemImageName(model.OfferItem));
+            SecondUserItemImg.sprite = Resources.Load<Sprite>(ItemImageName(model.RequestItem));
+            gameObject.SetActive(true);
         }
-        if (model.OfferItem.Name.Contains("Card"))
+
+        public string ItemName(InventoryItem item)
         {
-            FirstUserItemImg.sprite = Resources.Load<Sprite>(model.OfferItem.Name.AddBrackets());
+            if (item.Amount > 1)
+            {
+                return string.Format("{0}: {1}", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
+            }
+            else
+            {
+                return LocalizationManager.GetValue(item.NameRu, item.Name);
+            }
         }
-        else
+
+        public string ItemImageName(InventoryItem item)
         {
-            FirstUserItemImg.sprite = Resources.Load<Sprite>("Bonus" + model.OfferItem.ItemId);
+            if (item.Name.Contains("Card"))
+            {
+                return item.Name.AddBrackets();
+            }
+            else
+            {
+                return "Bonus" + item.ItemId;
+            }
         }
-        if (model.RequestItem.Name.Contains("Card"))
-        {
-            SecondUserItemImg.sprite = Resources.Load<Sprite>(model.RequestItem.Name.AddBrackets());
-        }
-        else
-        {
-            SecondUserItemImg.sprite = Resources.Load<Sprite>("Bonus" + model.RequestItem.ItemId);
-        }
-        gameObject.SetActive(true);
     }
 }

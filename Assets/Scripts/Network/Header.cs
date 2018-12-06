@@ -1,13 +1,16 @@
-﻿public class Header
+﻿namespace Assets.Scripts.Network
 {
-    public string Name { get; set; }
-    public string Value { get; set; }
-
-    public Header() { }
-
-    public Header(string header, string val)
+    public class Header
     {
-        Name = header;
-        Value = val;
+        public string Name { get; set; }
+        public string Value { get; set; }
+
+        public Header() { }
+
+        public Header(string header, string val)
+        {
+            Name = header;
+            Value = val;
+        }
     }
 }

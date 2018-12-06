@@ -1,23 +1,26 @@
 ﻿using UnityEngine;
 
-public class RocketCoin : Coin
+namespace Assets.Scripts.Gameplay
 {
-    void Update()
+    public class RocketCoin : Coin
     {
-        if (!GameController.Started) return;
+        void Update()
+        {
+            if (!GameController.Started) return;
 
-        transform.Translate(SpeedController.Speed * Time.deltaTime, Space.World);
+            transform.Translate(SpeedController.Speed * Time.deltaTime, Space.World);
 
-        if (transform.position.z < -18)
+            if (transform.position.z < -18)
+            {
+                CoinGenerator.Instance.ResetCoin(this);
+                gameObject.SetActive(false);
+            }
+        }
+
+        public override void PickUp()
         {
             CoinGenerator.Instance.ResetCoin(this);
-            gameObject.SetActive(false);
+            base.PickUp();
         }
-    }
-
-    public override void PickUp()
-    {
-        CoinGenerator.Instance.ResetCoin(this);
-        base.PickUp();
     }
 }

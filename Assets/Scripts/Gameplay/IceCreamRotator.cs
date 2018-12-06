@@ -1,24 +1,28 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class IceCreamRotator : Singleton<IceCreamRotator>
+namespace Assets.Scripts.Gameplay
 {
-    public Animator animator;
-    public float AngleDelta;
-
-    private Vector3 _previousRot;
-
-    public static void SetRotator(bool started)
+    public class IceCreamRotator : Singleton<IceCreamRotator>
     {
-        Instance.animator.SetBool("Started", started);
-    }
+        public Animator animator;
+        public float AngleDelta;
 
-    void OnTriggerEnter(Collider other)
-    {
-        _previousRot = _previousRot - Vector3.up * AngleDelta;
-        if (_previousRot.y <= -360)
+        private Vector3 _previousRot;
+
+        public static void SetRotator(bool started)
         {
-            _previousRot.y %= 360;
+            Instance.animator.SetBool("Started", started);
         }
-        other.GetComponentInChildren<Spinner>().StartRotation(_previousRot);
+
+        void OnTriggerEnter(Collider other)
+        {
+            _previousRot = _previousRot - Vector3.up * AngleDelta;
+            if (_previousRot.y <= -360)
+            {
+                _previousRot.y %= 360;
+            }
+            other.GetComponentInChildren<Spinner>().StartRotation(_previousRot);
+        }
     }
 }

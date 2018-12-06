@@ -19,16 +19,11 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 using System.IO;
 using System.Text.RegularExpressions;
 #endif
-
+using UnityEngine;
 using Callback = System.Action<string>;
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
@@ -43,12 +38,14 @@ public class UnitySendMessageDispatcher
 }
 #endif
 
-public class WebViewObject : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    Callback onJS;
-    Callback onError;
-    Callback onLoaded;
-    bool visibility;
+    public class WebViewObject : MonoBehaviour
+    {
+        Callback onJS;
+        Callback onError;
+        Callback onLoaded;
+        bool visibility;
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
     IntPtr webView;
     Rect rect;
@@ -58,32 +55,32 @@ public class WebViewObject : MonoBehaviour
 #elif UNITY_IPHONE
     IntPtr webView;
 #elif UNITY_ANDROID
-    AndroidJavaObject webView;
+        AndroidJavaObject webView;
     
-    bool mIsKeyboardVisible = false;
+        bool mIsKeyboardVisible = false;
     
-    /// Called from Java native plugin to set when the keyboard is opened
-    public void SetKeyboardVisible(string pIsVisible)
-    {
-        mIsKeyboardVisible = (pIsVisible == "true");
-    }
+        /// Called from Java native plugin to set when the keyboard is opened
+        public void SetKeyboardVisible(string pIsVisible)
+        {
+            mIsKeyboardVisible = (pIsVisible == "true");
+        }
 #else
     IntPtr webView;
 #endif
 
-    public bool IsKeyboardVisible
-    {
-        get
+        public bool IsKeyboardVisible
         {
+            get
+            {
 #if !UNITY_EDITOR && UNITY_ANDROID
             return mIsKeyboardVisible;
 #elif !UNITY_EDITOR && UNITY_IPHONE
             return TouchScreenKeyboard.visible;
 #else
-            return false;
+                return false;
 #endif
+            }
         }
-    }
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 #if WEBVIEW_SEPARATED
@@ -254,11 +251,11 @@ public class WebViewObject : MonoBehaviour
     private static extern void   _CWebViewPlugin_ClearCustomHeader(IntPtr instance);
 #endif
 
-    public void Init(Callback cb = null, bool transparent = false, string ua = "", Callback err = null, Callback ld = null, bool enableWKWebView = false)
-    {
-        onJS = cb;
-        onError = err;
-        onLoaded = ld;
+        public void Init(Callback cb = null, bool transparent = false, string ua = "", Callback err = null, Callback ld = null, bool enableWKWebView = false)
+        {
+            onJS = cb;
+            onError = err;
+            onLoaded = ld;
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         {
@@ -298,15 +295,15 @@ public class WebViewObject : MonoBehaviour
 #elif UNITY_IPHONE
         webView = _CWebViewPlugin_Init(name, transparent, ua, enableWKWebView);
 #elif UNITY_ANDROID
-        webView = new AndroidJavaObject("net.gree.unitywebview.CWebViewPlugin");
-        webView.Call("Init", name, transparent, ua);
+            webView = new AndroidJavaObject("net.gree.unitywebview.CWebViewPlugin");
+            webView.Call("Init", name, transparent, ua);
 #else
         Debug.LogError("Webview is not supported on this platform.");
 #endif
-    }
+        }
 
-		public void DestroyWebView(){
-		#if UNITY_WEBPLAYER
+        public void DestroyWebView(){
+#if UNITY_WEBPLAYER
 		Application.ExternalCall("unityWebView.destroy", name);
 		#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		if (webView == IntPtr.Zero)
@@ -319,21 +316,21 @@ public class WebViewObject : MonoBehaviour
 		_CWebViewPlugin_Destroy(webView);
 		webView = IntPtr.Zero;
 		#elif UNITY_ANDROID
-		if (webView == null)
-		return;
-		webView.Call("Destroy");
-		webView = null;
-		#endif
-		}
+            if (webView == null)
+                return;
+            webView.Call("Destroy");
+            webView = null;
+#endif
+        }
 
-    protected virtual void OnDestroy()
-    {
-		DestroyWebView ();
-    }
+        protected virtual void OnDestroy()
+        {
+            DestroyWebView ();
+        }
 
-    /** Use this function instead of SetMargins to easily set up a centered window */
-    public void SetCenterPositionWithScale(Vector2 center, Vector2 scale)
-    {
+        /** Use this function instead of SetMargins to easily set up a centered window */
+        public void SetCenterPositionWithScale(Vector2 center, Vector2 scale)
+        {
 #if UNITY_WEBPLAYER
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         rect.x = center.x + (Screen.width - scale.x)/2;
@@ -344,10 +341,10 @@ public class WebViewObject : MonoBehaviour
         if (webView == IntPtr.Zero) return;
         _CWebViewPlugin_SetFrame(webView,(int)center.x,(int)center.y,(int)scale.x,(int)scale.y);
 #endif
-    }
+        }
 
-    public void SetMargins(int left, int top, int right, int bottom)
-    {
+        public void SetMargins(int left, int top, int right, int bottom)
+        {
 #if UNITY_WEBPLAYER
         Application.ExternalCall("unityWebView.setMargins", name, left, top, right, bottom);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
@@ -362,14 +359,14 @@ public class WebViewObject : MonoBehaviour
             return;
         _CWebViewPlugin_SetMargins(webView, left, top, right, bottom);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("SetMargins", left, top, right, bottom);
+            if (webView == null)
+                return;
+            webView.Call("SetMargins", left, top, right, bottom);
 #endif
-    }
+        }
 
-    public void SetVisibility(bool v)
-    {
+        public void SetVisibility(bool v)
+        {
 #if UNITY_WEBPLAYER
         Application.ExternalCall("unityWebView.setVisibility", name, v);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
@@ -381,71 +378,71 @@ public class WebViewObject : MonoBehaviour
             return;
         _CWebViewPlugin_SetVisibility(webView, v);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("SetVisibility", v);
+            if (webView == null)
+                return;
+            webView.Call("SetVisibility", v);
 #endif
-        visibility = v;
-    }
+            visibility = v;
+        }
 
-    public bool GetVisibility()
-    {
-        return visibility;
-    }
+        public bool GetVisibility()
+        {
+            return visibility;
+        }
 
-    public void LoadURL(string url)
-    {
-        if (string.IsNullOrEmpty(url))
-            return;
+        public void LoadURL(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return;
 #if UNITY_WEBPLAYER
         Application.ExternalCall("unityWebView.loadURL", name, url);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
-        //if (webView == IntPtr.Zero)
-            //return;
+//if (webView == IntPtr.Zero)
+//return;
         SafariView_LoadURL(url);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("LoadURL", url);
+            if (webView == null)
+                return;
+            webView.Call("LoadURL", url);
 #endif
-    }
+        }
 
-    public string GetURL()
-    {
+        public string GetURL()
+        {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return string.Empty;
         //_CWebViewPlugin_LoadURL(webView, url);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return string.Empty;
-        return webView.Get<string>("getURL");
+            if (webView == null)
+                return string.Empty;
+            return webView.Get<string>("getURL");
 #else
          return string.Empty;
 #endif
-    }
+        }
 
-    public void LoadHTML(string html, string baseUrl)
-    {
-        if (string.IsNullOrEmpty(html))
-            return;
-        if (string.IsNullOrEmpty(baseUrl))
-            baseUrl = "";
+        public void LoadHTML(string html, string baseUrl)
+        {
+            if (string.IsNullOrEmpty(html))
+                return;
+            if (string.IsNullOrEmpty(baseUrl))
+                baseUrl = "";
 #if UNITY_WEBPLAYER
-        //TODO: UNSUPPORTED
+//TODO: UNSUPPORTED
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
         _CWebViewPlugin_LoadHTML(webView, html, baseUrl);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("LoadHTML", html, baseUrl);
+            if (webView == null)
+                return;
+            webView.Call("LoadHTML", html, baseUrl);
 #endif
-    }
+        }
 
-    public void EvaluateJS(string js)
-    {
+        public void EvaluateJS(string js)
+        {
 #if UNITY_WEBPLAYER
         Application.ExternalCall("unityWebView.evaluateJS", name, js);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
@@ -453,157 +450,157 @@ public class WebViewObject : MonoBehaviour
             return;
         _CWebViewPlugin_EvaluateJS(webView, js);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("LoadURL", "javascript:" + js);
+            if (webView == null)
+                return;
+            webView.Call("LoadURL", "javascript:" + js);
 #endif
-    }
+        }
 
-    public bool CanGoBack()
-    {
+        public bool CanGoBack()
+        {
 #if UNITY_WEBPLAYER
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return false;
         return _CWebViewPlugin_CanGoBack(webView);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return false;
-        return webView.Get<bool>("canGoBack");
+            if (webView == null)
+                return false;
+            return webView.Get<bool>("canGoBack");
 #else
         return false;
 #endif
-    }
+        }
 
-    public bool CanGoForward()
-    {
+        public bool CanGoForward()
+        {
 #if UNITY_WEBPLAYER
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return false;
         return _CWebViewPlugin_CanGoForward(webView);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return false;
-        return webView.Get<bool>("canGoForward");
+            if (webView == null)
+                return false;
+            return webView.Get<bool>("canGoForward");
 #else
         return false;
 #endif
-    }
+        }
 
-    public void GoBack()
-    {
+        public void GoBack()
+        {
 #if UNITY_WEBPLAYER
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
         _CWebViewPlugin_GoBack(webView);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("GoBack");
+            if (webView == null)
+                return;
+            webView.Call("GoBack");
 #endif
-    }
+        }
 
-    public void GoForward()
-    {
+        public void GoForward()
+        {
 #if UNITY_WEBPLAYER
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
         _CWebViewPlugin_GoForward(webView);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("GoForward");
+            if (webView == null)
+                return;
+            webView.Call("GoForward");
 #endif
-    }
-
-    public void CallOnError(string error)
-    {
-        if (onError != null)
-        {
-            onError(error);
         }
-    }
 
-    public void CallOnLoaded(string url)
-    {
-        if (onLoaded != null)
+        public void CallOnError(string error)
         {
-            onLoaded(url);
+            if (onError != null)
+            {
+                onError(error);
+            }
         }
-    }
 
-    public void CallFromJS(string message)
-    {
-        if (onJS != null)
+        public void CallOnLoaded(string url)
         {
+            if (onLoaded != null)
+            {
+                onLoaded(url);
+            }
+        }
+
+        public void CallFromJS(string message)
+        {
+            if (onJS != null)
+            {
 #if !UNITY_ANDROID
             message = WWW.UnEscapeURL(message);
 #endif
-            onJS(message);
+                onJS(message);
+            }
         }
-    }
 
 
-    public void AddCustomHeader(string headerKey, string headerValue)
-    {
+        public void AddCustomHeader(string headerKey, string headerValue)
+        {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
 
         _CWebViewPlugin_AddCustomHeader(webView, headerKey, headerValue);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("AddCustomHeader", headerKey, headerValue);
+            if (webView == null)
+                return;
+            webView.Call("AddCustomHeader", headerKey, headerValue);
 #endif
-    }
+        }
 
-    public string GetCustomHeaderValue(string headerKey)
-    {
+        public string GetCustomHeaderValue(string headerKey)
+        {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
           return null;
         
         return _CWebViewPlugin_GetCustomHeaderValue(webView, headerKey);  
 #elif UNITY_ANDROID
-        if (webView == null)
-            return null;
-        return webView.Call<string>("GetCustomHeaderValue", headerKey);
+            if (webView == null)
+                return null;
+            return webView.Call<string>("GetCustomHeaderValue", headerKey);
 #else
         return null;
 #endif
-    }
+        }
 
-    public void RemoveCustomHeader(string headerKey)
-    {
+        public void RemoveCustomHeader(string headerKey)
+        {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
 
         _CWebViewPlugin_RemoveCustomHeader(webView, headerKey);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("RemoveCustomHeader", headerKey);
+            if (webView == null)
+                return;
+            webView.Call("RemoveCustomHeader", headerKey);
 #endif
-    }
+        }
 
-    public void ClearCustomHeader()
-    {
+        public void ClearCustomHeader()
+        {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IPHONE
         if (webView == IntPtr.Zero)
             return;
 
         _CWebViewPlugin_ClearCustomHeader(webView);
 #elif UNITY_ANDROID
-        if (webView == null)
-            return;
-        webView.Call("ClearCustomHeader");
+            if (webView == null)
+                return;
+            webView.Call("ClearCustomHeader");
 #endif
-    }
+        }
 
 
 #if UNITY_WEBPLAYER
@@ -676,4 +673,5 @@ public class WebViewObject : MonoBehaviour
         }
     }
 #endif
+    }
 }

@@ -1,20 +1,24 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class AchievementObject : MonoBehaviour {
+namespace Assets.Scripts.UI
+{
+    public class AchievementObject : MonoBehaviour {
 
-    public Text Title;
+        public Text Title;
 
-    public PlayerAchievementModel info;
+        public PlayerAchievementModel Info;
 
-    public void SetAchievement(PlayerAchievementModel model)
-    {
-        info = model;
-        Title.text = model.Name;
-    }
+        public void SetAchievement(PlayerAchievementModel model)
+        {
+            Info = model;
+            Title.text = model.Name;
+        }
 
-    public void OpenAchievementInfo()
-    {
-        Canvaser.Instance.AchievementInfo.SetAchievementInfo(info);
+        public void OpenAchievementInfo()
+        {
+            Canvaser.Instance.AchievementInfo.SetAchievementInfo(Info);
+        }
     }
 }

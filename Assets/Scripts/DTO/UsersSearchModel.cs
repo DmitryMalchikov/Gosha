@@ -1,5 +1,8 @@
-﻿public class UsersSearchModel
+﻿namespace Assets.Scripts.DTO
 {
-    public FriendRequestModel[] Users { get; set; }
-    public int TotalCount;
+    public class UsersSearchModel
+    {
+        public FriendRequestModel[] Users { get; set; }
+        public int TotalCount;
+    }
 }

@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 
-public class Rocket : MonoBehaviour, IPickable
+namespace Assets.Scripts.Gameplay
 {
-    public void PickUp()
+    public class Rocket : MonoBehaviour, IPickable
     {
-        PlayerRocket.Instance.ApplyRocket();
-        gameObject.SetActive(false);
-        AudioManager.PlayEffectPickup();
+        public void PickUp()
+        {
+            PlayerRocket.Instance.ApplyRocket();
+            gameObject.SetActive(false);
+            AudioManager.PlayEffectPickup();
+        }
     }
 }

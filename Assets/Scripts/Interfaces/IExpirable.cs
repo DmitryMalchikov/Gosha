@@ -1,6 +1,9 @@
 ﻿using System;
 
-public interface IExpirable
+namespace Assets.Scripts.Interfaces
 {
-    DateTime ExpireDate { get; set; }
+    public interface IExpirable
+    {
+        DateTime ExpireDate { get; set; }
+    }
 }

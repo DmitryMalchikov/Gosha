@@ -1,37 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.UI;
 using UnityEngine;
 
-public class TouchReader : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public bool sas;
-    public PlayerController PC;
-    bool wasMove = false;
-
-    public float DoubleTapTime = 0.1f;
-    public float sqrMag = 1;
-
-    Vector3 pos;
-    bool wasClick = false;
-
-    public Collider col;
-
-    private static Queue<bool> _moveInputs = new Queue<bool>();
-    private bool _lastInput = false;
-
-    void OnMouseDown()
+    public class TouchReader : MonoBehaviour
     {
-        if (!Canvaser.Instance.MainMenu.activeInHierarchy && GameController.Started && Time.timeScale > 0)
+        public bool sas;
+        public PlayerController PC;
+        private bool _wasMove = false;
+
+        public float DoubleTapTime = 0.1f;
+        public float SqrMag = 1;
+
+        private Vector3 _pos;
+        private bool _wasClick = false;
+
+        public Collider Col;
+
+        private static Queue<bool> _moveInputs = new Queue<bool>();
+        private bool _lastInput = false;
+
+        void OnMouseDown()
         {
-            pos = Input.mousePosition;
+            if (Canvaser.Instance.MainMenu.activeInHierarchy || !GameController.Started ||
+                !(Time.timeScale > 0)) return;
+
+            _pos = Input.mousePosition;
             sas = true;
-            if (!wasClick)
+            if (!_wasClick)
             {
-                wasMove = false;
-                wasClick = true;
+                _wasMove = false;
+                _wasClick = true;
                 StartCoroutine(CheckClick());
             }
-            else if (!wasMove)
+            else if (!_wasMove)
             {
                 if (GameController.Instance.CanUseCurrentBonus)
                 {
@@ -39,91 +43,90 @@ public class TouchReader : MonoBehaviour
                 }
             }
         }
-    }
 
-    void OnMouseDrag()
-    {
-        if (GameController.Started && sas && Time.timeScale > 0)
+        void OnMouseDrag()
         {
-            if (DistanceAbsX > sqrMag || DistanceAbsY > sqrMag)
+            if (GameController.Started && sas && Time.timeScale > 0)
             {
+                if (!(DistanceAbsX > SqrMag) && !(DistanceAbsY > SqrMag)) return;
+
                 if (DistanceAbsX > DistanceAbsY)
                 {
                     _moveInputs.Enqueue(DistanceX > 0);
                     //PC.Move(DistanceX > 0);
                     sas = false;
-                    wasMove = true;
+                    _wasMove = true;
                 }
                 else
                 {
-                    if (DistanceY > sqrMag)
+                    if (DistanceY > SqrMag)
                     {
                         PC.Jump();
                         sas = false;
-                        wasMove = true;
+                        _wasMove = true;
                     }
-                    else if (DistanceY < -sqrMag)
+                    else if (DistanceY < -SqrMag)
                     {
                         PC.Crouch();
                         sas = false;
-                        wasMove = true;
+                        _wasMove = true;
                     }
                 }
             }
         }
-    }
 
-    private float DistanceX { get { return Input.mousePosition.x - pos.x; } }
-    private float DistanceY { get { return Input.mousePosition.y - pos.y; } }
-    private float DistanceAbsX { get { return Mathf.Abs(DistanceX); } }
-    private float DistanceAbsY { get { return Mathf.Abs(DistanceY); } }
+        private float DistanceX { get { return Input.mousePosition.x - _pos.x; } }
+        private float DistanceY { get { return Input.mousePosition.y - _pos.y; } }
+        private float DistanceAbsX { get { return Mathf.Abs(DistanceX); } }
+        private float DistanceAbsY { get { return Mathf.Abs(DistanceY); } }
 
-    IEnumerator CheckClick()
-    {
-        yield return new WaitForSeconds(DoubleTapTime);
-
-        if (wasClick)
+        private IEnumerator CheckClick()
         {
-            wasClick = false;
+            yield return new WaitForSeconds(DoubleTapTime);
+
+            if (_wasClick)
+            {
+                _wasClick = false;
+            }
         }
-    }
 
-    public static void ClearInputs()
-    {
-        _moveInputs.Clear();
-    }
-
-    void Update()
-    {
-        if (!GameController.Started)
-            return;
-
-        if (_moveInputs.Count > 0 && (!PC.isMoving || _lastInput != _moveInputs.Peek()))
+        public static void ClearInputs()
         {
-            bool move = _moveInputs.Dequeue();
-            PC.Move(move);
-            _lastInput = move;
+            _moveInputs.Clear();
         }
+
+        void Update()
+        {
+            if (!GameController.Started)
+                return;
+
+            if (_moveInputs.Count > 0 && (!PC.IsMoving || _lastInput != _moveInputs.Peek()))
+            {
+                bool move = _moveInputs.Dequeue();
+                PC.Move(move);
+                _lastInput = move;
+            }
 
 #if UNITY_EDITOR
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            _moveInputs.Enqueue(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            _moveInputs.Enqueue(false);
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            PC.Crouch();
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            PC.Jump();
-        }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                _moveInputs.Enqueue(true);
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                _moveInputs.Enqueue(false);
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                PC.Crouch();
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                PC.Jump();
+            }
 #endif
-    }
+        }
 
+    }
 }

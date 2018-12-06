@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 
-public class SubmitScoreModel : SubmitModel
+namespace Assets.Scripts.DTO
 {
-    public int IceCreamCount { get; set; }
-    public int CasesCount { get; set; }
-    public int Distance { get; set; }
-    public bool NotContinued { get; set; }
-    public Dictionary<int, byte> Uses { get; set; }
+    public class SubmitScoreModel : SubmitModel
+    {
+        public int IceCreamCount { get; set; }
+        public int CasesCount { get; set; }
+        public int Distance { get; set; }
+        public bool NotContinued { get; set; }
+        public Dictionary<int, byte> Uses { get; set; }
+    }
 }

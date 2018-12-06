@@ -1,5 +1,8 @@
-﻿public class ItemBuyModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int ItemId { get; set; }
-    public int Amount { get; set; }
+    public class ItemBuyModel
+    {
+        public int ItemId { get; set; }
+        public int Amount { get; set; }
+    }
 }

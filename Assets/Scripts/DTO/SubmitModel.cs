@@ -1,4 +1,7 @@
-﻿public class SubmitModel
+﻿namespace Assets.Scripts.DTO
 {
-    public string Key { get; set; }
+    public class SubmitModel
+    {
+        public string Key { get; set; }
+    }
 }

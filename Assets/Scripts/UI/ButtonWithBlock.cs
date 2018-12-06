@@ -2,36 +2,39 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ButtonWithBlock : Button
+namespace Assets.Scripts.UI
 {
-    protected override void Start()
+    public class ButtonWithBlock : Button
     {
-        base.Start();
-        ColorBlock colBlock = colors;
-        colBlock.disabledColor = colBlock.normalColor;
-
-        colors = colBlock;
-    }
-
-    public override void OnPointerDown(PointerEventData eventData)
-    {
-        if (Input.touchCount > 1)
+        protected override void Start()
         {
-            interactable = false;
-        }
-        else
-        { 
-            base.OnPointerDown(eventData);
-        }
-    }
+            base.Start();
+            ColorBlock colBlock = colors;
+            colBlock.disabledColor = colBlock.normalColor;
 
-    public override void OnPointerClick(PointerEventData eventData)
-    {
-        if (interactable)
+            colors = colBlock;
+        }
+
+        public override void OnPointerDown(PointerEventData eventData)
         {
-            base.OnPointerClick(eventData);
+            if (Input.touchCount > 1)
+            {
+                interactable = false;
+            }
+            else
+            { 
+                base.OnPointerDown(eventData);
+            }
         }
 
-        interactable = true;
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            if (interactable)
+            {
+                base.OnPointerClick(eventData);
+            }
+
+            interactable = true;
+        }
     }
 }

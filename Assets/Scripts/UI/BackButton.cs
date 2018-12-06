@@ -1,27 +1,30 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class BackButton : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    private Button _button;
-
-    private void OnEnable()
+    public class BackButton : MonoBehaviour
     {
-        if (!_button)
+        private Button _button;
+
+        private void OnEnable()
         {
-            _button = GetComponent<Button>();
+            if (!_button)
+            {
+                _button = GetComponent<Button>();
+            }
+
+            Canvaser.AddButton(this);
         }
 
-        Canvaser.AddButton(this);
-    }
+        private void OnDisable()
+        {
+            Canvaser.RemoveButton();
+        }
 
-    private void OnDisable()
-    {
-        Canvaser.RemoveButton();
-    }
-
-    public void PressButton()
-    {
-        _button.onClick.Invoke();
+        public void PressButton()
+        {
+            _button.onClick.Invoke();
+        }
     }
 }

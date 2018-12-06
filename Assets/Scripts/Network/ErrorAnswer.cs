@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 
-public class ErrorAnswer
+namespace Assets.Scripts.Network
 {
-    public string Message { get; set; }
-    public Dictionary<string, IList<string>> ModelState { get; set; }
+    public class ErrorAnswer
+    {
+        public string Message { get; set; }
+        public Dictionary<string, IList<string>> ModelState { get; set; }
+    }
 }

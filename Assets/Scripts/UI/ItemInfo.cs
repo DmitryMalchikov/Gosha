@@ -1,109 +1,118 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Managers;
+using Assets.Scripts.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemInfo : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public int ItemID;
-    public string ItemName;
-    public string Desc;
-    public int Price;
-
-    public ShopCard CardInfo;
-    public ShopItem CaseInfo;
-
-    public Image ImgSource;
-    public Text NameText;
-    public Text PriceText;
-    public Button BuyButton;
-
-    public TradePanel _TradePanel;
-
-    public Slider Upgrade;
-    InventoryItem curItem;
-
-    public void OpenBuyInfo()
+    public class ItemInfo : MonoBehaviour
     {
-        Canvaser.Instance.BuyInfoPanel.SetBuyInfo(this);
-    }
-    public void OpenUpgradeInfo()
-    {
-        Canvaser.Instance.UpgradeInfoPanel.SetBuyInfo(this);
-    }
+        public string ItemName;
+        public string Desc;
+        private ShopItem _itemInfo;
+        public Image ImgSource;
+        public Text NameText;
+        public Text PriceText;
+        public Button BuyButton;
+        public TradePanel _TradePanel;
+        public Slider Upgrade;
 
-    public void SetCard(ShopCard card)
-    {
-        CardInfo = card;
-        NameText.text = LocalizationManager.GetValue(card.NameRu, card.Name);
-        PriceText.text = card.Cost.ToString();
-        ItemID = card.Id;
-        ImgSource.sprite = Resources.Load<Sprite>(string.Format("{0} ({1})", CardInfo.SuitName, CardInfo.Position));
-        Price = card.Cost;
-    }
+        public int Price { get { return _itemInfo.Cost; } }
 
-    public void SetCase(ShopItem item)
-    {
-        CaseInfo = item;
-        NameText.text = LocalizationManager.GetValue(item.NameRu, item.Name);
-        PriceText.text = item.Cost.ToString();
-        ItemID = item.Id;
-        Price = item.Cost;
-    }
-
-    public void SetUpgrade(ShopItem item)
-    {
-        int amount = item.Amount;
-
-        if (LoginManager.LocalUser)
+        public int ItemId
         {
-            var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
-            amount = upgrade != null ? upgrade.UpgradeAmount : 0;
+            get
+            {
+                var item = _itemInfo as InventoryItem;
+                if (item != null)
+                {
+                    return item.ItemId;
+                }
+                return _itemInfo.Id;
+            }
         }
 
-        Upgrade.value = amount;
-        if (amount < 5)
+        public void OpenBuyInfo()
         {
-            Price = (item.Cost * (amount + 1));
-            PriceText.text = Price.ToString();
-            BuyButton.interactable = LoginManager.User.IceCream >= (item.Cost * (amount + 1));
+            Canvaser.Instance.BuyInfoPanel.SetBuyInfo(this);
         }
-        else
+        public void OpenUpgradeInfo()
         {
-            BuyButton.interactable = false;
-            PriceText.text = "Max";
+            Canvaser.Instance.UpgradeInfoPanel.SetBuyInfo(this);
         }
 
-        ItemID = item.Id;
-    }
-
-    public void SetBonus(ShopItem item)
-    {
-        Price = item.Cost;
-        PriceText.text = item.Cost.ToString();
-        ItemID = item.Id;
-    }
-
-    public void SelectItem(bool toSelect)
-    {
-        if (toSelect)
+        public void SetCard(ShopCard card)
         {
-            _TradePanel.SelectedItemID = ItemID;
-            _TradePanel.IcecreamForTrade = 0;
-            _TradePanel.IceCreamForTradeInput.text = "";
+            SetItemAndText(card);
+            ImgSource.sprite = Resources.Load<Sprite>(string.Format("{0} ({1})", card.SuitName, card.Position));
         }
-        NameText.text = string.Format("{0}({1})", curItem.Name, curItem.Amount - 1 * (toSelect ? 1 : 0));
-    }
 
-    public void SetInventoryCard(InventoryCard item)
-    {
-        ItemID = item.ItemId;
-        NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
-        curItem = item;
-        ImgSource.sprite = Resources.Load<Sprite>(item.Name.AddBrackets());
-    }
-    public void SetBonus(InventoryItem item)
-    {
-        gameObject.SetActive(true);
-        curItem = item;
-        NameText.text = string.Format("{0}({1})", item.Name, item.Amount);
+        public void SetCase(ShopItem item)
+        {
+            SetItemAndText(item);
+        }
+
+        public void SetItemAndText(ShopItem item)
+        {
+            _itemInfo = item;
+            NameText.text = LocalizationManager.GetValue(item.NameRu, item.Name);
+            PriceText.text = item.Cost.ToString();
+        }
+
+        public void SetUpgrade(ShopItem item)
+        {
+            int amount = item.Amount;
+            _itemInfo = item;
+
+            if (LoginManager.LocalUser)
+            {
+                var upgrade = LoginManager.User.BonusUpgrades.Find(bu => bu.BonusName == item.Name);
+                amount = upgrade != null ? upgrade.UpgradeAmount : 0;
+            }
+
+            Upgrade.value = amount;
+            if (amount < 5)
+            {
+                _itemInfo.Cost = (item.Cost * (amount + 1));
+                PriceText.text = Price.ToString();
+                BuyButton.interactable = LoginManager.User.IceCream >= (item.Cost * (amount + 1));
+            }
+            else
+            {
+                BuyButton.interactable = false;
+                PriceText.text = "Max";
+            }
+        }
+
+        public void SetBonus(ShopItem item)
+        {
+            _itemInfo = item;
+            PriceText.text = item.Cost.ToString();
+        }
+
+        public void SelectItem(bool toSelect)
+        {
+            if (toSelect)
+            {
+                _TradePanel.SelectedItemID = ItemId;
+                _TradePanel.IcecreamForTrade = 0;
+                _TradePanel.IceCreamForTradeInput.text = "";
+            }
+            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(_itemInfo.NameRu, _itemInfo.Name), _itemInfo.Amount - 1 * (toSelect ? 1 : 0));
+        }
+
+        public void SetInventoryCard(InventoryCard item)
+        {
+            _itemInfo = item;
+            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
+            ImgSource.sprite = Resources.Load<Sprite>(item.Name.AddBrackets());
+        }
+        public void SetBonus(InventoryItem item)
+        {
+            gameObject.SetActive(true);
+            _itemInfo = item;
+            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
+        }
     }
 }

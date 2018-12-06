@@ -1,35 +1,38 @@
 ﻿using UnityEngine;
 
-public class Ramp : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public static bool PlayerOnRamp { get; private set; }
-
-    static Ramp()
+    public class Ramp : MonoBehaviour
     {
-        PlayerOnRamp = false;
-    }
+        public static bool PlayerOnRamp { get; private set; }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            PlayerOnRamp = true;
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        static Ramp()
         {
             PlayerOnRamp = false;
         }
-    }
 
-    public static void StickPlayerToGround()
-    {
-        if (PlayerOnRamp)
+        void OnTriggerEnter(Collider other)
         {
-            PlayerController.Instance.StickToGround();
+            if (other.CompareTag("Player"))
+            {
+                PlayerOnRamp = true;
+            }
+        }
+
+        void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                PlayerOnRamp = false;
+            }
+        }
+
+        public static void StickPlayerToGround()
+        {
+            if (PlayerOnRamp)
+            {
+                PlayerController.Instance.StickToGround();
+            }
         }
     }
 }

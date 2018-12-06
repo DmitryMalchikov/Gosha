@@ -1,132 +1,136 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class PlayerRigidbody : Singleton<PlayerRigidbody>
+namespace Assets.Scripts.Gameplay
 {
-    [SerializeField]
-    private Rigidbody _rigidbody;
-    [SerializeField]
-    private Vector3 JumpSpeed;
-    [SerializeField]
-    private Vector3 _crouchPower = Vector3.down;
-
-    private static Rigidbody InstanceRigidbody
+    public class PlayerRigidbody : Singleton<PlayerRigidbody>
     {
-        get
-        {
-            return Instance._rigidbody;
-        }
-    }
+        [SerializeField]
+        private Rigidbody _rigidbody;
+        [SerializeField]
+        private Vector3 JumpSpeed;
+        [SerializeField]
+        private Vector3 _crouchPower = Vector3.down;
 
-    public static Vector3 Velocity
-    {
-        get
+        private static Rigidbody InstanceRigidbody
         {
-            return InstanceRigidbody.velocity;
+            get
+            {
+                return Instance._rigidbody;
+            }
         }
-        private set
-        {
-            InstanceRigidbody.velocity = value;
-        }
-    }
 
-    public static bool UseGravity
-    {
-        get
+        public static Vector3 Velocity
         {
-            return InstanceRigidbody.useGravity;
+            get
+            {
+                return InstanceRigidbody.velocity;
+            }
+            private set
+            {
+                InstanceRigidbody.velocity = value;
+            }
         }
-        set
+
+        public static bool UseGravity
         {
-            InstanceRigidbody.useGravity = value;
+            get
+            {
+                return InstanceRigidbody.useGravity;
+            }
+            set
+            {
+                InstanceRigidbody.useGravity = value;
+            }
         }
-    }
 
-    private static Vector3 _velocityBeforePhysics;
+        private static Vector3 _velocityBeforePhysics;
 
-    private void Start()
-    {
+        private void Start()
+        {
         
-    }
-
-    public static void FreezeAll()
-    {
-        InstanceRigidbody.constraints = RigidbodyConstraints.FreezeAll;
-    }
-
-    public static void FreezeExceptJump()
-    {
-        InstanceRigidbody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
-    }
-
-    public static void AddForce(Vector3 force, ForceMode mode)
-    {
-        InstanceRigidbody.AddForce(force, mode);
-    }
-
-    public static void ResetRigidbody()
-    {
-        InstanceRigidbody.useGravity = false;
-        FreezeAll();
-    }
-
-    public static void SetInAir()
-    {
-        UseGravity = true;
-        FreezeExceptJump();
-    }
-
-    public static void TurnOnRocket(float rocketPower)
-    {
-        FreezeExceptJump();
-        Velocity += Vector3.up * (rocketPower - Velocity.y);
-        UseGravity = false;        
-    }
-
-    public static void OnRocket()
-    {
-        Velocity = Vector3.zero;
-        FreezeAll();
-    }
-
-    public static void Jump()
-    {
-        AddForce(Instance.JumpSpeed, ForceMode.VelocityChange);
-        UseGravity = true;
-        FreezeExceptJump();
-    }
-
-    public static void OnHit()
-    {
-        UseGravity = true;
-        Velocity += Vector3.left * Velocity.x + Vector3.down * Velocity.y;
-        FreezeExceptJump();
-    }
-
-    public static void OnShieldHit()
-    {
-        Velocity = _velocityBeforePhysics;
-    }
-
-    public static void ResetVelocity()
-    {
-        Velocity = Vector3.zero;
-    }
-
-    public static void MoveToGround(bool onGround)
-    {
-        if (!onGround)
-        {
-            AddForce(Instance._crouchPower, ForceMode.Acceleration);
-            PlayerAnimator.SetGroundNear();
         }
-        else
-        {
-            ResetVelocity();
-        }
-    }
 
-    private void FixedUpdate()
-    {
-        _velocityBeforePhysics = Velocity;
+        public static void FreezeAll()
+        {
+            InstanceRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
+        public static void FreezeExceptJump()
+        {
+            InstanceRigidbody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
+        }
+
+        public static void AddForce(Vector3 force, ForceMode mode)
+        {
+            InstanceRigidbody.AddForce(force, mode);
+        }
+
+        public static void ResetRigidbody()
+        {
+            InstanceRigidbody.useGravity = false;
+            FreezeAll();
+        }
+
+        public static void SetInAir()
+        {
+            UseGravity = true;
+            FreezeExceptJump();
+        }
+
+        public static void TurnOnRocket(float rocketPower)
+        {
+            FreezeExceptJump();
+            Velocity += Vector3.up * (rocketPower - Velocity.y);
+            UseGravity = false;        
+        }
+
+        public static void OnRocket()
+        {
+            Velocity = Vector3.zero;
+            FreezeAll();
+        }
+
+        public static void Jump()
+        {
+            AddForce(Instance.JumpSpeed, ForceMode.VelocityChange);
+            UseGravity = true;
+            FreezeExceptJump();
+        }
+
+        public static void OnHit()
+        {
+            UseGravity = true;
+            Velocity += Vector3.left * Velocity.x + Vector3.down * Velocity.y;
+            FreezeExceptJump();
+        }
+
+        public static void OnShieldHit()
+        {
+            Velocity = _velocityBeforePhysics;
+        }
+
+        public static void ResetVelocity()
+        {
+            Velocity = Vector3.zero;
+        }
+
+        public static void MoveToGround(bool onGround)
+        {
+            if (!onGround)
+            {
+                AddForce(Instance._crouchPower, ForceMode.Acceleration);
+                PlayerAnimator.SetGroundNear();
+            }
+            else
+            {
+                ResetVelocity();
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            _velocityBeforePhysics = Velocity;
+        }
     }
 }

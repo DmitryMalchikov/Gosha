@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class AutoClear : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    private InputField _input;
-
-    private void OnEnable()
+    public class AutoClear : MonoBehaviour
     {
-        if (!_input)
-        {
-            _input = GetComponent<InputField>();
-        }
+        private InputField _input;
 
-        _input.text = string.Empty;
+        private void OnEnable()
+        {
+            if (!_input)
+            {
+                _input = GetComponent<InputField>();
+            }
+
+            _input.text = string.Empty;
+        }
     }
 }

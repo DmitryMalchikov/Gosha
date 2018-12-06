@@ -1,18 +1,22 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Utils;
+using UnityEngine;
 
-public class LoginCanvas : Singleton<LoginCanvas>
+namespace Assets.Scripts.UI
 {
-    public GameObject Warning;
-
-    public void Enable(bool enable)
+    public class LoginCanvas : Singleton<LoginCanvas>
     {
-        EnableWarning(false);
-        gameObject.SetActive(enable);
-        Canvaser.Instance.MainMenu.SetActive(!enable);        
-    }
+        public GameObject Warning;
 
-    public void EnableWarning(bool enable)
-    {
-        Warning.SetActive(enable);
+        public void Enable(bool enable)
+        {
+            EnableWarning(false);
+            gameObject.SetActive(enable);
+            Canvaser.Instance.MainMenu.SetActive(!enable);        
+        }
+
+        public void EnableWarning(bool enable)
+        {
+            Warning.SetActive(enable);
+        }
     }
 }

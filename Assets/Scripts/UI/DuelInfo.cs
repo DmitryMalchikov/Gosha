@@ -1,51 +1,57 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.DTO;
+using Assets.Scripts.Interfaces;
+using Assets.Scripts.Managers;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class DuelInfo : TimeCheck, IAvatarSprite
+namespace Assets.Scripts.UI
 {
-    public Text Name;
-    public Text Bet;
-    public Image Avatar;
-
-    protected DuelModel _info;
-
-    public override IExpirable Info
+    public class DuelInfo : TimeCheck, IAvatarSprite
     {
-        get
+        public Text Name;
+        public Text Bet;
+        public Image Avatar;
+
+        protected DuelModel _info;
+
+        public override IExpirable Info
         {
-            return _info;
+            get
+            {
+                return _info;
+            }
         }
-    }
 
-    public virtual void SetDuelPanel(DuelModel model)
-    {
-        _info = model;
-        Name.text = _info.Nickname;
-        Bet.text = _info.Bet.ToString();
-        LoginManager.Instance.GetUserImage(this, _info.UserId);        
-    }
-
-    public void AcceptDuel(bool accept)
-    {
-        if (accept)
+        public virtual void SetDuelPanel(DuelModel model)
         {
-            DuelManager.Instance.AcceptDuelAsync(_info.Id);
-            Run();
+            _info = model;
+            Name.text = _info.Nickname;
+            Bet.text = _info.Bet.ToString();
+            LoginManager.Instance.GetUserImage(this, _info.UserId);        
         }
-        else
+
+        public void AcceptDuel(bool accept)
         {
-            DuelManager.Instance.DeclineDuelAsync(_info.Id);
+            if (accept)
+            {
+                DuelManager.Instance.AcceptDuelAsync(_info.Id);
+                Run();
+            }
+            else
+            {
+                DuelManager.Instance.DeclineDuelAsync(_info.Id);
+            }
         }
-    }
 
-    public void Run()
-    {
-        Canvaser.Instance.Duels.gameObject.SetActive(false);        
-        Canvaser.Instance.StartRun();
-    }
+        public void Run()
+        {
+            Canvaser.Instance.Duels.gameObject.SetActive(false);        
+            Canvaser.Instance.StartRun();
+        }
 
-    public void SetSprite(Sprite sprite)
-    {
-        Avatar.sprite = sprite;
+        public void SetSprite(Sprite sprite)
+        {
+            Avatar.sprite = sprite;
+        }
     }
 }

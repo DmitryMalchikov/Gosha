@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Runtime.InteropServices;
+﻿using UnityEngine;
 
-public class ImagePicker : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
+    public class ImagePicker : MonoBehaviour
+    {
 #if UNITY_ANDROID && !UNITY_EDITOR
     private static AndroidJavaObject unityActivityClass;
 #endif
@@ -26,11 +23,12 @@ public class ImagePicker : MonoBehaviour
 		Unimgpicker_show ("avatar", "avatar", 10);
 	}
 #else 
-    static void _openFileSystem() { }
+        static void _openFileSystem() { }
 #endif
 
-    public void OpenGallery()
-    {
-        _openFileSystem();
+        public void OpenGallery()
+        {
+            _openFileSystem();
+        }
     }
 }

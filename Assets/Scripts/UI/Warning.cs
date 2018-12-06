@@ -2,21 +2,24 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Warning : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Text message;
-    public int offset = 5;
-
-    public void ShowMessage(string messagetoShow)
+    public class Warning : MonoBehaviour
     {
-        message.text = messagetoShow;
-        gameObject.SetActive(true);
-        StartCoroutine(MessageCloser());
-    }
+        public Text message;
+        public int offset = 5;
 
-    IEnumerator MessageCloser()
-    {
-        yield return new WaitForSeconds(offset);
-        gameObject.SetActive(false);
+        public void ShowMessage(string messageToShow)
+        {
+            message.text = messageToShow;
+            gameObject.SetActive(true);
+            StartCoroutine(MessageCloser());
+        }
+
+        IEnumerator MessageCloser()
+        {
+            yield return new WaitForSeconds(offset);
+            gameObject.SetActive(false);
+        }
     }
 }

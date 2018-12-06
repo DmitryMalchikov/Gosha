@@ -1,5 +1,8 @@
-﻿public class AdsModel
+﻿namespace Assets.Scripts.DTO
 {
-    public int Id { get; set; }
-    public string Text { get; set; }
+    public class AdsModel
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+    }
 }

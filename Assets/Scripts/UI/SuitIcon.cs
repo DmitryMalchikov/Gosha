@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SuitIcon : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    public Image Icon;
-    public Toggle IsOn;
+    public class SuitIcon : MonoBehaviour
+    {
+        public Image Icon;
+        public Toggle IsOn;
+    }
 }

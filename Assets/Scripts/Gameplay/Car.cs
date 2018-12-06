@@ -1,38 +1,40 @@
 ﻿using UnityEngine;
 
-public class Car : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public float Speed;
-    Vector3 defaultPos;
-    bool firstEnable = true;
-    public bool IsMoving = true;
-
-    private void OnEnable()
+    public class Car : MonoBehaviour
     {
-        if (IsMoving)
+        public float Speed;
+        Vector3 _defaultPos;
+        private bool _firstEnable = true;
+        public bool IsMoving = true;
+
+        private void OnEnable()
         {
-            if (firstEnable)
+            if (!IsMoving) return;
+
+            if (_firstEnable)
             {
-                defaultPos = transform.localPosition;
-                firstEnable = false;
+                _defaultPos = transform.localPosition;
+                _firstEnable = false;
             }
             else
             {
                 ResetPos();
             }
         }
-    }
 
-    public void ResetPos()
-    {
-        transform.localPosition = defaultPos;
-    }
-
-    void Update()
-    {
-        if (Speed > 0 && GameController.Started)
+        public void ResetPos()
         {
-            transform.Translate(Vector3.forward * Speed * (-SpeedController.Speed.z) * Time.deltaTime);
+            transform.localPosition = _defaultPos;
+        }
+
+        void Update()
+        {
+            if (Speed > 0 && GameController.Started)
+            {
+                transform.Translate(Vector3.forward * Speed * (-SpeedController.Speed.z) * Time.deltaTime);
+            }
         }
     }
 }
