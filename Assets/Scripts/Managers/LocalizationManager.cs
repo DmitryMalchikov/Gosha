@@ -10,17 +10,17 @@ namespace Assets.Scripts.Managers
 {
     public class LocalizationManager : Singleton<LocalizationManager>
     {
-        private static Dictionary<string, string> localizedText;
-
         public string NotFoundKey = "Missing text";
-        public static Language CurrentLanguage = Language.EN;
-        public static bool IsReady = false;
 
-        private static Dictionary<Language, string> localizationFileNames = new Dictionary<Language, string>()
+        private static Dictionary<string, string> _localizedText;
+        private static Dictionary<Language, string> _localizationFileNames = new Dictionary<Language, string>()
         {
             { Language.EN, "localization_eng.json" },
             { Language.RU, "localization_ru.json" }
         };
+
+        public static Language CurrentLanguage { get; private set; }
+        public static bool IsReady { get; private set; }
 
         public static string GetValue(string ru, string eng)
         {
@@ -31,8 +31,7 @@ namespace Assets.Scripts.Managers
 
             return eng;
         }
-
-        // Use this for initialization
+        
         IEnumerator Start()
         {
             var lang = PlayerPrefs.GetInt("language");
@@ -52,49 +51,27 @@ namespace Assets.Scripts.Managers
                 }
             }
 
-            yield return LoadLocalizedText(localizationFileNames[CurrentLanguage]);
-            Canvaser.Instance.LanguageDropdown.value = (int)CurrentLanguage - 1;
+            yield return LoadLocalizedText(_localizationFileNames[CurrentLanguage]);
         }
 
 
         public IEnumerator LoadLocalizedText(string fileName)
         {
-
-            localizedText = new Dictionary<string, string>();
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
-#if UNITY_ANDROID && !UNITY_EDITOR
-        var www = new WWW(filePath);
-        yield return www;
-        
-        if (string.IsNullOrEmpty(www.error))
+            yield return StartCoroutine(FileExtensions.LoadTextFromStreamingAssets(filePath, ParseJsonIntoDictionary));
+        }
+
+        public void ParseJsonIntoDictionary(string dataAsJson)
         {
-            string dataAsJson = www.text;
+            _localizedText = new Dictionary<string, string>();
             LocalizationData loadedData = JsonUtility.FromJson<LocalizationData>(dataAsJson);
 
             for (int i = 0; i < loadedData.items.Length; i++)
             {
-                localizedText.Add(loadedData.items[i].key, loadedData.items[i].value);
+                _localizedText.Add(loadedData.items[i].key, loadedData.items[i].value);
             }
-        }
-        else
-        {
-            Debug.Log(www.error);
-        }
-#else
-            if (File.Exists(filePath))
-            {
-                string dataAsJson = File.ReadAllText(filePath);
-                LocalizationData loadedData = JsonUtility.FromJson<LocalizationData>(dataAsJson);
 
-                for (int i = 0; i < loadedData.items.Length; i++)
-                {
-                    localizedText.Add(loadedData.items[i].key, loadedData.items[i].value);
-                }
-            }
-            yield return null;
-#endif
             IsReady = true;
-        
         }
 
         public void ChangeLanguage(int lang)
@@ -107,7 +84,7 @@ namespace Assets.Scripts.Managers
 
         private IEnumerator ChangeLanguage()
         {
-            yield return LoadLocalizedText(localizationFileNames[CurrentLanguage]);
+            yield return LoadLocalizedText(_localizationFileNames[CurrentLanguage]);
 
             var texts = FindObjectsOfType<LocalizedText>();
             PlayerPrefs.SetInt("language", (int)CurrentLanguage);
@@ -115,7 +92,6 @@ namespace Assets.Scripts.Managers
             for (int i = 0; i < texts.Length; i++)
             {
                 texts[i].SetText();
-                //yield return null;
             }
 
             if (LoginManager.User != null)
@@ -126,9 +102,9 @@ namespace Assets.Scripts.Managers
 
         public static string GetLocalizedValue(string key)
         {
-            if (localizedText.ContainsKey(key))
+            if (_localizedText.ContainsKey(key))
             {
-                return localizedText[key].Replace("\\n", Environment.NewLine);
+                return _localizedText[key].Replace("\\n", Environment.NewLine);
             }
 
             return Instance.NotFoundKey;

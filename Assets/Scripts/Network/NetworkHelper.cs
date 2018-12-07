@@ -137,7 +137,6 @@ namespace Assets.Scripts.Network
             if (response.StatusCode == 0)
             {
                 forceUpdate = true;
-                //Extensions.ShowGameObjects(LoadingManager.GetPanelsByKey(loadingPanelsKey));
                 var req = CreateRequest(url, parms.Value, contentType, LoginManager.Instance.Headers);
                 yield return SendRequest(req);
                 SetResponse(response, req);
@@ -191,16 +190,7 @@ namespace Assets.Scripts.Network
 #endif
             {
                 response.SetFields(HandleExceptionText(req.downloadHandler.text, (HttpStatusCode)req.responseCode));
-                //var model = new AnswerModel(req.downloadHandler.text);
-                //model.StatusCode = HttpStatusCode.InternalServerError;
-                //response.SetFields(model);
             }
-            //#if !UNITY_5
-            //        else if (req.isNetworkError)
-            //        {
-            //            //response.SetFields(HandleExceptionText(req.error, (HttpStatusCode)req.responseCode));
-            //        }
-            //#endif
             else
             {
                 response.SetFields(new AnswerModel(req.downloadHandler.text));

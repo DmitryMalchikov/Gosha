@@ -6,7 +6,7 @@ namespace Assets.Scripts.UI
 {
     public class UserInfo : MonoBehaviour
     {
-        public FriendObject info;
+        private FriendObject _info;
         public Text Name;
         public Text Region;
         public Text Record;
@@ -37,7 +37,7 @@ namespace Assets.Scripts.UI
         public void SetUserObject(FriendObject user)
         {
             SetAvatarDownloadedCallback(user);
-            info = user;
+            _info = user;
             Name.text = user.Info.Nickname;
             Region.text = user.Info.Region;
             Record.text = LocalizationManager.GetLocalizedValue("highscore") + user.Info.Highscore.ToString();
@@ -48,9 +48,9 @@ namespace Assets.Scripts.UI
 
         public void SetAvatarDownloadedCallback(FriendObject user)
         {
-            if (info != null)
+            if (_info != null)
             {
-                info.OnAvatarDownloaded -= SetSprite;
+                _info.OnAvatarDownloaded -= SetSprite;
             }
             user.OnAvatarDownloaded += SetSprite;
         }
@@ -78,7 +78,7 @@ namespace Assets.Scripts.UI
         {
             if (Canvaser.Instance.IsLoggedIn())
             {
-                FriendshipStatus newStatus = info.OfferOrAddfriend();
+                FriendshipStatus newStatus = _info.OfferOrAddfriend();
                 if (newStatus == FriendshipStatus.OutgoingRequest)
                 {
                     SetAddToFriendsButton(true);
@@ -92,13 +92,13 @@ namespace Assets.Scripts.UI
 
         public void AddFriend(bool toAdd)
         {
-            info.AcceptFriend(toAdd);
+            _info.AcceptFriend(toAdd);
             gameObject.SetActive(false);
         }
 
         public void Trade()
         {
-            info.Trade();
+            _info.Trade();
             gameObject.SetActive(false);
         }
 
@@ -106,7 +106,7 @@ namespace Assets.Scripts.UI
         {
             if (Canvaser.Instance.IsLoggedIn())
             {
-                Canvaser.Instance.FriendsPanel.OpenDuelPanel(info.Info.Id);
+                Canvaser.Instance.FriendsPanel.OpenDuelPanel(_info.Info.Id);
                 gameObject.SetActive(false);
             }
         }

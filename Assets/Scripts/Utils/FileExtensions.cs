@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Assets.Scripts.Gameplay;
@@ -6,6 +7,7 @@ using Assets.Scripts.Managers;
 using Encryptor;
 using Newtonsoft.Json;
 using uTasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Utils
 {
@@ -88,6 +90,23 @@ namespace Assets.Scripts.Utils
             }
         }
 
+        public static void RemoveAllCachedData()
+        {
+            string folderPath = Path.Combine(GameController.PersistentDataPath, "Data");
+            DirectoryInfo di = new DirectoryInfo(folderPath);
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+        }
+
         public static T TryParseData<T>(string input, string key = null)
         {
             T result = default(T);
@@ -110,7 +129,7 @@ namespace Assets.Scripts.Utils
             return result;
         }
 
-        public static IEnumerator<string> LoadTextFromStreamingAssets(string filePath)
+        public static IEnumerator<string> LoadTextFromStreamingAssets(string filePath, Action<string> onLoadEnd = null)
         {
             string dataAsJson = string.Empty;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -130,7 +149,14 @@ namespace Assets.Scripts.Utils
                 dataAsJson = File.ReadAllText(filePath);
             }
 #endif
-            yield return dataAsJson;
+            if (onLoadEnd != null)
+            {
+                onLoadEnd(dataAsJson);
+            }
+            else
+            {
+                yield return dataAsJson;
+            }
         }
     }
 }

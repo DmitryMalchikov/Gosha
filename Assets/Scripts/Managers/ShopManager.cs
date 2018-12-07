@@ -38,7 +38,7 @@ namespace Assets.Scripts.Managers
                 Canvaser.Instance.Shop.CheckBuyBtns();
 
                 LoginManager.Instance.GetUserInfoAsync();
-            }, errorMethod: (model) =>       
+            }, errorMethod: (model) =>
             {
                 info.BuyItemLocaly();
             }, finallyMethod: () => callback());
@@ -68,14 +68,14 @@ namespace Assets.Scripts.Managers
                         CurrentShop = model;
                         HashManager.SetShopHash(model.ShopHash);
                         SetShopItems(model);
-
-                        task.Ready = true;
-                    }, 
+                    },
+                    finallyMethod: () => { task.Ready = true; },
                     type: DataType.Shop, loadingPanelsKey: "shop");
             }
             else
             {
                 SetShopItems(CurrentShop);
+                task.Ready = true;
             }
             return task;
         }

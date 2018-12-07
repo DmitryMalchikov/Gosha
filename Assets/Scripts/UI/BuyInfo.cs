@@ -89,7 +89,7 @@ namespace Assets.Scripts.UI
                 bonusUpgrade.UpgradeAmount++;
             }
 
-            ShopManager.CurrentShop.BonusUpgrades.FirstOrDefault(bu => bu.Id == ItemId).Amount++;
+            ShopManager.CurrentShop.BonusUpgrades.First(bu => bu.Id == ItemId).Amount++;
             ShopManager.UpdateShopItems();
             GameController.Instance.LoadBonusesTime(LoginManager.User.BonusUpgrades);
         }

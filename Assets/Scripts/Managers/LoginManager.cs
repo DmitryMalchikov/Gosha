@@ -437,6 +437,7 @@ namespace Assets.Scripts.Managers
             PlayerPrefs.DeleteKey("CurrentSuit");
             PlayerPrefs.DeleteKey("token_gosha");
             PlayerPrefs.DeleteKey("token_expires_in_gosha");
+            FileExtensions.RemoveAllCachedData();
         }
 
         public void SendImage(string path)

@@ -44,7 +44,6 @@ namespace Assets.Scripts.UI
         public GameObject GameOverPanel;
         public GamePanel GamePanel;
         public List<IceCreamChanger> IceCreamPanels;
-        public Dropdown LanguageDropdown;
         public GameObject LoadingPanel;
         public CanvasGroup LoadingPanelCanvasGroup;
         public GameObject LoginPanel;

@@ -65,6 +65,11 @@ namespace Assets.Scripts
                 return false;
             }
 
+            if (LoginManager.User == null)
+            {
+                return false;
+            }
+
             switch (type)
             {
                 case DataType.Duels:

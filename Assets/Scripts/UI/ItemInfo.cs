@@ -99,20 +99,21 @@ namespace Assets.Scripts.UI
                 _TradePanel.IcecreamForTrade = 0;
                 _TradePanel.IceCreamForTradeInput.text = "";
             }
-            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(_itemInfo.NameRu, _itemInfo.Name), _itemInfo.Amount - 1 * (toSelect ? 1 : 0));
+
+            NameText.text = _itemInfo.ItemName(_itemInfo.Amount - 1 * (toSelect ? 1 : 0));
         }
 
         public void SetInventoryCard(InventoryCard item)
         {
             _itemInfo = item;
-            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
+            NameText.text = item.ItemName();
             ImgSource.sprite = Resources.Load<Sprite>(item.Name.AddBrackets());
         }
         public void SetBonus(InventoryItem item)
         {
             gameObject.SetActive(true);
             _itemInfo = item;
-            NameText.text = string.Format("{0}({1})", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
+            NameText.text = item.ItemName();
         }
     }
 }

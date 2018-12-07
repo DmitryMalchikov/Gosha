@@ -8,7 +8,7 @@ namespace Assets.Scripts.UI
 {
     public class TradeDetails : MonoBehaviour
     {
-        public TradeOfferModel info;
+        public TradeOfferModel Info;
 
         public Text Title;
         public Button AcceptBtn;
@@ -25,19 +25,19 @@ namespace Assets.Scripts.UI
 
         public void Accept()
         {
-            TradeManager.Instance.AcceptTradeAsync(info.Id);
+            TradeManager.Instance.AcceptTradeAsync(Info.Id);
             LoginManager.Instance.GetUserInfoAsync();
         }
 
         public void Decline()
         {
-            TradeManager.Instance.DeclineTradeAsync(info.Id);
+            TradeManager.Instance.DeclineTradeAsync(Info.Id);
             LoginManager.Instance.GetUserInfoAsync();
         }
 
         public void SetDetails(TradeOfferModel model)
         {
-            info = model;
+            Info = model;
 
             if (model.UserId == LoginManager.User.Id)
             {
@@ -54,35 +54,11 @@ namespace Assets.Scripts.UI
                 AcceptBtn.gameObject.SetActive(true);
             }
 
-            FirstUserItemName.text = ItemName(model.OfferItem);
-            SecondUserItemName.text = ItemName(model.RequestItem);
-            FirstUserItemImg.sprite = Resources.Load<Sprite>(ItemImageName(model.OfferItem));
-            SecondUserItemImg.sprite = Resources.Load<Sprite>(ItemImageName(model.RequestItem));
+            FirstUserItemName.text = model.OfferItem.ItemName();
+            SecondUserItemName.text = model.RequestItem.ItemName();
+            FirstUserItemImg.sprite = Resources.Load<Sprite>(model.OfferItem.ItemImageName());
+            SecondUserItemImg.sprite = Resources.Load<Sprite>(model.RequestItem.ItemImageName());
             gameObject.SetActive(true);
-        }
-
-        public string ItemName(InventoryItem item)
-        {
-            if (item.Amount > 1)
-            {
-                return string.Format("{0}: {1}", LocalizationManager.GetValue(item.NameRu, item.Name), item.Amount);
-            }
-            else
-            {
-                return LocalizationManager.GetValue(item.NameRu, item.Name);
-            }
-        }
-
-        public string ItemImageName(InventoryItem item)
-        {
-            if (item.Name.Contains("Card"))
-            {
-                return item.Name.AddBrackets();
-            }
-            else
-            {
-                return "Bonus" + item.ItemId;
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Utils
 {
