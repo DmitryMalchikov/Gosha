@@ -79,14 +79,12 @@ namespace Assets.Scripts.Managers
                 if (tokenExpireDate > DateTime.Now.AddDays(1))
                 {
                     string token = PlayerPrefs.GetString("token_gosha");
-                
+
                     Headers = new List<Header>() { new Header("Authorization", " Bearer " + token) };
                     GetUserInfoAsync();
-
-                    AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+                    
                     AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
 
-                    LoginCanvas.Instance.EnableWarning(false);
                     LoginCanvas.Instance.Enable(false);
 
                     yield break;
@@ -126,48 +124,42 @@ namespace Assets.Scripts.Managers
 
         private void LocalLogin()
         {
-            // LocalUser = true;
-            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
             AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
-            LoginCanvas.Instance.EnableWarning(false);
             LoginCanvas.Instance.Enable(false);
             GetUserInfoAsync();
         }
 
         public void GetTokenByRefreshAsync(string refreshToken)
         {
-            CoroutineManager.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), (AccessToken token) =>
-                {
-                    LocalUser = false;
-                    UserToken = token;
-
-                    OneSignal.SetSubscription(true);
-                    OneSignal.SyncHashedEmail(UserToken.Email);
-
-                    PlayerPrefs.SetString("refresh_token_gosha", UserToken.RefreshToken);
-                    PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.RefreshExpireIn).ToString());
-
-                    PlayerPrefs.SetString("token_gosha", UserToken.Token);
-                    PlayerPrefs.SetString("token_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.TokenExpiresIn).ToString());
-
-                    LoginCanvas.Instance.EnableWarning(false);
-
-                    Debug.Log(UserToken.Token);
-
-                    LoginCanvas.Instance.Enable(false);
-
-                    Headers = new List<Header>() { new Header("Authorization", " Bearer " + UserToken.Token) };
-                    GetUserInfoAsync();
-                    //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-                    AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-                    AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);               
-                },
+            CoroutineManager.SendRequest(LoginUrl, string.Format("refresh_token={0}&grant_type=refresh_token", refreshToken), 
+                (Action<AccessToken>)HandleUserRefreshToken,
                 (response) =>
                 {
                     //LoginCanvas.Instance.EnableWarning(true);
                     LocalLogin();
                     //Canvaser.Instance.CloseLoading();
                 });
+        }
+
+        public void HandleUserRefreshToken(AccessToken token)
+        {
+            LocalUser = false;
+            UserToken = token;
+
+            OneSignal.SetSubscription(true);
+            OneSignal.SyncHashedEmail(UserToken.Email);
+
+            PlayerPrefs.SetString("refresh_token_gosha", UserToken.RefreshToken);
+            PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.RefreshExpireIn).ToString());
+
+            PlayerPrefs.SetString("token_gosha", UserToken.Token);
+            PlayerPrefs.SetString("token_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.TokenExpiresIn).ToString());
+
+            LoginCanvas.Instance.Enable(false);
+
+            Headers = new List<Header>() { new Header("Authorization", " Bearer " + UserToken.Token) };
+            GetUserInfoAsync();
+            AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
         }
 
         public void GetTokenAsync()
@@ -180,33 +172,8 @@ namespace Assets.Scripts.Managers
         {
             LoginBtn.interactable = false;
 
-            CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password), (AccessToken token) =>
-                {
-                    FileExtensions.RemoveJsonData(DataType.UserInfo);
-                    LocalUser = false;
-                    UserToken = token;
-
-                    PlayerPrefs.SetString("refresh_token_gosha", UserToken.RefreshToken);
-                    PlayerPrefs.SetString("refresh_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.RefreshExpireIn).ToString());
-
-                    PlayerPrefs.SetString("token_gosha", UserToken.Token);
-                    PlayerPrefs.SetString("token_expires_in_gosha", DateTime.Now.AddSeconds(UserToken.TokenExpiresIn).ToString());
-
-                    OneSignal.SetSubscription(true);
-                    OneSignal.SyncHashedEmail(UserToken.Email);
-
-                    LoginCanvas.Instance.EnableWarning(false);
-
-                    Debug.Log(UserToken.Token);
-
-                    LoginCanvas.Instance.Enable(false);
-
-                    Headers = new List<Header>() { new Header("Authorization", " Bearer " + UserToken.Token) };
-                    GetUserInfoAsync();
-                    //AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.ADSPanel.OpenAds();
-                    AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
-                    AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);           
-                },
+            CoroutineManager.SendRequest(LoginUrl, string.Format("username={0}&password={1}&grant_type=password", email, password),
+                (Action<AccessToken>)HandleUserToken,
                 (response) =>
                 {
                     LoginCanvas.Instance.EnableWarning(true);
@@ -216,6 +183,12 @@ namespace Assets.Scripts.Managers
                 {
                     LoginBtn.interactable = true;
                 });
+        }
+
+        public void HandleUserToken(AccessToken token)
+        {
+            FileExtensions.RemoveJsonData(DataType.UserInfo);
+            HandleUserRefreshToken(token);
         }
 
         public void GetUserInfo()
@@ -228,35 +201,7 @@ namespace Assets.Scripts.Managers
             CustomTask task = new CustomTask();
             CoroutineManager.SendRequest(UserInfoUrl, null, (UserInfoModel info) =>
                 {
-                    if (info == null)
-                    {
-                        info = new UserInfoModel();
-                    }
-
-                    SetUserInfos(info);
-
-                    if (!LocalUser)
-                    {
-                        Canvaser.Instance.Nickname.text = User.Nickname;
-                        AchievementsManager.Instance.LoadAchievements(info.Achievements);
-                        TasksManager.Instance.LoadTasks(info.WeeklyTasks);                
-                        Canvaser.Instance.DailyBonus.SetHighlights();
-                        Canvaser.Instance.SettingsRegion.Key = User.Region;
-                        Canvaser.Instance.Shop.SetPromoBtn();
-
-                        if (!User.GotDailyBonus)
-                        {
-                            Canvaser.Instance.DailyBonus.gameObject.SetActive(true);
-                        }
-                        GetUserImage();
-                        //GetAvatarImage();
-
-                        //NotificationsManager.Register(User.Id);
-
-                        Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
-                        Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);
-                        Canvaser.Instance.OpenNotificationPanel(NotificationType.TradeRequest, User.NewTrades);
-                    }
+                    HandleUserInfo(info);
 
                     if (callback != null)
                     {
@@ -264,12 +209,9 @@ namespace Assets.Scripts.Managers
                     }
                 },
                 type: DataType.UserInfo,
-                finallyMethod: () => 
+                finallyMethod: () =>
                 {
-                    if (User == null)
-                    {
-                        SetUserInfos(new UserInfoModel());
-                    }
+                    SetUserInfos(User);
                     FileExtensions.SaveJsonDataAsync(DataType.UserInfo, User);
                     task.Ready = true;
                 });
@@ -277,8 +219,38 @@ namespace Assets.Scripts.Managers
             return task;
         }
 
+        public void HandleUserInfo(UserInfoModel info)
+        {
+            SetUserInfos(info);
+
+            if (LocalUser) return;
+
+            Canvaser.Instance.Nickname.text = User.Nickname;
+            AchievementsManager.Instance.LoadAchievements(info.Achievements);
+            TasksManager.Instance.LoadTasks(info.WeeklyTasks);
+            Canvaser.Instance.DailyBonus.Show(!User.GotDailyBonus);
+            Canvaser.Instance.SettingsRegion.Key = User.Region;
+            Canvaser.Instance.Shop.SetPromoBtn();
+
+            GetUserImage();
+            //GetAvatarImage();
+
+            //NotificationsManager.Register(User.Id);
+
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.DuelRequest, User.NewDuels);
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.FriendRequest, User.NewFriendships);
+            Canvaser.Instance.OpenNotificationPanel(NotificationType.TradeRequest, User.NewTrades);
+        }
+
         public void SetUserInfos(UserInfoModel user)
         {
+            if (User != null) return;
+
+            if (user == null)
+            {
+                user = new UserInfoModel();
+            }
+
             User = user;
             GameController.Instance.LoadBonusesTime(user.BonusUpgrades);
             Canvaser.Instance.SetAllIceCreams(user.IceCream);
@@ -289,22 +261,24 @@ namespace Assets.Scripts.Managers
 
         public void RegisterAsync(RegisterBindingModel model)
         {
-            if (User != null)
-            {
-                model.IceCream = User.IceCream;
-                model.Cases = User.Cases;
-                model.Bonuses = User.Bonuses.ToArray();
-                model.BonusUpgrades = User.BonusUpgrades.ToArray();
-                FileExtensions.RemoveJsonData(DataType.UserInfo);
-            }
+            PopulateLocalUser(model);
 
             CoroutineManager.SendRequest(RegisterUrl, model, () =>
             {
                 GetTokenAsync(model.Email, model.Password);
-                Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
-                Canvaser.Instance.RegistrationPanel.PageNum = 0;
-                Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
+                Canvaser.RegistrationFinished();
             });
+        }
+
+        public void PopulateLocalUser(RegisterExternalBindingModel model)
+        {
+            if (User == null) return;
+
+            model.IceCream = User.IceCream;
+            model.Cases = User.Cases;
+            model.Bonuses = User.Bonuses.ToArray();
+            model.BonusUpgrades = User.BonusUpgrades.ToArray();
+            FileExtensions.RemoveJsonData(DataType.UserInfo);
         }
 
         public void ForgotPasswordAsync(string email)
@@ -380,29 +354,19 @@ namespace Assets.Scripts.Managers
                 Canvaser.Instance.LoginPanel.SetActive(false);
                 GetUserInfoAsync();
                 Canvaser.Instance.MainMenu.SetActive(true);
-
-                AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+                
                 AdsManager.Instance.GetAds(Canvaser.Instance.ADSPanel.txt, Canvaser.Instance.ADSPanel.img);
             }
         }
 
         public void RegisterExternal(RegisterExternalBindingModel model)
         {
-            if (User != null)
-            {
-                model.IceCream = User.IceCream;
-                model.Cases = User.Cases;
-                model.Bonuses = User.Bonuses.ToArray();
-                model.BonusUpgrades = User.BonusUpgrades.ToArray();
-                FileExtensions.RemoveJsonData(DataType.UserInfo);
-            }
+            PopulateLocalUser(model);
 
             CoroutineManager.SendRequest(ExternalRegisterUrl, model, () =>
             {
                 OpenExternalLogin(LoginProvider);
-                Canvaser.Instance.RegistrationPanel.PageNum = 0;
-                Canvaser.Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
-                Canvaser.Instance.RegistrationPanel.gameObject.SetActive(false);
+                Canvaser.RegistrationFinished();
                 Canvaser.Instance.LoginPanel.gameObject.SetActive(false);
                 Canvaser.Instance.MainMenu.SetActive(true);
             });

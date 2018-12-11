@@ -6,9 +6,6 @@ namespace Assets.Scripts.Utils
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
     private static AndroidJavaObject unityActivityClass;
-#endif
-
-#if UNITY_ANDROID && !UNITY_EDITOR
     static void _openFileSystem()
     {
         unityActivityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");

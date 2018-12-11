@@ -37,7 +37,7 @@ namespace Assets.Scripts.UI
         public RegisterBindingModel NewUser = new RegisterBindingModel();
         public List<RegionModel> regions = new List<RegionModel>();
 
-        public RegionModel Region;
+        private RegionModel _region;
         public Transform RegionsContent;
         public GameObject RegionObject;
         public ToggleGroup Group;
@@ -51,8 +51,13 @@ namespace Assets.Scripts.UI
         public void Start()
         {
             SetUrls();
-            _phoneNumberHandler = new PhoneNumberTemplate();
             _checks = new List<Action> { CheckRegion, CheckEmail, CheckNick, ComparePasswords };
+        }
+
+        public void SetRegion(RegionModel region)
+        {
+            _region = region;
+            _phoneNumberHandler = new PhoneNumberTemplate(_region.PhonePlaceholder);
         }
 
         public void SetUrls()
@@ -129,7 +134,7 @@ namespace Assets.Scripts.UI
                 {
                     NewUser.Password = pass1;
                     NewUser.ConfirmPassword = pass2;
-                    NewUser.RegionId = Region.Id;
+                    NewUser.RegionId = _region.Id;
                     LoginManager.Instance.RegisterAsync(NewUser);
                 }
                 else
@@ -144,8 +149,8 @@ namespace Assets.Scripts.UI
         }
 
         public void ChangePhoneCharacters(string input)
-        {      
-            Phone.text = _phoneNumberHandler.ChangePhoneCharacters(input, Region.PhonePlaceholder);
+        {
+            Phone.text = _phoneNumberHandler.ChangeCharacters(input);
             Phone.MoveTextEnd(false);      
         }
 
@@ -195,7 +200,7 @@ namespace Assets.Scripts.UI
             bool exist;
             InputString parameters = new InputString() { Value = _phone };
 
-            if (Regex.IsMatch(_phone, Canvaser.Instance.RegistrationPanel.Region.PhonePattern))
+            if (Regex.IsMatch(_phone, Canvaser.Instance.RegistrationPanel._region.PhonePattern))
             {
                 CoroutineManager.SendRequest(CheckPhoneUrl, parameters,
                     preSuccessMethod: (response) =>
@@ -238,7 +243,7 @@ namespace Assets.Scripts.UI
                             NewUser.Nickname = nick;
                             if (External)
                             {
-                                NewUser.RegionId = Region.Id;
+                                NewUser.RegionId = _region.Id;
                                 LoginManager.Instance.RegisterExternal(new RegisterExternalBindingModel(NewUser));
                             }
                             else
@@ -296,6 +301,12 @@ namespace Assets.Scripts.UI
             External = false;
             LoginManager.Instance.GetRegions();
             LangPanel.SetActive(true);
+        }
+
+        public void ResetPanel()
+        {
+            PageNum = 0;
+            gameObject.SetActive(false);
         }
     }
 }

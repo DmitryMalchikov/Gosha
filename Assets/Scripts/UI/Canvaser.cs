@@ -331,6 +331,12 @@ namespace Assets.Scripts.UI
             Instance.Coins.text = "0";
             Instance.Score.text = "0";
         }
+
+        public static void RegistrationFinished()
+        {
+            Instance.RegistrationFinishedPanel.gameObject.SetActive(true);
+            Instance.RegistrationPanel.ResetPanel();
+        }
     }
 }
 

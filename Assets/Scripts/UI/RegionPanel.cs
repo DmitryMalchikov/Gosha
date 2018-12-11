@@ -14,7 +14,7 @@ namespace Assets.Scripts.UI
         public void ChooseRegion(bool isChosen)
         {
             if (!isChosen) return;
-            Canvaser.Instance.RegistrationPanel.Region = info;
+            Canvaser.Instance.RegistrationPanel.SetRegion(info);
             Canvaser.Instance.RegistrationPanel.Phone.placeholder.GetComponent<Text>().text = info.PhonePlaceholder;
         }
 

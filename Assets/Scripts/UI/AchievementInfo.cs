@@ -19,7 +19,7 @@ namespace Assets.Scripts.UI
             Title.text = model.Name;
             Description.text = model.GenerateDescription();
             SocialNetworkButtons.SetActive(model.PlayerProgress >= model.ActionsCount);
-            AdsManager.Instance.GetAds(ADSText, ADS);
+            AdsManager.Instance.GetAds(ADSText, ADS, false);
             gameObject.SetActive(true);
         }
 
@@ -28,7 +28,7 @@ namespace Assets.Scripts.UI
             Title.text = LocalizationManager.GetLocalizedValue("share");
             Description.text = LocalizationManager.GetLocalizedValue("sharegamewithyourfriends");
             SocialNetworkButtons.SetActive(true);
-            AdsManager.Instance.GetAds(ADSText, ADS);
+            AdsManager.Instance.GetAds(ADSText, ADS, false);
             gameObject.SetActive(true);
         }
 

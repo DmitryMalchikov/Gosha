@@ -25,7 +25,6 @@ namespace Assets.Scripts.UI
 
         public void DoubleScore()
         {
-            AdsManager.Instance.OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
             AdsManager.Instance.GetAds(txt, img);
         }
     }

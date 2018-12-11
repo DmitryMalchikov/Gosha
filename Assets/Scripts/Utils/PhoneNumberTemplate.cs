@@ -5,113 +5,90 @@ namespace Assets.Scripts.Utils
 {
     public class PhoneNumberTemplate
     {
-        private const char defaultCharacter = '_';
-        private const string charactersType = @"\d";
-        private const char placeholder = '#';
+        public const char DefaultCharacter = '_';
+        public const string CharactersType = @"\d";
 
         private string _result = string.Empty;
-        private byte _previousLength = 0;
-        private string _previousInput;
+        private readonly string _regionTemplate;
+        private readonly Regex _regex;
+        private bool _isDeleting;
+        private char _deletedCharacter;
+        private StringBuilder _builder;
+        private MatchCollection _matches;
 
-        public string ChangePhoneCharacters(string input, string regionTemplate)
+        public PhoneNumberTemplate(string regionTemplate)
+        {
+            _regionTemplate = regionTemplate;
+            _regex = new Regex(CharactersType);
+        }
+
+        public string ChangeCharacters(string input)
         {
             if (input == _result)
             {
                 return input;
             }
-            bool isDeleting = _previousLength > input.Length;
-            char deletedCharacter = ' ';
-            _previousLength = (byte)input.Length;
-            if (isDeleting && !string.IsNullOrEmpty(_previousInput))
+
+            InitParameters(input);
+            int index;
+
+            ReplacePlaceholders(out index);
+            CutEnd(index);
+
+            _result = _builder.ToString();
+            return _result;
+        }
+
+        public void InitParameters(string input)
+        {
+            _isDeleting = _result.Length > input.Length;
+            if (_isDeleting && !string.IsNullOrEmpty(_result))
             {
-                deletedCharacter = _previousInput[_previousInput.Length - 1];
+                _deletedCharacter = _result[_result.Length - 1];
             }
-            _previousInput = input;
 
-            string template = regionTemplate.Replace(defaultCharacter, placeholder);
+            _builder = new StringBuilder(_regionTemplate);
+            _matches = _regex.Matches(input);
+        }
 
-            StringBuilder builder = new StringBuilder(template);
-            Regex reg = new Regex(charactersType);
-            var matches = reg.Matches(input);
-            int index = -1;
-
-            for (int i = 0; i < matches.Count; i++)
+        public void CutEnd(int index)
+        {
+            if (_matches.Count == 0)
             {
-                index = -1;
-                for (int j = 0; j < builder.Length; j++)
-                {
-                    if (builder[j] == placeholder)
-                    {
-                        index = j;
-                        break;
-                    }
-                }
+                _builder.RemoveToEnd(0);
+                return;
+            }
 
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (_isDeleting && !_regex.IsMatch(_deletedCharacter.ToString()))
+            {
+                _builder.RemoveToEnd(index);
+            }
+            else if (index < _builder.Length - 1 && _builder[index + 1] == DefaultCharacter)
+            {
+                _builder.RemoveToEnd(index + 1);
+            }
+            else if (index < _builder.Length - 2)
+            {
+                _builder.RemoveToEnd(index + 2);
+            }
+        }
+
+        public void ReplacePlaceholders(out int index)
+        {
+            index = -1;
+            for (int i = 0; i < _matches.Count; i++)
+            {
+                index = _builder.IndexOf(DefaultCharacter);
                 if (index > -1)
                 {
-                    builder.Replace(placeholder, matches[i].Value[0], index, 1);
+                    _builder.Replace(DefaultCharacter, _matches[i].Value[0], index, 1);
                 }
             }
-
-
-            for (int i = builder.Length - 1; builder.Length > 0 && i >= 0; i--)
-            {
-                if (builder[i] == placeholder)
-                {
-                    builder.Remove(i, 1);
-                }
-                else if (!Regex.IsMatch(builder[i].ToString(), charactersType))
-                {
-                    if (i > 0)
-                    {
-                        if (isDeleting)
-                        {
-                            if (!Regex.IsMatch(builder[i].ToString(), charactersType))
-                            {
-                                if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
-                                {
-                                    if (!Regex.IsMatch(deletedCharacter.ToString(), charactersType))
-                                    {
-                                        builder.Remove(i - 1, 2);
-                                        i--;
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    builder.Remove(i, 1);
-                                }
-                            }
-                            else
-                            {
-                                builder.Remove(i, 1);
-                            }
-                        }
-                        else if (Regex.IsMatch(builder[i - 1].ToString(), charactersType))
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            builder.Remove(i, 1);
-                        }
-                    }
-                    else
-                    {
-                        builder.Remove(i, 1);
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            _result = builder.ToString();
-            return _result;
         }
     }
 }

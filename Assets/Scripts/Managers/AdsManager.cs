@@ -58,8 +58,13 @@ namespace Assets.Scripts.Managers
             }
         }
 
-        public void GetAds(Text text, RawImage image)
+        public void GetAds(Text text, RawImage image, bool closeLoading = true)
         {
+            if (closeLoading)
+            {
+                OnAdsDownloaded += () => Canvaser.Instance.CloseLoading();
+            }
+
             Canvaser.Instance.ADSPanel.OpenAds();
             image.texture = null;
             TurnOnLoading();

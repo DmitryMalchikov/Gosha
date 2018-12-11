@@ -95,5 +95,26 @@ namespace Assets.Scripts.Utils
             while (enumerator.MoveNext()) { }
             return enumerator.Current;
         }
+
+        public static void RemoveToEnd(this StringBuilder builder, int startIndex)
+        {
+            builder.Remove(startIndex, builder.Length - startIndex);
+        }
+
+        public static int IndexOf(this StringBuilder builder, char symbol)
+        {
+            int index = -1;
+
+            for (int j = 0; j < builder.Length; j++)
+            {
+                if (builder[j] == symbol)
+                {
+                    index = j;
+                    break;
+                }
+            }
+
+            return index;
+        }
     }
 }
