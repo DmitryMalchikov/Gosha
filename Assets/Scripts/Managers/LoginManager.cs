@@ -211,7 +211,11 @@ namespace Assets.Scripts.Managers
                 type: DataType.UserInfo,
                 finallyMethod: () =>
                 {
-                    SetUserInfos(User);
+                    if (User == null)
+                    {
+                        SetUserInfos(User);
+                    }
+
                     FileExtensions.SaveJsonDataAsync(DataType.UserInfo, User);
                     task.Ready = true;
                 });
@@ -244,8 +248,6 @@ namespace Assets.Scripts.Managers
 
         public void SetUserInfos(UserInfoModel user)
         {
-            if (User != null) return;
-
             if (user == null)
             {
                 user = new UserInfoModel();
